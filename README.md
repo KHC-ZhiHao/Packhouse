@@ -97,7 +97,7 @@ let alone = group.alone({
 alone.tool('sum').direct(5, 10) // 15
 ```
 
-#### Merger And Coop (ver1.0.8)
+#### Merger And Coop
 
 Merger是Group互相引用的接口
 
@@ -174,7 +174,7 @@ let saa5 = sumAndAdd5.direct
 saa5(5, 10) // 20
 ```
 
-#### 預填裝 (ver1.0.3)
+#### 預填裝
 
 ```js
 let sumAndAdd5 = factory.tool('math', 'sumAndAdd5').packing(5, 10)
@@ -185,13 +185,13 @@ let sumAndAdd5 = factory.tool('math', 'sumAndAdd5').packing(5).packing(5)
 sumAndAdd5.direct() // 15
 ```
 
-#### 解除預填裝 (ver1.0.6)
+#### 解除預填裝
 
 ```js
 let sumAndAdd5 = factory.tool('math', 'sumAndAdd5').packing(5, 10).unPacking().direct(5, 5) // 15
 ```
 
-#### 預監聽錯誤 (ver1.0.5)
+#### 預監聽錯誤
 
 NG將協助你捕捉錯誤或優化程式碼
 
@@ -238,7 +238,7 @@ factory.tool('math', 'errorDemo').ng((err)=>{
 }).promise()
 ```
 
-### Mold (v1.1.0)
+### Mold
 
 Mold是一個參數配裝器，只支援同步處理，用於參數驗證與型態轉換。
 
@@ -387,6 +387,7 @@ factory.line('math', 'compute')(5).add(10).double().promise().then((result) => {
 
 ## 其他
 [版本LOG](https://github.com/KHC-ZhiHao/Packhouse/blob/master/document/version.md)
+
 [開發者文件](https://khc-zhihao.github.io/Packhouse/document/document.html)
 
 [npm-image]: https://img.shields.io/npm/v/packhouse.svg
