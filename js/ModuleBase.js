@@ -21,7 +21,7 @@ class ModuleBase {
             console.log( `%c error : `, 'color:#FFF; background:red' );
             console.log( object );
         }
-        throw new Error( `(☉д⊙)!! Assembly::${this.$moduleBase.name} => ${functionName} -> ${message}` );
+        throw new Error( `(☉д⊙)!! PackHouse::${this.$moduleBase.name} => ${functionName} -> ${message}` );
     }
 
     $noKey( functionName, target, key ) {

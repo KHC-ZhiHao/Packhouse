@@ -9,10 +9,9 @@
 
 class Mold extends ModuleBase {
 
-    constructor(options = {}, group) {
+    constructor(options = {}) {
         super('Mold')
         this.case = new Case()
-        this.group = group
         this.data = this.$verify(options, {
             name: [true, ''],
             check: [false, function() { return true }],

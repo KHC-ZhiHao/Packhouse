@@ -83,7 +83,7 @@ class ModuleBase {
             console.log( `%c error : `, 'color:#FFF; background:red' );
             console.log( object );
         }
-        throw new Error( `(☉д⊙)!! Assembly::${this.$moduleBase.name} => ${functionName} -> ${message}` );
+        throw new Error( `(☉д⊙)!! PackHouse::${this.$moduleBase.name} => ${functionName} -> ${message}` );
     }
 
     $noKey( functionName, target, key ) {
@@ -136,6 +136,11 @@ class Packhouse extends ModuleBase {
         super("Packhouse")
         this.groups = {}
         this.bridge = null
+    }
+
+    static createPublicMold(options) {
+        let mold = new Mold(options)
+        PublicMolds[mold.name] = mold
     }
 
     /**
@@ -309,10 +314,7 @@ class Tool extends ModuleBase {
         this.initSystem()
         this.initArgLength()
         this.install = null
-        this.data.create.bind(this.user)(this.store, {
-            group: this.group.case,
-            include: this.include.bind(this)
-        })
+        this.data.create.bind(this.user)(this.store, this.system)
     }
 
     /**
@@ -326,7 +328,8 @@ class Tool extends ModuleBase {
             coop: this.coop.bind(this),
             store: this.store,
             group: this.group.case,
-            include: this.include.bind(this)
+            include: this.include.bind(this),
+            casting: this.parseMold.bind(this)
         }
     }
 
@@ -353,6 +356,7 @@ class Tool extends ModuleBase {
 
     createExports() {
         let supData = {
+            pass: null,
             noGood: null,
             package: []
         }
@@ -369,7 +373,7 @@ class Tool extends ModuleBase {
     /**
      * @function createSupport
      * @private
-     * @desc 建立輔助方法，應該找機會把它獨立出來ˊOuOˋ
+     * @desc 建立輔助方法，應該找機會把它獨立出來
      */
 
     createSupport(exps, supData) {
@@ -379,7 +383,7 @@ class Tool extends ModuleBase {
                     supData.noGood = broadcast
                     return exps
                 }
-                this.$systemError('createSupport', 'NG param not a function.', broadcast)
+                this.$systemError('setNG', 'NG param not a function.', broadcast)
             },
             packing: function() {
                 supData.package = supData.package.concat([...arguments])
@@ -432,18 +436,23 @@ class Tool extends ModuleBase {
         return tool[name]
     }
 
-    parseMold(params, index, error) {
-        let name = this.data.molds[index]
-        if (name) {
-            let mold = this.group.getMold(name)
-            let check = mold.check(params)
-            if (check === true) {
-                return mold.casting(params)
-            } else {
+    /**
+     * @function parseMold
+     * @desc 解讀Mold是否正確
+     */
+
+    parseMold(name, params, error) {
+        let mold = this.group.getMold(name)
+        let check = mold.check(params)
+        if (check === true) {
+            return mold.casting(params)
+        } else {
+            if (typeof error === 'function') {
                 error(check)
+            } else {
+                this.$systemError('parseMold', check)
             }
         }
-        return params
     }
 
     /**
@@ -474,7 +483,8 @@ class Tool extends ModuleBase {
 
     call(params, error, success) {
         for (let i = 0; i < params.length; i++) {
-            params[i] = this.parseMold(params[i], i, error)
+            let name = this.data.molds[i]
+            params[i] = name ? this.parseMold(name, params[i], error) : params[i]
         }
         this.data.action.call(this.user, ...params, this.system, error, success)
     }
@@ -925,10 +935,9 @@ class Process extends ModuleBase {
 
 class Mold extends ModuleBase {
 
-    constructor(options = {}, group) {
+    constructor(options = {}) {
         super('Mold')
         this.case = new Case()
-        this.group = group
         this.data = this.$verify(options, {
             name: [true, ''],
             check: [false, function() { return true }],
@@ -959,6 +968,55 @@ class Mold extends ModuleBase {
     casting(param) {
         return this.data.casting.call(this.case, param)
     }
+
+}
+
+let PublicMolds = {
+
+    number: new Mold({
+        name: 'number',
+        check(param) {
+            return typeof param === 'number' ? true : 'Param not a number.'
+        }
+    }),
+
+    int: new Mold({
+        name: 'int',
+        check(param) {
+            return typeof param === 'number' ? true : 'Param not a number.'
+        },
+        casting(param) {
+            return Math.floor(param)
+        }
+    }),
+
+    string: new Mold({
+        name: 'string',
+        check(param) {
+            return typeof param === 'string' ? true : 'Param not a string.'
+        }
+    }),
+
+    array: new Mold({
+        name: 'array',
+        check(param) {
+            return Array.isArray(param) ? true : 'Param not a array.'
+        }
+    }),
+
+    object: new Mold({
+        name: 'object',
+        check(param) {
+            return typeof param === 'object' ? true : 'Param not a object.'
+        }
+    }),
+
+    function: new Mold({
+        name: 'function',
+        check(param) {
+            return typeof param === 'function' ? true : 'Param not a function.'
+        }
+    })
 
 }
 /**
@@ -1075,8 +1133,9 @@ class Group extends ModuleBase {
      */
 
     getMold(name) {
-        if( this.moldbox[name] ){
-            return this.moldbox[name]
+        let mold = this.moldbox[name] || PublicMolds[name] || null
+        if (mold){
+            return mold
         } else {
             this.$systemError('getMold', 'Mold not found.', name)
         }
@@ -1123,7 +1182,7 @@ class Group extends ModuleBase {
      */
 
     addMold(options) {
-        let mold = new Mold(options, this)
+        let mold = new Mold(options)
         if (this.$noKey('addMold', this.moldbox, mold.name)) {
             this.moldbox[mold.name] = mold
         }

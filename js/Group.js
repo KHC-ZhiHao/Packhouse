@@ -112,8 +112,9 @@ class Group extends ModuleBase {
      */
 
     getMold(name) {
-        if( this.moldbox[name] ){
-            return this.moldbox[name]
+        let mold = this.moldbox[name] || PublicMolds[name] || null
+        if (mold){
+            return mold
         } else {
             this.$systemError('getMold', 'Mold not found.', name)
         }
@@ -160,7 +161,7 @@ class Group extends ModuleBase {
      */
 
     addMold(options) {
-        let mold = new Mold(options, this)
+        let mold = new Mold(options)
         if (this.$noKey('addMold', this.moldbox, mold.name)) {
             this.moldbox[mold.name] = mold
         }

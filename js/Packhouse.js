@@ -16,6 +16,11 @@ class Packhouse extends ModuleBase {
         this.bridge = null
     }
 
+    static createPublicMold(options) {
+        let mold = new Mold(options)
+        PublicMolds[mold.name] = mold
+    }
+
     /**
      * @function getGroup(name)
      * @desc 獲取一個Group

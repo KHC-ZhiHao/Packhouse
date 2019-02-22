@@ -22,7 +22,7 @@
 <p><a href="#remd-me-functions">Functions</a></p>
 <p><a href="#remd-me-modulebase">ModuleBase
 </a></p>
-<p><a href="#remd-me-assembly">Assembly
+<p><a href="#remd-me-packhouse">Packhouse
 </a></p>
 <p><a href="#remd-me-tool">Tool
 </a></p>
@@ -41,7 +41,7 @@
 <hr>
 <h3 id="remd-me-function">Function</h3>
 <h4 id="remd-me-getargslength-function-">getArgsLength(function)</h4>
-<p><span style="border-radius:3px; background-color:#687489; color:#FFF; padding:2px 6px; text-align:center">static</span></p>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:#687489; color:#FFF; padding:2px 6px; text-align:center">static</span></p>
 <p><span style="width:100%; display:inline-block;">獲取函數的參數長度</span></p>
 <h2 id="remd-me-modulebase">ModuleBase</h2>
 <p><span style="width:100%; display:inline-block;">系統殼層
@@ -51,7 +51,7 @@
 <h4 id="remd-me--systemerror-functionname-maessage-object-">$systemError(functionName,maessage,object)</h4>
 <p><span style="width:100%; display:inline-block;">於console呼叫錯誤，中斷程序並顯示錯誤的物件
 </span></p>
-<h2 id="remd-me-assembly">Assembly</h2>
+<h2 id="remd-me-packhouse">Packhouse</h2>
 <p><span style="width:100%; display:inline-block;">主核心
 </span></p>
 <hr>
@@ -90,7 +90,7 @@
 <p><span style="width:100%; display:inline-block;">呼叫一個line
 </span></p>
 <h4 id="remd-me-callbridge">callBridge</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">呼叫橋接器
 </span></p>
 <h4 id="remd-me-setbridge">setBridge</h4>
@@ -116,67 +116,70 @@
 <p> 對外暴露的物件</p>
 <h3 id="remd-me-function">Function</h3>
 <h4 id="remd-me-install">install</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">當模具被第一次使用時呼叫
 </span></p>
 <h4 id="remd-me-initsystem">initSystem</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">初始化系統接口
 </span></p>
 <h4 id="remd-me-initarglength">initArgLength</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">初始化參數長度
 </span></p>
 <h4 id="remd-me-createexports">createExports</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">use tool時建構可使用的行為
 </span></p>
 <h4 id="remd-me-createsupport">createSupport</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
-<span style="width:100%; display:inline-block;">建立輔助方法，應該找機會把它獨立出來ˊOuOˋ
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">建立輔助方法，應該找機會把它獨立出來
 </span></p>
 <h4 id="remd-me-geterror">getError</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">有鑑於有時候不會輸入錯誤訊息，但還是該回傳
 </span></p>
 <h4 id="remd-me-createlambda">createLambda</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">封裝function，Assembly神奇的地方，同時也是可怕的效能吞噬者
 </span></p>
+<h4 id="remd-me-parsemold">parseMold</h4>
+<p><span style="width:100%; display:inline-block;">解讀Mold是否正確
+</span></p>
 <h4 id="remd-me-include">include</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">引入同Group的Tool
 </span></p>
 <h4 id="remd-me-coop">coop</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">引入外部Group的接口
 </span></p>
 <h4 id="remd-me-call">call</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">呼叫自己的action
 </span></p>
 <h4 id="remd-me-createresponse">createResponse</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">建構通用的success和error
 </span></p>
 <h4 id="remd-me-direct">direct</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">呼叫不須非同步的function
 </span></p>
 <h4 id="remd-me-action">action</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">宣告一個具有callback的function
 </span></p>
 <h4 id="remd-me-promise">promise</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">宣告一個promise
 </span></p>
 <h4 id="remd-me-getstore">getStore</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">store的對外接口，只支援get
 </span></p>
 <h4 id="remd-me-use">use</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">Group引用的接口
 </span></p>
 <h2 id="remd-me-line">Line</h2>
@@ -193,11 +196,11 @@
 <hr>
 <h3 id="remd-me-function">Function</h3>
 <h4 id="remd-me-checkprivatekey">checkPrivateKey</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">action, promise是不允許被放在layout的
 </span></p>
 <h4 id="remd-me-use">use</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">Line的對外接口
 </span></p>
 <h2 id="remd-me-deploy">Deploy</h2>
@@ -209,35 +212,35 @@
 <p> 為放置行為的容器</p>
 <h3 id="remd-me-function">Function</h3>
 <h4 id="remd-me-createtool">createTool</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">實例化layout
 </span></p>
 <h4 id="remd-me-init">init</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">初始化I/O
 </span></p>
 <h4 id="remd-me-initconveyer">initConveyer</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">初始化輸送帶
 </span></p>
 <h4 id="remd-me-getconveyer">getConveyer</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">輸送帶的對外接口
 </span></p>
 <h4 id="remd-me-register">register</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">註冊一個flow
 </span></p>
 <h4 id="remd-me-action">action</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">執行有回乎函數的動作
 </span></p>
 <h4 id="remd-me-action">action</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">執行回傳Promise的動作
 </span></p>
 <h4 id="remd-me-process">process</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">process是一個包裝執行過程的物件
 </span></p>
 <h2 id="remd-me-process">Process</h2>
@@ -246,23 +249,23 @@
 <hr>
 <h3 id="remd-me-function">Function</h3>
 <h4 id="remd-me-start">start</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">執行Process
 </span></p>
 <h4 id="remd-me-finish">finish</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">執行output
 </span></p>
 <h4 id="remd-me-createerror">createError</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">建立錯誤與堆棧
 </span></p>
 <h4 id="remd-me-fail">fail</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">呼叫失敗
 </span></p>
 <h4 id="remd-me-next">next</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">執行下一個flow
 </span></p>
 <h2 id="remd-me-mold">Mold</h2>
@@ -275,12 +278,12 @@
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">function</span> <font color="#e30090">casting</font> 回傳加工後的參數</p>
 <hr>
 <h3 id="remd-me-function">Function</h3>
-<h4 id="remd-me-check-">check()</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<h4 id="remd-me-check-param-">check(param)</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">驗證參數
 </span></p>
-<h4 id="remd-me-casting-">casting()</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<h4 id="remd-me-casting-param-">casting(param)</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">打模
 </span></p>
 <h2 id="remd-me-group">Group</h2>
@@ -294,37 +297,37 @@
 <hr>
 <h3 id="remd-me-function">Function</h3>
 <h4 id="remd-me-initstatus-">initStatus()</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">初始化狀態
 </span></p>
 <h4 id="remd-me-initmerger-">initMerger()</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">檢查Merger是否正確
 </span></p>
 <h4 id="remd-me-alone-">alone()</h4>
 <p><span style="width:100%; display:inline-block;">回傳一個獨立的呼叫接口
 </span></p>
 <h4 id="remd-me-create">create</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">當Group首次宣告alone或引入factory時呼叫
 </span></p>
 <h4 id="remd-me-gettool">getTool</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">string</span> <font color="#e30090">name</font> 獲取Group內的Tool</p>
 <h4 id="remd-me-getline">getLine</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">string</span> <font color="#e30090">name</font> 獲取Group內的Line</p>
 <h4 id="remd-me-getmold">getMold</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">string</span> <font color="#e30090">name</font> 獲取Group內的Mold</p>
 <h4 id="remd-me-getmerger">getMerger</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">string</span> <font color="#e30090">name</font> 獲取Group Merger對象宣告的alone</p>
 <h4 id="remd-me-calltool">callTool</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">string</span> <font color="#e30090">name</font> 使用Group的Tool</p>
 <h4 id="remd-me-callline">callLine</h4>
-<p><span style="border-radius:3px; background-color:red; color:#FFF; padding:2px 6px; text-align:center">private</span><br>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">string</span> <font color="#e30090">name</font> 使用Group的Tool</p>
 <h4 id="remd-me-addmold">addMold</h4>
 <p><span style="width:100%; display:inline-block;">加入一個模具

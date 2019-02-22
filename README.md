@@ -271,6 +271,57 @@ factory.tool('math', 'multiply').direct(10, 5.5) // 50
 factory.tool('math', 'multiply').direct(10, '5.5') // error 'Not a number.'
 ```
 
+#### public mold(v1.0.1)
+
+全域宣告的mold，可以定義一些通用的mold，需要注意的是，public mold是可以**複寫**的。
+
+>當group中有同名優先宣告的mold，則group優先
+
+```js
+Packhouse.createPublicMold({
+    name: 'double',
+    check(param) {
+        return typeof param === 'number' ? true : 'Param not a number.'
+    },
+    casting(param) {
+        return param * 2
+    }
+})
+
+group.addTool({
+    name: 'double',
+    mold: ['double'],
+    action: function(a, system, error, success) {
+        success(a)
+    }
+})
+```
+
+於1.0.1板後可以用system呼叫casting使用mold。
+
+>第三個參數為錯誤回呼，當casting check不正確時才會呼叫。
+
+```js
+group.addTool({
+    name: 'system_double',
+    action: function(a, system, error, success) {
+        let b = system.casting('double', a, error)
+        success(b)
+    }
+})
+```
+
+#### 預設的public mold(v1.0.1)
+
+系統將自動預設幾個常態性的public mold
+
+* number: 驗證是否為數字
+* int: 驗證是否為數字並轉成整數
+* string: 驗證是否為字串
+* array: 驗證是否為陣列
+* object: 驗證是否為物件
+* function: 驗證是否為函數
+
 ## 生產線
 
 建構生產線是一個函數柯理化(curry)的過程，在這之前，先將整個function給定義好
