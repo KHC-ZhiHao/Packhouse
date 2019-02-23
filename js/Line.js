@@ -142,7 +142,7 @@ class Deploy extends ModuleBase {
     register(name, params) {
         if (this.main.inlet.length !== 0 && this.flow.length === 0) {
             if (!this.main.inlet.includes(name)) {
-                this.$systemError('register', 'First call method not inside inlet.', name)
+                this.$systemError('register', `First call method not inside inlet, you use'${name}'.`)
             }
         }
         let data = {

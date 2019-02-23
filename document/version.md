@@ -22,3 +22,13 @@ Mold的耦合比想像中小，也比想像中還複用，簡單的東西果然�
 ### MODIFY
 
 * error: 修正錯誤訊息還是Assembly的錯誤
+
+## 1.0.2
+
+### NEW
+
+* async loop: 支援非同步迴圈
+
+### MODIFY
+
+* error: 更良好的錯誤顯示。

@@ -46,7 +46,7 @@ class Group extends ModuleBase {
         for (let key in this.data.merger) {
             let group = this.data.merger[key]
             if ((group instanceof Group) === false) {
-                this.$systemError('initMerger', 'Not a group.', group)
+                this.$systemError('initMerger', `The '${key}' not a group.`)
             }
         }
     }
@@ -87,7 +87,7 @@ class Group extends ModuleBase {
         if( this.toolbox[name] ){
             return this.toolbox[name]
         } else {
-            this.$systemError('getTool', 'Tool not found.', name)
+            this.$systemError('getTool', `Tool(${name}) not found.`)
         }
     }
 
@@ -98,10 +98,10 @@ class Group extends ModuleBase {
      */
 
     getLine(name) {
-        if( this.line[name] ){
+        if (this.line[name]) {
             return this.line[name]
         } else {
-            this.$systemError('getLine', 'Line not found.', name)
+            this.$systemError('getLine', `Line(${name}) not found.`)
         }
     }
 
@@ -113,10 +113,10 @@ class Group extends ModuleBase {
 
     getMold(name) {
         let mold = this.moldbox[name] || PublicMolds[name] || null
-        if (mold){
+        if (mold) {
             return mold
         } else {
-            this.$systemError('getMold', 'Mold not found.', name)
+            this.$systemError('getMold', `Mold(${name}) not found.`)
         }
     }
 
@@ -130,7 +130,7 @@ class Group extends ModuleBase {
         if (this.data.merger[name]) {
             return this.data.merger[name].alone()
         } else {
-            this.$systemError('getMerger', 'Merger not found.', name)
+            this.$systemError('getMerger', `Merger(${name}) not found.`)
         }
     }
 

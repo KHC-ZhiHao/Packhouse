@@ -16,9 +16,49 @@ class Packhouse extends ModuleBase {
         this.bridge = null
     }
 
+    /**
+     * @function createPublicMold(moldOptions)
+     * @static
+     * @desc 建立public mold
+     */
+
     static createPublicMold(options) {
         let mold = new Mold(options)
         PublicMolds[mold.name] = mold
+    }
+
+    /**
+     * @function asyncLoop(target,action,callback)
+     * @static
+     * @desc 非同步迴圈
+     */
+
+    static asyncLoop(target, action, callback) {
+        if (Array.isArray(target) === false) {
+            callback('AsyncLoop : Targrt not be array.')
+            return
+        }
+        if (typeof action !== "function" || typeof callback !== "function") {
+            callback('AsyncLoop : Action or callback not a function.')
+            return
+        }
+        let length = target.length
+        let onload = 0
+        let onloadCallback = () => {
+            onload += 1
+            if (onload === length) {
+                callback()
+            }
+        }
+        let doing = async(target, index) => {
+            action(target, index, onloadCallback)
+        }
+        for (let i = 0; i < length; i++) {
+            doing(target[i], i)
+        }
+        if (length === 0) {
+            callback()
+        }
     }
 
     /**
@@ -30,7 +70,7 @@ class Packhouse extends ModuleBase {
         if (this.hasGroup(name)) {
             return this.groups[name]
         } else {
-            this.$systemError('getGroup', 'Group not found.')
+            this.$systemError('getGroup', `Group(${name}) not found.`)
         }
     }
 
@@ -60,7 +100,7 @@ class Packhouse extends ModuleBase {
 
     addGroup(name, group, options) {
         if (this.groups[name] != null){
-            this.$systemError('addGroup', 'Name already exists.', name)
+            this.$systemError('addGroup', `Name(${name}) already exists.`)
             return
         }
         if ((group instanceof Group) === false) {

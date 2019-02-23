@@ -10,7 +10,7 @@ group.addTool({
     paramLength: 2,
     allowDirect: true,
     create: function(store, { include, group, casting }) {
-        console.log(casting('int', 77.7))
+        
     },
     action: function(a, b, system, error, success) {
         success(a + b)

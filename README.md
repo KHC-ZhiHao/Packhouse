@@ -436,6 +436,27 @@ factory.line('math', 'compute')(5).add(10).double().promise().then((result) => {
 })
 ```
 
+## 靜態函數
+
+### asyncLoop
+
+非同步迴圈
+
+```js
+// Packhouse.asyncLoop(array, action, callback)
+
+let arr = [1, 2, 3]
+let count = 0
+
+Packhouse.asyncLoop(arr, (target, index, onload) => {
+    count += target
+    onload()
+}, () => {
+    console.log(count) // 6
+})
+
+```
+
 ## 其他
 [版本LOG](https://github.com/KHC-ZhiHao/Packhouse/blob/master/document/version.md)
 

@@ -78,19 +78,18 @@ class ModuleBase {
      * @desc 於console呼叫錯誤，中斷程序並顯示錯誤的物件
      */
 
-    $systemError( functionName, message, object = '$_no_error' ){
-        if( object !== '$_no_error' ){
-            console.log( `%c error : `, 'color:#FFF; background:red' );
-            console.log( object );
+    $systemError(functionName, message, object = '$_no_error'){
+        if (object !== '$_no_error') {
+            console.log('error data => ', object );
         }
-        throw new Error( `(☉д⊙)!! PackHouse::${this.$moduleBase.name} => ${functionName} -> ${message}` );
+        throw new Error(`(☉д⊙)!! PackHouse::${this.$moduleBase.name} => ${functionName} -> ${message}`);
     }
 
     $noKey( functionName, target, key ) {
         if( target[key] == null ){
             return true;
         } else {
-            this.$systemError( functionName, 'Name already exists.', key );
+            this.$systemError(functionName, `Name(${key}) already exists.`);
             return false;
         } 
     }
@@ -138,9 +137,49 @@ class Packhouse extends ModuleBase {
         this.bridge = null
     }
 
+    /**
+     * @function createPublicMold(moldOptions)
+     * @static
+     * @desc 建立public mold
+     */
+
     static createPublicMold(options) {
         let mold = new Mold(options)
         PublicMolds[mold.name] = mold
+    }
+
+    /**
+     * @function asyncLoop(target,action,callback)
+     * @static
+     * @desc 非同步迴圈
+     */
+
+    static asyncLoop(target, action, callback) {
+        if (Array.isArray(target) === false) {
+            callback('AsyncLoop : Targrt not be array.')
+            return
+        }
+        if (typeof action !== "function" || typeof callback !== "function") {
+            callback('AsyncLoop : Action or callback not a function.')
+            return
+        }
+        let length = target.length
+        let onload = 0
+        let onloadCallback = () => {
+            onload += 1
+            if (onload === length) {
+                callback()
+            }
+        }
+        let doing = async(target, index) => {
+            action(target, index, onloadCallback)
+        }
+        for (let i = 0; i < length; i++) {
+            doing(target[i], i)
+        }
+        if (length === 0) {
+            callback()
+        }
     }
 
     /**
@@ -152,7 +191,7 @@ class Packhouse extends ModuleBase {
         if (this.hasGroup(name)) {
             return this.groups[name]
         } else {
-            this.$systemError('getGroup', 'Group not found.')
+            this.$systemError('getGroup', `Group(${name}) not found.`)
         }
     }
 
@@ -182,7 +221,7 @@ class Packhouse extends ModuleBase {
 
     addGroup(name, group, options) {
         if (this.groups[name] != null){
-            this.$systemError('addGroup', 'Name already exists.', name)
+            this.$systemError('addGroup', `Name(${name}) already exists.`)
             return
         }
         if ((group instanceof Group) === false) {
@@ -356,7 +395,6 @@ class Tool extends ModuleBase {
 
     createExports() {
         let supData = {
-            pass: null,
             noGood: null,
             package: []
         }
@@ -373,27 +411,27 @@ class Tool extends ModuleBase {
     /**
      * @function createSupport
      * @private
-     * @desc 建立輔助方法，應該找機會把它獨立出來
+     * @desc 建立輔助方法
      */
 
     createSupport(exps, supData) {
-        return {
-            ng: function(broadcast) {
-                if (typeof broadcast === 'function') {
-                    supData.noGood = broadcast
-                    return exps
-                }
-                this.$systemError('setNG', 'NG param not a function.', broadcast)
-            },
-            packing: function() {
-                supData.package = supData.package.concat([...arguments])
-                return exps
-            },
-            unPacking: function() {
-                supData.package = []
+        let ng = function(broadcast) {
+            if (typeof broadcast === 'function') {
+                supData.noGood = broadcast
                 return exps
             }
+            this.$systemError('setNG', 'NG param not a function.', broadcast)
         }
+        let packing = function() {
+            supData.package = supData.package.concat([...arguments])
+            return exps
+        }
+
+        let unPacking = function() {
+            supData.package = []
+            return exps
+        }
+        return { ng, packing, unPacking }
     }
 
     /**
@@ -519,7 +557,7 @@ class Tool extends ModuleBase {
 
     direct(params, callback, supports) {
         if (this.data.allowDirect === false) {
-            this.$systemError('direct', 'Not allow direct.', this.data.name)
+            this.$systemError('direct', `Tool(${this.data.name}) no allow direct.`)
         }
         let output = null
         let response = this.createResponse({
@@ -599,7 +637,7 @@ class Tool extends ModuleBase {
         if (this.store[key]) {
             return this.store[key]
         } else {
-            this.$systemError('getStore', 'Key not found.', key)
+            this.$systemError('getStore', `Key(${key}) not found.`)
         }
     }
 
@@ -760,7 +798,7 @@ class Deploy extends ModuleBase {
     register(name, params) {
         if (this.main.inlet.length !== 0 && this.flow.length === 0) {
             if (!this.main.inlet.includes(name)) {
-                this.$systemError('register', 'First call method not inside inlet.', name)
+                this.$systemError('register', `First call method not inside inlet, you use'${name}'.`)
             }
         }
         let data = {
@@ -1067,7 +1105,7 @@ class Group extends ModuleBase {
         for (let key in this.data.merger) {
             let group = this.data.merger[key]
             if ((group instanceof Group) === false) {
-                this.$systemError('initMerger', 'Not a group.', group)
+                this.$systemError('initMerger', `The '${key}' not a group.`)
             }
         }
     }
@@ -1108,7 +1146,7 @@ class Group extends ModuleBase {
         if( this.toolbox[name] ){
             return this.toolbox[name]
         } else {
-            this.$systemError('getTool', 'Tool not found.', name)
+            this.$systemError('getTool', `Tool(${name}) not found.`)
         }
     }
 
@@ -1119,10 +1157,10 @@ class Group extends ModuleBase {
      */
 
     getLine(name) {
-        if( this.line[name] ){
+        if (this.line[name]) {
             return this.line[name]
         } else {
-            this.$systemError('getLine', 'Line not found.', name)
+            this.$systemError('getLine', `Line(${name}) not found.`)
         }
     }
 
@@ -1134,10 +1172,10 @@ class Group extends ModuleBase {
 
     getMold(name) {
         let mold = this.moldbox[name] || PublicMolds[name] || null
-        if (mold){
+        if (mold) {
             return mold
         } else {
-            this.$systemError('getMold', 'Mold not found.', name)
+            this.$systemError('getMold', `Mold(${name}) not found.`)
         }
     }
 
@@ -1151,7 +1189,7 @@ class Group extends ModuleBase {
         if (this.data.merger[name]) {
             return this.data.merger[name].alone()
         } else {
-            this.$systemError('getMerger', 'Merger not found.', name)
+            this.$systemError('getMerger', `Merger(${name}) not found.`)
         }
     }
 

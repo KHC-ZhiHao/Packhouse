@@ -86,7 +86,6 @@ class Tool extends ModuleBase {
 
     createExports() {
         let supData = {
-            pass: null,
             noGood: null,
             package: []
         }
@@ -103,27 +102,27 @@ class Tool extends ModuleBase {
     /**
      * @function createSupport
      * @private
-     * @desc 建立輔助方法，應該找機會把它獨立出來
+     * @desc 建立輔助方法
      */
 
     createSupport(exps, supData) {
-        return {
-            ng: function(broadcast) {
-                if (typeof broadcast === 'function') {
-                    supData.noGood = broadcast
-                    return exps
-                }
-                this.$systemError('setNG', 'NG param not a function.', broadcast)
-            },
-            packing: function() {
-                supData.package = supData.package.concat([...arguments])
-                return exps
-            },
-            unPacking: function() {
-                supData.package = []
+        let ng = function(broadcast) {
+            if (typeof broadcast === 'function') {
+                supData.noGood = broadcast
                 return exps
             }
+            this.$systemError('setNG', 'NG param not a function.', broadcast)
         }
+        let packing = function() {
+            supData.package = supData.package.concat([...arguments])
+            return exps
+        }
+
+        let unPacking = function() {
+            supData.package = []
+            return exps
+        }
+        return { ng, packing, unPacking }
     }
 
     /**
@@ -249,7 +248,7 @@ class Tool extends ModuleBase {
 
     direct(params, callback, supports) {
         if (this.data.allowDirect === false) {
-            this.$systemError('direct', 'Not allow direct.', this.data.name)
+            this.$systemError('direct', `Tool(${this.data.name}) no allow direct.`)
         }
         let output = null
         let response = this.createResponse({
@@ -329,7 +328,7 @@ class Tool extends ModuleBase {
         if (this.store[key]) {
             return this.store[key]
         } else {
-            this.$systemError('getStore', 'Key not found.', key)
+            this.$systemError('getStore', `Key(${key}) not found.`)
         }
     }
 
