@@ -24,6 +24,10 @@
 </a></p>
 <p><a href="#remd-me-packhouse">Packhouse
 </a></p>
+<p><a href="#remd-me-order">Order
+</a></p>
+<p><a href="#remd-me-ordercache">OrderCache
+</a></p>
 <p><a href="#remd-me-tool">Tool
 </a></p>
 <p><a href="#remd-me-line">Line
@@ -105,6 +109,62 @@
 <p><span style="width:100%; display:inline-block;">建立橋接器，在任何呼叫前執行一個function
 </span></p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">function</span> <font color="#e30090">bridge</font> 呼叫函式</p>
+<h2 id="remd-me-order">Order</h2>
+<p><span style="width:100%; display:inline-block;">緩衝與快取物件
+</span></p>
+<hr>
+<h3 id="remd-me-function">Function</h3>
+<h4 id="remd-me-has-key-">has(key)</h4>
+<p><span style="width:100%; display:inline-block;">有無這份cache
+</span></p>
+<h4 id="remd-me-get-key-">get(key)</h4>
+<p><span style="width:100%; display:inline-block;">獲取cache
+</span></p>
+<h4 id="remd-me-clear-">clear()</h4>
+<p><span style="width:100%; display:inline-block;">清空cache
+</span></p>
+<h4 id="remd-me-create-">create()</h4>
+<p><span style="width:100%; display:inline-block;">建立一個cache
+</span></p>
+<h4 id="remd-me-getorcreate-">getOrCreate()</h4>
+<p><span style="width:100%; display:inline-block;">獲取一個快取，如果沒有則建立
+</span></p>
+<h2 id="remd-me-ordercache">OrderCache</h2>
+<p><span style="width:100%; display:inline-block;">快取物件
+</span></p>
+<hr>
+<h3 id="remd-me-function">Function</h3>
+<h4 id="remd-me-post-">post()</h4>
+<p><span style="width:100%; display:inline-block;">推播所有buffer
+</span></p>
+<h4 id="remd-me-buffer-error-success-">buffer(error,success)</h4>
+<p><span style="width:100%; display:inline-block;">加入一個緩衝
+</span></p>
+<h4 id="remd-me-isready-">isReady()</h4>
+<p><span style="width:100%; display:inline-block;">是否被宣告過載入
+</span></p>
+<h4 id="remd-me-onready-callback-">onReady(callback)</h4>
+<p><span style="width:100%; display:inline-block;">沒有快取，宣告載入
+</span></p>
+<h4 id="remd-me-onload-callback-">onload(callback)</h4>
+<p><span style="width:100%; display:inline-block;">監聽是否已經快取，已經快取完畢則執行，否則等待快取完畢後執行
+</span></p>
+<h4 id="remd-me-postonload-">postOnload()</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">等待快取仔入完畢後，推播所有的onload事件
+</span></p>
+<h4 id="remd-me-set-mode-result-">set(mode,result)</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">設定快取資料
+</span></p>
+<h4 id="remd-me-seterror-result-">setError(result)</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">這次的快取是個錯誤
+</span></p>
+<h4 id="remd-me-setsuccess-result-">setSuccess(result)</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">這次的快取是成功的
+</span></p>
 <h2 id="remd-me-tool">Tool</h2>
 <p><span style="width:100%; display:inline-block;">Assembly的最小單位，負責執行指定邏輯
 </span></p>
@@ -112,9 +172,11 @@
 <p> 實例化時可以接收以下參數</p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">string</span> <font color="#e30090">name</font> 模具名稱</p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">array</span> <font color="#e30090">molds</font> 模型組</p>
+<p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">nubmer</span> <font color="#e30090">updateTime</font> update的指定時間(ms)</p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">number</span> <font color="#e30090">paramLength</font> 參數長度</p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">boolean</span> <font color="#e30090">allowDirect</font> 是否允許直接回傳</p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">function</span> <font color="#e30090">create</font> 首次使用該模具時呼叫</p>
+<p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">function</span> <font color="#e30090">update</font> 每次呼叫達指定時間時，執行一次</p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">function</span> <font color="#e30090">action</font> 主要執行的function</p>
 <hr>
 <h3 id="remd-me-member">Member</h3>
@@ -126,6 +188,14 @@
 <h4 id="remd-me-install">install</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">當模具被第一次使用時呼叫
+</span></p>
+<h4 id="remd-me-initcreate">initCreate</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">初始化create
+</span></p>
+<h4 id="remd-me-checkupdate">checkUpdate</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">判定是否要update
 </span></p>
 <h4 id="remd-me-initsystem">initSystem</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
@@ -341,6 +411,10 @@
 <p><span style="width:100%; display:inline-block;">加入一個模具
 </span></p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">object</span> <font color="#e30090">options</font> 建立mold所需要的物件</p>
+<h4 id="remd-me-addmolds">addMolds</h4>
+<p><span style="width:100%; display:inline-block;">加入多個模塊
+</span></p>
+<p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">array</span> <font color="#e30090">molds</font> 建立mold所需要多個物件</p>
 <h4 id="remd-me-addline">addLine</h4>
 <p><span style="width:100%; display:inline-block;">加入一個產線
 </span></p>
@@ -349,6 +423,10 @@
 <p><span style="width:100%; display:inline-block;">加入一個工具
 </span></p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">object</span> <font color="#e30090">options</font> 建立tool所需要的物件</p>
+<h4 id="remd-me-addtools">addTools</h4>
+<p><span style="width:100%; display:inline-block;">加入多個工具
+</span></p>
+<p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">array</span> <font color="#e30090">tools</font> 建立tool所需要多個物件</p>
 <h4 id="remd-me-hastool">hasTool</h4>
 <p><span style="width:100%; display:inline-block;">getTool失敗會擲出錯誤，使用這支function來檢查此問題
 </span></p>
@@ -363,4 +441,3 @@
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">string</span> <font color="#e30090">name</font> 搜尋目標mold的name</p>
 </div>
                 </body>
-            

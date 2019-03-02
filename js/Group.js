@@ -168,6 +168,22 @@ class Group extends ModuleBase {
     }
 
     /**
+     * @function addMolds
+     * @desc 加入多個模塊
+     * @param {array} molds 建立mold所需要多個物件
+     */
+
+    addMolds(molds) {
+        if (Array.isArray(molds)) {
+            for (let mold of molds) {
+                this.addMold(mold)
+            }
+        } else {
+            this.$systemError('addMolds', 'Molds not a array.', molds)
+        }
+    }
+
+    /**
      * @function addLine
      * @desc 加入一個產線
      * @param {object} options 建立line所需要的物件
@@ -190,6 +206,22 @@ class Group extends ModuleBase {
         let tool = new Tool(options, this)
         if( this.$noKey('addTool', this.toolbox, tool.name ) ){
             this.toolbox[tool.name] = tool
+        }
+    }
+
+    /**
+     * @function addTools
+     * @desc 加入多個工具
+     * @param {array} tools 建立tool所需要多個物件
+     */
+
+    addTools(tools) {
+        if (Array.isArray(tools)) {
+            for (let tool of tools) {
+                this.addTool(tool)
+            }
+        } else {
+            this.$systemError('addTools', 'Tools not a array.', tools)
         }
     }
 

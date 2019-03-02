@@ -140,6 +140,8 @@ Tool是一個裝載function的單位，由group建造
 group.addTool({
     // (Require) function name
     name: 'sumAndAdd5',
+    // 指定update的時間(ms)
+    updateTime: 10000,
     // 是否支援直接回傳，若有非同步處理請關閉(預設:true)
     allowDirect: true,
     // 手動定義參數長度
@@ -149,11 +151,34 @@ group.addTool({
         store.hello = 'world' // store是一個對外物件，你有需要的時候就會想到它的
         this.add = group.options.coefficient
     },
+    // 每次呼叫時如果超過指定時間則運行，時間由updateTime指定
+    update: function(store, system) {
+        // do something...
+    },
     // (Require) 對於外部來看這是個function(a,b)，並沒有其他參數
     action: function(a, b, { include, group, store }, error, success) {
         success(a + b + this.add)
     }
 })
+```
+
+#### 也可以使用addTools進行模組化管理(v1.0.3)
+
+```js
+group.addTools([
+    {
+        name: 'sum',
+        action: function(a, b, { include, group, store }, error, success) {
+            success(a + b)
+        }
+    },
+    {
+        name: 'double',
+        action: function(a, { include, group, store }, error, success) {
+            success(a * 2)
+        }
+    }
+])
 ```
 
 #### 呼叫function
@@ -269,6 +294,25 @@ group.addTool({
 factory.tool('math', 'multiply').direct(5.5, 10) // 55
 factory.tool('math', 'multiply').direct(10, 5.5) // 50
 factory.tool('math', 'multiply').direct(10, '5.5') // error 'Not a number.'
+```
+
+#### 使用addMolds進行模組化管理(v1.0.3)
+
+```js
+group.addMolds([
+    {
+        name: 'number',
+        check(param) {
+            return typeof param === 'number' ? true : 'Not a number.'
+        }
+    },
+    {
+        name: 'string',
+        check(param) {
+            return typeof param === 'string' ? true : 'Not a string.'
+        }
+    }
+])
 ```
 
 #### public mold(v1.0.1)
@@ -433,6 +477,46 @@ factory.line('math', 'compute')(5).add(10).double().double().action((err, result
 })
 factory.line('math', 'compute')(5).add(10).double().promise().then((result) => {
     console.log(result) // 30
+})
+```
+
+## Order(v1.0.3)
+
+Order是一個以字串key為主鍵的可緩衝的快取物件，使用它來快取請求後的結果，並把結果分發至每個註冊的緩衝。
+
+>比方說，呼叫10次一樣的請求，事實上只呼叫一次，而其他的9次將等待著第一次呼叫回來的結果，而之後每次的呼叫都回傳第一次的結果。
+
+```js
+group.addTool({
+    name: 'request',
+    molds: ['string'],
+    updateTime: 64000,
+    paramLength: 1,
+    allowDirect: false,
+    create: function(store, system) {
+        this.order = Packhouse.createOrder()
+        this.request = require('request')
+    },
+    update: function(store, system) {
+        // 定時清空快取
+        this.order.clear()
+    },
+    action: function(url, system, error, success) {
+        // 從order建立或獲取一個cache，並推進一則buffer，如果已經快取完畢，推播呼叫所有的buffer
+        let cache = this.order.getOrCreate(url).buffer(error, success).onload(cache => cache.post())
+        if (cache.isReady() === false) {
+            // 等待error or success其中一個被宣告，執行推播所有buffer
+            cache.onReady((error, success) => {
+                this.request.post(url, (err, response, body) => {
+                    if (err) {
+                        error(err)
+                    } else {
+                        success(body)
+                    }
+                })
+            })
+        }
+    }
 })
 ```
 

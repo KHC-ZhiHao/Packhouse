@@ -4,9 +4,11 @@
  * @argument options 實例化時可以接收以下參數
  * @param {string} name 模具名稱
  * @param {array} molds 模型組
+ * @param {nubmer} updateTime update的指定時間(ms)
  * @param {number} paramLength 參數長度
  * @param {boolean} allowDirect 是否允許直接回傳
  * @param {function} create 首次使用該模具時呼叫
+ * @param {function} update 每次呼叫達指定時間時，執行一次
  * @param {function} action 主要執行的function
  */
 
@@ -22,12 +24,15 @@ class Tool extends ModuleBase {
         this.user = user || new Case()
         this.store = {}
         this.group = group
+        this.installStamp = 0
         this.argumentLength = typeof options.paramLength === 'number' ? options.paramLength : -1
         this.data = this.$verify(options, {
             name: [true, ''],
             molds: [false, []],
             create: [false, function () {}],
             action: [true, '#function'],
+            update: [false, function () {}],
+            updateTime: [false, -1],
             allowDirect: [false, true]
         })
     }
@@ -43,8 +48,34 @@ class Tool extends ModuleBase {
     install() {
         this.initSystem()
         this.initArgLength()
+        this.initCreate()
+        this.installStamp = Date.now()
         this.install = null
-        this.data.create.bind(this.user)(this.store, this.system)
+    }
+
+    /**
+     * @function initCreate
+     * @private
+     * @desc 初始化create
+     */
+
+    initCreate() {
+        this.data.create.call(this.user, this.store, this.system)
+    }
+
+    /**
+     * @function checkUpdate
+     * @private
+     * @desc 判定是否要update
+     */
+
+    checkUpdate() {
+        let ts = Date.now()
+        let elapsed = ts - this.installStamp
+        if (elapsed > this.data.updateTime) {
+            this.data.update.call(this.user, this.store, this.system)
+            this.installStamp = ts
+        }
     }
 
     /**
@@ -211,10 +242,16 @@ class Tool extends ModuleBase {
      */
 
     call(params, error, success) {
+        // 驗證是否需要reset
+        if (this.data.updateTime >= 0) {
+            this.checkUpdate()
+        }
+        // 驗證參數是否使用mold
         for (let i = 0; i < params.length; i++) {
             let name = this.data.molds[i]
             params[i] = name ? this.parseMold(name, params[i], error) : params[i]
         }
+        // 執行action
         this.data.action.call(this.user, ...params, this.system, error, success)
     }
 

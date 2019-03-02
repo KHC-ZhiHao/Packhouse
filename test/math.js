@@ -1,4 +1,5 @@
 let Packhouse = require('../dist/index')
+let request = require('request')
 
 let group = new Packhouse.Group({
     create() {}
@@ -6,12 +7,11 @@ let group = new Packhouse.Group({
 
 group.addTool({
     name: 'sum',
+    keep: 64000,
     molds: [null, 'number'],
     paramLength: 2,
     allowDirect: true,
-    create: function(store, { include, group, casting }) {
-        
-    },
+    create: function(store, system) {},
     action: function(a, b, system, error, success) {
         success(a + b)
     }

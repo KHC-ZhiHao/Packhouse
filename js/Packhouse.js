@@ -27,6 +27,11 @@ class Packhouse extends ModuleBase {
         PublicMolds[mold.name] = mold
     }
 
+    static createOrder() {
+        let order = new Order()
+        return order.exports
+    }
+
     /**
      * @function asyncLoop(target,action,callback)
      * @static
