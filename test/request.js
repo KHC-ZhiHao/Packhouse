@@ -66,6 +66,18 @@ group.addTools([
                 headers: headers || { "Content-Type": "application/json;charset=UTF-8" }
             }, success)
         }
+    },
+    {
+        name: 'update',
+        paramLength: 2,
+        allowDirect: true,
+        update: function() {
+            console.log('update')
+        },
+        action: function(url, headers, system, error, success) {
+            system.update()
+            system.updateCall('send')
+        }
     }
 ])
 

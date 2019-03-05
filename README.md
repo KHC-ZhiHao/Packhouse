@@ -162,6 +162,26 @@ group.addTool({
 })
 ```
 
+#### call update(v1.0.4)
+
+update可以自己宣告或宣告他人
+
+```js
+group.addTool({
+    name: 'update',
+    allowDirect: true,
+    update: function() {
+        console.log('update')
+    },
+    action: function(system, error, success) {
+        system.update() // call self update
+        system.updateCall('sumAndAdd5') // call sumAndAdd5 update
+        system.updateCall(['sumAndAdd5']) // call can use array
+        success()
+    }
+})
+```
+
 #### 也可以使用addTools進行模組化管理(v1.0.3)
 
 ```js

@@ -48,3 +48,14 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 * tool => addTools : tool可能會太過龐大，tools可以勉強協助分裝
 * tool => addMolds : mold可能會太過龐大，molds可以勉強協助分裝
 * order : 全新的模式，一個以key為主的快取與緩衝組件
+
+## 1.0.4
+
+### NEW
+
+* tool => update : 執行本身的更新
+* tool => updateCall : 執行指定的更新
+
+### MODIFY
+
+* tool: 進行微重構。

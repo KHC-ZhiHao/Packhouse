@@ -24,7 +24,7 @@ class Tool extends ModuleBase {
         this.user = user || new Case()
         this.store = {}
         this.group = group
-        this.installStamp = 0
+        this.updateStamp = 0
         this.argumentLength = typeof options.paramLength === 'number' ? options.paramLength : -1
         this.data = this.$verify(options, {
             name: [true, ''],
@@ -49,8 +49,14 @@ class Tool extends ModuleBase {
         this.initSystem()
         this.initArgLength()
         this.initCreate()
-        this.installStamp = Date.now()
+        this.initCatchData()
+        this.updateStamp = Date.now()
         this.install = null
+    }
+
+    initCatchData() {
+        this._moldLength = this.data.molds.length
+        this._bindAction = this.data.action.bind(this.user)
     }
 
     /**
@@ -71,10 +77,36 @@ class Tool extends ModuleBase {
 
     checkUpdate() {
         let ts = Date.now()
-        let elapsed = ts - this.installStamp
+        let elapsed = ts - this.updateStamp
         if (elapsed > this.data.updateTime) {
-            this.data.update.call(this.user, this.store, this.system)
-            this.installStamp = ts
+            this.update()
+        }
+    }
+
+    /**
+     * @function update
+     * @private
+     * @desc 執行update
+     */
+
+    update() {
+        this.data.update.call(this.user, this.store, this.system)
+        this.updateStamp = Date.now()
+    }
+
+    /**
+     * @function updateCall
+     * @private
+     * @desc 指定其他tool update
+     */
+
+    updateCall(target) {
+        if (Array.isArray(target)) {
+            for (let key of target) {
+                this.group.updateCall(key)
+            }
+        } else {
+            this.group.updateCall(target)
         }
     }
 
@@ -89,8 +121,10 @@ class Tool extends ModuleBase {
             coop: this.coop.bind(this),
             store: this.store,
             group: this.group.case,
+            update: this.update.bind(this),
             include: this.include.bind(this),
-            casting: this.parseMold.bind(this)
+            casting: this.parseMold.bind(this),
+            updateCall: this.updateCall.bind(this)
         }
     }
 
@@ -169,28 +203,27 @@ class Tool extends ModuleBase {
     /**
      * @function createLambda
      * @private
-     * @desc 封裝function，Assembly神奇的地方，同時也是可怕的效能吞噬者
+     * @desc 封裝function，神奇的地方，同時也是可怕的效能吞噬者
      */
 
     createLambda(func, type, supports) {
-        let self = this
         let name = Symbol(this.group.data.alias + '_' + this.name + '_' + type)
         let tool = {
-            [name]: function() {
-                let params = supports.package.concat([...arguments])
+            [name]: (...options) => {
+                let args = []
+                let length = this.argumentLength
+                let params = supports.package.concat(options)
                 let callback = null
                 if (type === 'action') {
-                    if (typeof params.slice(-1)[0] === 'function') {
-                        callback = params.pop()
-                    } else {
-                        self.$systemError('createLambda', 'Action must a callback, no need ? try direct!')
+                    callback = params.pop()
+                    if (typeof callback !== 'function') {
+                        this.$systemError('createLambda', 'Action must a callback, no need ? try direct!')
                     }
                 }
-                let args = new Array(self.argumentLength)
-                for (let i = 0; i < args.length; i++) {
+                for (let i = 0; i < length; i++) {
                     args[i] = params[i] || undefined
                 }
-                return func.bind(self)(args, callback, supports)
+                return func.call(this, args, callback, supports)
             }
         }
         return tool[name]
@@ -247,12 +280,15 @@ class Tool extends ModuleBase {
             this.checkUpdate()
         }
         // 驗證參數是否使用mold
-        for (let i = 0; i < params.length; i++) {
+        let length = this._moldLength
+        for (let i = 0; i < length; i++) {
             let name = this.data.molds[i]
-            params[i] = name ? this.parseMold(name, params[i], error) : params[i]
+            if (name) {
+                params[i] = this.parseMold(name, params[i], error)
+            }
         }
         // 執行action
-        this.data.action.call(this.user, ...params, this.system, error, success)
+        this._bindAction(...params, this.system, error, success)
     }
 
     /**

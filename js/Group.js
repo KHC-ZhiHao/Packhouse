@@ -12,7 +12,7 @@ class Group extends ModuleBase {
     constructor(options = {}) {
         super("Group")
         this.case = new Case()
-        this.line = {}
+        this.linebox = {}
         this.moldbox = {}
         this.toolbox = {}
         this.data = this.$verify(options, {
@@ -84,7 +84,7 @@ class Group extends ModuleBase {
      */
 
     getTool(name) {
-        if( this.toolbox[name] ){
+        if (this.toolbox[name]) {
             return this.toolbox[name]
         } else {
             this.$systemError('getTool', `Tool(${name}) not found.`)
@@ -98,8 +98,8 @@ class Group extends ModuleBase {
      */
 
     getLine(name) {
-        if (this.line[name]) {
-            return this.line[name]
+        if (this.linebox[name]) {
+            return this.linebox[name]
         } else {
             this.$systemError('getLine', `Line(${name}) not found.`)
         }
@@ -191,8 +191,8 @@ class Group extends ModuleBase {
 
     addLine(options){
         let line = new Line(options, this)
-        if (this.$noKey('addLine', this.line, line.name)) {
-            this.line[line.name] = line
+        if (this.$noKey('addLine', this.linebox, line.name)) {
+            this.linebox[line.name] = line
         }
     }
 
@@ -242,7 +242,7 @@ class Group extends ModuleBase {
      */
 
     hasLine(name) {
-        return !!this.line[name]
+        return !!this.linebox[name]
     }
 
     /**
@@ -253,6 +253,15 @@ class Group extends ModuleBase {
 
     hasMold(name) {
         return !!this.moldbox[name]
+    }
+
+    /**
+     * @function updateCall
+     * @desc 指定tool update
+     */
+
+    updateCall(name) {
+        this.getTool(name).update()
     }
 
 }

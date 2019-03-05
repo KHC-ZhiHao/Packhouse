@@ -32,6 +32,14 @@ factory.tool('request', 'get').ng((err) => {
     console.log('success => ', result.slice(0, 10) + '...')
 })
 
+factory.tool('request', 'update').direct()
+
+factory.tool('request', 'get').ng((err) => {
+    console.log('error => ', err)
+}).action(url, (result) => {
+    console.log('success => ', result.slice(0, 10) + '...')
+})
+
 setTimeout(() => {
     factory.tool('request', 'get').ng((err) => {
         console.log('error => ', err)
