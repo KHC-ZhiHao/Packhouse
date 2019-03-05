@@ -619,6 +619,7 @@ class Tool extends ModuleBase {
      */
 
     update() {
+        if (this.install) { this.install() }
         this.data.update.call(this.user, this.store, this.system)
         this.updateStamp = Date.now()
     }

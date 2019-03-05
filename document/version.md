@@ -59,3 +59,9 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 ### MODIFY
 
 * tool: 進行微重構。
+
+## 1.0.5
+
+### FIX
+
+* tool => update : 如果tool還沒宣告create，呼叫update會報錯的bug
