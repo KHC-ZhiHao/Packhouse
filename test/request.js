@@ -1,6 +1,9 @@
-let Packhouse = require('../dist/index')
-let group = new Packhouse.Group({
-    create() {}
+let Packhouse = require('../dist/Packhouse')
+
+let group = Packhouse.createGroup({
+    create() {
+        console.log('request start')
+    }
 })
 
 group.addTools([

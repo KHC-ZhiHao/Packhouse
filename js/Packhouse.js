@@ -27,9 +27,57 @@ class Packhouse extends ModuleBase {
         PublicMolds[mold.name] = mold
     }
 
+    /**
+     * @function createOrder()
+     * @static
+     * @desc 建立一個order
+     */
+
     static createOrder() {
         let order = new Order()
         return order.exports
+    }
+
+    /**
+     * @function createGroup()
+     * @static
+     * @desc 建立一個Group
+     */
+
+    static createGroup(options) {
+        let group = new Group(options)
+        return new GroupExports(group)
+    }
+
+    /**
+     * @function createFactory()
+     * @static
+     * @desc 建立一個Factory
+     */
+
+    static createFactory() {
+        let factory = new Packhouse()
+        return new FactoryExports(factory)
+    }
+
+    /**
+     * @function isFactory(factory)
+     * @static
+     * @desc 確認是一個Factory
+     */
+
+    static isFactory(factory) {
+        return factory instanceof Packhouse || factory instanceof FactoryExports
+    }
+
+    /**
+     * @function isGroup(group)
+     * @static
+     * @desc 確認是一個Group
+     */
+
+    static isGroup(group) {
+        return Group.isGroup(group)
     }
 
     /**
@@ -85,7 +133,7 @@ class Packhouse extends ModuleBase {
      */
 
     getTool(groupName, name) {
-        return this.getGroup(groupName).getTool(name)
+        return this.getGroup(groupName).callTool(name)
     }
 
     /**
@@ -94,7 +142,7 @@ class Packhouse extends ModuleBase {
      */
 
     getLine(groupName, name) {
-        return this.getGroup(groupName).getLine(name)
+        return this.getGroup(groupName).callLine(name)
     }
 
     /**
@@ -108,7 +156,7 @@ class Packhouse extends ModuleBase {
             this.$systemError('addGroup', `Name(${name}) already exists.`)
             return
         }
-        if ((group instanceof Group) === false) {
+        if (Group.isGroup(group) === false) {
             this.$systemError('addGroup', 'Must group.', group)
             return
         }
@@ -150,7 +198,7 @@ class Packhouse extends ModuleBase {
 
     tool(groupName, name) {
         this.callBridge(groupName, name)
-        return this.getTool(groupName, name).use()
+        return this.getTool(groupName, name)
     }
 
     /**
@@ -160,7 +208,7 @@ class Packhouse extends ModuleBase {
 
     line(groupName, name) {
         this.callBridge(groupName, name)
-        return this.getLine(groupName, name).use()
+        return this.getLine(groupName, name)
     }
 
     /**
@@ -189,4 +237,33 @@ class Packhouse extends ModuleBase {
         }
     }
 
+}
+
+class FactoryExports {
+    constructor(factory) {
+        this.line = factory.line.bind(factory)
+        this.tool = factory.tool.bind(factory)
+        this.hasLine = factory.hasLine.bind(factory)
+        this.hasTool = factory.hasTool.bind(factory)
+        this.addGroup = factory.addGroup.bind(factory)
+        this.hasGroup = factory.hasGroup.bind(factory)
+        this.setBridge = factory.setBridge.bind(factory)
+    }
+}
+
+class GroupExports {
+    constructor(group) {
+        this.alone = group.alone.bind(group)
+        this.create = group.create.bind(group)
+        this.addMold = group.addMold.bind(group)
+        this.addMolds = group.addMolds.bind(group)
+        this.addTool = group.addTool.bind(group)
+        this.addTools = group.addTools.bind(group)
+        this.addLine = group.addLine.bind(group)
+        this.hasTool = group.hasTool.bind(group)
+        this.hasMold = group.hasMold.bind(group)
+        this.hasLine = group.hasLine.bind(group)
+        this.callTool = group.callTool.bind(group)
+        this.callLine = group.callLine.bind(group)
+    }
 }

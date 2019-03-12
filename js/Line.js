@@ -33,13 +33,13 @@ class Line extends ModuleBase {
     /**
      * @function checkPrivateKey
      * @private
-     * @desc action, promise是不允許被放在layout的
+     * @desc action, promise, setRule是不允許被放在layout的
      */
 
     checkPrivateKey() {
         let layout = this.data.layout
-        if( layout.action || layout.promise ){
-            this.$systemError('init', 'Layout has private key(action, promise)')
+        if( layout.action || layout.promise || layout.setRule ){
+            this.$systemError('init', 'Layout has private key(action, promise, setRule)')
         }
     }
 

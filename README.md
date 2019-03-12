@@ -17,32 +17,32 @@ npm i packhouse
 
 web
 ```html
-<script src="./dist/index.js"></script>
-```
-```js
-let factory = new Packhouse()
+<script src="https://khc-zhihao.github.io/Packhouse/dist/index.js"></script>
+<script>
+    let factory = Packhouse.createFactory()
+</script>
 ```
 webpack
 ```js
 import Packhouse from 'packhouse'
-let factory = new Packhouse()
+let factory = Packhouse.createFactory()
 ```
 nodejs
 ```js
 let Packhouse = require('packhouse')
-let factory = new Packhouse()
+let factory = Packhouse.createFactory()
 ```
 
 ## 如何開始
 
 ### 建立工廠
 
-Packhouse是集結Group的工廠
+Factory是集結Group的物件。
 
 > Bridge是每次從工廠呼叫function時都會執行的函式，初始目的是為了動態載入group
 
 ```js
-let factory = new Packhouse()
+let factory = Packhouse.createFactory()
 factory.setBridge((factory, groupName, toolName) => {
     if (factory.hasGroup(groupName) === false) {
         factory.addGroup(groupName, require(`./${groupName}`))
@@ -55,7 +55,7 @@ factory.setBridge((factory, groupName, toolName) => {
 所有的function都必須在group下建構，因此建立group是第一步。
 
 ```js
-let group = new Packhouse.Group()
+let group = Packhouse.createGroup(options)
 ```
 
 當group被Packhouse引入時可以藉由create客製化屬性，可用於模組化管理
@@ -63,7 +63,7 @@ let group = new Packhouse.Group()
 > alias只賦予系統訊息的命名，而非factory呼叫的key
 
 ```js
-let group = new Packhouse.Group({
+let group = Packhouse.createGroup({
     alias: 'math',
     create(options) {
         this.options = options // {coefficient: 5}
@@ -79,7 +79,7 @@ factory.addGroup('math', group, {
 獨立Group，使其不再受Factory管制。
 
 ```js
-let group = new Packhouse.Group({
+let group = Packhouse.createGroup({
     create(options) {
         this.options = options // {coefficient: 5}
     }
@@ -104,7 +104,7 @@ Merger是Group互相引用的接口
 > Merger的Group也會觸發create，請避免把負責被引用的Group加入Factory，除非他不需要接收外部參數
 
 ```js
-let valid = new Packhouse.Group()
+let valid = Packhouse.createGroup()
 valid.addTool({
     name: 'validNumber',
     action: function(number, { include, group, store }, error, success) {
@@ -116,7 +116,7 @@ valid.addTool({
     }
 })
 
-let math = new Packhouse.Group({
+let math = Packhouse.createGroup({
     merger: { valid }
 })
 
@@ -217,6 +217,22 @@ sumAndAdd5.promise(5, 10).then((result) => {
 // look for normal function.
 let saa5 = sumAndAdd5.direct
 saa5(5, 10) // 20
+```
+
+#### 結束後執行-SOP
+
+sop就像是trycatch中的finally一樣，賦予一個不論成功或失敗後都會執行的function。
+
+```js
+factory.tool('math', 'sumAndAdd5').sop((context) => {
+    console.log(context.success) // true
+    console.log(context.result) // 20
+}).direct(5, 10)
+```
+#### 解除SOP
+
+```js
+factory.tool('math', 'sumAndAdd5').unSop().direct(5, 5)
 ```
 
 #### 預填裝
@@ -393,7 +409,7 @@ group.addTool({
 >include是一個Tool互相溝通的接口，作用域只到當下的group
 
 ```js
-let math = new Packhouse.Group()
+let math = Packhouse.createGroup()
 math.addTool({
     name: 'isNumber',
     allowDirect: false,

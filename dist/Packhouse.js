@@ -147,9 +147,57 @@ class Packhouse extends ModuleBase {
         PublicMolds[mold.name] = mold
     }
 
+    /**
+     * @function createOrder()
+     * @static
+     * @desc 建立一個order
+     */
+
     static createOrder() {
         let order = new Order()
         return order.exports
+    }
+
+    /**
+     * @function createGroup()
+     * @static
+     * @desc 建立一個Group
+     */
+
+    static createGroup(options) {
+        let group = new Group(options)
+        return new GroupExports(group)
+    }
+
+    /**
+     * @function createFactory()
+     * @static
+     * @desc 建立一個Factory
+     */
+
+    static createFactory() {
+        let factory = new Packhouse()
+        return new FactoryExports(factory)
+    }
+
+    /**
+     * @function isFactory(factory)
+     * @static
+     * @desc 確認是一個Factory
+     */
+
+    static isFactory(factory) {
+        return factory instanceof Packhouse || factory instanceof FactoryExports
+    }
+
+    /**
+     * @function isGroup(group)
+     * @static
+     * @desc 確認是一個Group
+     */
+
+    static isGroup(group) {
+        return Group.isGroup(group)
     }
 
     /**
@@ -205,7 +253,7 @@ class Packhouse extends ModuleBase {
      */
 
     getTool(groupName, name) {
-        return this.getGroup(groupName).getTool(name)
+        return this.getGroup(groupName).callTool(name)
     }
 
     /**
@@ -214,7 +262,7 @@ class Packhouse extends ModuleBase {
      */
 
     getLine(groupName, name) {
-        return this.getGroup(groupName).getLine(name)
+        return this.getGroup(groupName).callLine(name)
     }
 
     /**
@@ -228,7 +276,7 @@ class Packhouse extends ModuleBase {
             this.$systemError('addGroup', `Name(${name}) already exists.`)
             return
         }
-        if ((group instanceof Group) === false) {
+        if (Group.isGroup(group) === false) {
             this.$systemError('addGroup', 'Must group.', group)
             return
         }
@@ -270,7 +318,7 @@ class Packhouse extends ModuleBase {
 
     tool(groupName, name) {
         this.callBridge(groupName, name)
-        return this.getTool(groupName, name).use()
+        return this.getTool(groupName, name)
     }
 
     /**
@@ -280,7 +328,7 @@ class Packhouse extends ModuleBase {
 
     line(groupName, name) {
         this.callBridge(groupName, name)
-        return this.getLine(groupName, name).use()
+        return this.getLine(groupName, name)
     }
 
     /**
@@ -311,6 +359,34 @@ class Packhouse extends ModuleBase {
 
 }
 
+class FactoryExports {
+    constructor(factory) {
+        this.line = factory.line.bind(factory)
+        this.tool = factory.tool.bind(factory)
+        this.hasLine = factory.hasLine.bind(factory)
+        this.hasTool = factory.hasTool.bind(factory)
+        this.addGroup = factory.addGroup.bind(factory)
+        this.hasGroup = factory.hasGroup.bind(factory)
+        this.setBridge = factory.setBridge.bind(factory)
+    }
+}
+
+class GroupExports {
+    constructor(group) {
+        this.alone = group.alone.bind(group)
+        this.create = group.create.bind(group)
+        this.addMold = group.addMold.bind(group)
+        this.addMolds = group.addMolds.bind(group)
+        this.addTool = group.addTool.bind(group)
+        this.addTools = group.addTools.bind(group)
+        this.addLine = group.addLine.bind(group)
+        this.hasTool = group.hasTool.bind(group)
+        this.hasMold = group.hasMold.bind(group)
+        this.hasLine = group.hasLine.bind(group)
+        this.callTool = group.callTool.bind(group)
+        this.callLine = group.callLine.bind(group)
+    }
+}
 /**
  * @class Order
  * @desc 緩衝與快取物件
@@ -324,6 +400,7 @@ class Order extends ModuleBase {
         this.exports = {
             has: this.has.bind(this),
             get: this.get.bind(this),
+            list: this.list.bind(this),
             clear: this.clear.bind(this),
             create: this.create.bind(this),
             getOrCreate: this.getOrCreate.bind(this)
@@ -350,10 +427,23 @@ class Order extends ModuleBase {
 
     get(key) {
         if (this.has(key)) {
-            return this.caches[key]
+            return this.caches[key].exports
         } else {
             this.$system('get', `Key(${key}) not found.`)
         }
+    }
+
+    /**
+     * @function list()
+     * @desc 獲取cache map
+     */
+
+    list() {
+        let map = {}
+        for (let key of this.caches) {
+            map[key] = this.caches[key].result
+        }
+        return map
     }
 
     /**
@@ -371,8 +461,7 @@ class Order extends ModuleBase {
      */
 
     create(key) {
-        let cache = new OrderCache()
-        this.caches[key] = cache.exports
+        this.caches[key] = new OrderCache()
         return this.get(key)
     }
 
@@ -681,6 +770,7 @@ class Tool extends ModuleBase {
 
     createExports() {
         let supData = {
+            sop: null,
             noGood: null,
             package: []
         }
@@ -708,6 +798,17 @@ class Tool extends ModuleBase {
             }
             this.$systemError('setNG', 'NG param not a function.', broadcast)
         }
+        let sop = function(broadcast) {
+            if (typeof broadcast === 'function') {
+                supData.sop = broadcast
+                return exps
+            }
+            this.$systemError('setSOP', 'SOP param not a function.', broadcast)
+        }
+        let unSop = function() {
+            supData.sop = null
+            return exps
+        }
         let packing = function() {
             supData.package = supData.package.concat([...arguments])
             return exps
@@ -717,7 +818,7 @@ class Tool extends ModuleBase {
             supData.package = []
             return exps
         }
-        return { ng, packing, unPacking }
+        return { ng, packing, unPacking, sop, unSop }
     }
 
     /**
@@ -827,18 +928,31 @@ class Tool extends ModuleBase {
      * @desc 建構通用的success和error
      */
 
-    createResponse({ error, success }) {
+    createResponse({ error, success }, supports) {
         let over = false
+        let doSop = function(context) {
+            if (supports.sop) {
+                supports.sop(context)
+            }
+        }
         return {
             error: (err) => {
                 if (over) return
                 over = true
                 error(err)
+                doSop({
+                    success: false,
+                    result: err
+                })
             },
             success: (result) => {
                 if (over) return
                 over = true
                 success(result)
+                doSop({
+                    success: true,
+                    result: result
+                })
             }
         }
     }
@@ -865,7 +979,7 @@ class Tool extends ModuleBase {
             success: (result) => {
                 output = result
             }
-        })
+        }, supports)
         this.call(params, response.error, response.success)
         return output
     }
@@ -893,7 +1007,7 @@ class Tool extends ModuleBase {
                     callback(null, result)
                 }
             }
-        })
+        }, supports)
         this.call(params, response.error, response.success)
     }
 
@@ -916,7 +1030,7 @@ class Tool extends ModuleBase {
                 success: (result) => {
                     resolve(result)
                 }
-            })
+            }, supports)
             this.call(params, response.error, response.success)
         })
     }
@@ -983,13 +1097,13 @@ class Line extends ModuleBase {
     /**
      * @function checkPrivateKey
      * @private
-     * @desc action, promise是不允許被放在layout的
+     * @desc action, promise, setRule是不允許被放在layout的
      */
 
     checkPrivateKey() {
         let layout = this.data.layout
-        if( layout.action || layout.promise ){
-            this.$systemError('init', 'Layout has private key(action, promise)')
+        if( layout.action || layout.promise || layout.setRule ){
+            this.$systemError('init', 'Layout has private key(action, promise, setRule)')
         }
     }
 
@@ -1365,16 +1479,20 @@ class Group extends ModuleBase {
     constructor(options = {}) {
         super("Group")
         this.case = new Case()
-        this.linebox = {}
-        this.moldbox = {}
-        this.toolbox = {}
         this.data = this.$verify(options, {
             alias: [false, 'no_alias_group'],
             merger: [false, {}],
             create: [false, function(){}]
         })
+        this.linebox = {}
+        this.moldbox = {}
+        this.toolbox = {}
         this.initStatus()
         this.initMerger()
+    }
+
+    static isGroup(group) {
+        return group instanceof Group || group instanceof GroupExports
     }
 
     /**
@@ -1398,7 +1516,7 @@ class Group extends ModuleBase {
     initMerger() {
         for (let key in this.data.merger) {
             let group = this.data.merger[key]
-            if ((group instanceof Group) === false) {
+            if (Group.isGroup(group) === false) {
                 this.$systemError('initMerger', `The '${key}' not a group.`)
             }
         }

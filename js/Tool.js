@@ -152,6 +152,7 @@ class Tool extends ModuleBase {
 
     createExports() {
         let supData = {
+            sop: null,
             noGood: null,
             package: []
         }
@@ -179,6 +180,17 @@ class Tool extends ModuleBase {
             }
             this.$systemError('setNG', 'NG param not a function.', broadcast)
         }
+        let sop = function(broadcast) {
+            if (typeof broadcast === 'function') {
+                supData.sop = broadcast
+                return exps
+            }
+            this.$systemError('setSOP', 'SOP param not a function.', broadcast)
+        }
+        let unSop = function() {
+            supData.sop = null
+            return exps
+        }
         let packing = function() {
             supData.package = supData.package.concat([...arguments])
             return exps
@@ -188,7 +200,7 @@ class Tool extends ModuleBase {
             supData.package = []
             return exps
         }
-        return { ng, packing, unPacking }
+        return { ng, packing, unPacking, sop, unSop }
     }
 
     /**
@@ -298,18 +310,31 @@ class Tool extends ModuleBase {
      * @desc 建構通用的success和error
      */
 
-    createResponse({ error, success }) {
+    createResponse({ error, success }, supports) {
         let over = false
+        let doSop = function(context) {
+            if (supports.sop) {
+                supports.sop(context)
+            }
+        }
         return {
             error: (err) => {
                 if (over) return
                 over = true
                 error(err)
+                doSop({
+                    success: false,
+                    result: err
+                })
             },
             success: (result) => {
                 if (over) return
                 over = true
                 success(result)
+                doSop({
+                    success: true,
+                    result: result
+                })
             }
         }
     }
@@ -336,7 +361,7 @@ class Tool extends ModuleBase {
             success: (result) => {
                 output = result
             }
-        })
+        }, supports)
         this.call(params, response.error, response.success)
         return output
     }
@@ -364,7 +389,7 @@ class Tool extends ModuleBase {
                     callback(null, result)
                 }
             }
-        })
+        }, supports)
         this.call(params, response.error, response.success)
     }
 
@@ -387,7 +412,7 @@ class Tool extends ModuleBase {
                 success: (result) => {
                     resolve(result)
                 }
-            })
+            }, supports)
             this.call(params, response.error, response.success)
         })
     }

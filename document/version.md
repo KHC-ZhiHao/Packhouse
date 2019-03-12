@@ -65,3 +65,15 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 ### FIX
 
 * tool => update : 如果tool還沒宣告create，呼叫update會報錯的bug
+
+## 1.0.6
+
+### NEW
+
+* Factory和Group都有export的接口，降低開發衝突
+* sop and unsop : 當執行結束時執行的function
+* order => list : 獲取快取地圖
+
+### MODIFY
+
+* line: 新的Private Key => setRule。

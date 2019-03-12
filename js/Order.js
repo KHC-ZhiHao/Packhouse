@@ -11,6 +11,7 @@ class Order extends ModuleBase {
         this.exports = {
             has: this.has.bind(this),
             get: this.get.bind(this),
+            list: this.list.bind(this),
             clear: this.clear.bind(this),
             create: this.create.bind(this),
             getOrCreate: this.getOrCreate.bind(this)
@@ -37,10 +38,23 @@ class Order extends ModuleBase {
 
     get(key) {
         if (this.has(key)) {
-            return this.caches[key]
+            return this.caches[key].exports
         } else {
             this.$system('get', `Key(${key}) not found.`)
         }
+    }
+
+    /**
+     * @function list()
+     * @desc 獲取cache map
+     */
+
+    list() {
+        let map = {}
+        for (let key of this.caches) {
+            map[key] = this.caches[key].result
+        }
+        return map
     }
 
     /**
@@ -58,8 +72,7 @@ class Order extends ModuleBase {
      */
 
     create(key) {
-        let cache = new OrderCache()
-        this.caches[key] = cache.exports
+        this.caches[key] = new OrderCache()
         return this.get(key)
     }
 

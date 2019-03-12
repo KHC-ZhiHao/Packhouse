@@ -12,16 +12,20 @@ class Group extends ModuleBase {
     constructor(options = {}) {
         super("Group")
         this.case = new Case()
-        this.linebox = {}
-        this.moldbox = {}
-        this.toolbox = {}
         this.data = this.$verify(options, {
             alias: [false, 'no_alias_group'],
             merger: [false, {}],
             create: [false, function(){}]
         })
+        this.linebox = {}
+        this.moldbox = {}
+        this.toolbox = {}
         this.initStatus()
         this.initMerger()
+    }
+
+    static isGroup(group) {
+        return group instanceof Group || group instanceof GroupExports
     }
 
     /**
@@ -45,7 +49,7 @@ class Group extends ModuleBase {
     initMerger() {
         for (let key in this.data.merger) {
             let group = this.data.merger[key]
-            if ((group instanceof Group) === false) {
+            if (Group.isGroup(group) === false) {
                 this.$systemError('initMerger', `The '${key}' not a group.`)
             }
         }

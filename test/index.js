@@ -1,16 +1,22 @@
-let Packhouse = require('../dist/index')
-let factory = new Packhouse()
+let Packhouse = require('../dist/Packhouse')
+let factory = Packhouse.createFactory()
 let url = 'https://khc-zhihao.github.io/Packhouse/document/document.html'
 
 factory.setBridge((factory, groupName, toolName) => {
 	if (factory.hasGroup(groupName) === false) {
-        factory.addGroup(groupName, require(`./${groupName}`))
+        let group = require(`./${groupName}`)
+        if (Packhouse.isGroup(group)) {
+            factory.addGroup(groupName, require(`./${groupName}`))
+        } else {
+            console.log('Not a group', groupName)
+        }
     }
 })
 
+
 factory.tool('math', 'sum').ng((err) => {
     console.log(err)
-}).action(90, 80, (result) => {
+}).sop(c => console.log(c)).action(90, 87, (result) => {
     console.log(result)
 })
 
@@ -36,7 +42,7 @@ factory.tool('request', 'update').direct()
 
 factory.tool('request', 'get').ng((err) => {
     console.log('error => ', err)
-}).action(url, (result) => {
+}).sop(c => console.log(c)).unSop().action(url, (result) => {
     console.log('success => ', result.slice(0, 10) + '...')
 })
 
