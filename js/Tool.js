@@ -178,14 +178,14 @@ class Tool extends ModuleBase {
      */
 
     createSupport(exps, supData) {
-        let ng = function(broadcast) {
+        let ng = (broadcast) => {
             if (typeof broadcast === 'function') {
                 supData.noGood = broadcast
                 return exps
             }
             this.$systemError('setNG', 'NG param not a function.', broadcast)
         }
-        let sop = function(broadcast) {
+        let sop = (broadcast) => {
             if (typeof broadcast === 'function') {
                 supData.sop = broadcast
                 return exps
@@ -238,7 +238,8 @@ class Tool extends ModuleBase {
                 let params = new Array(argsLength)
                 for (let i = 0; i < argsLength; i++) {
                     if (i >= packagesLength) {
-                        params[i] = options[i]
+                        let j = i - packagesLength
+                        params[i] = options[j]
                     } else {
                         params[i] = packages[i]
                     }
@@ -263,10 +264,10 @@ class Tool extends ModuleBase {
         if (type !== 'action') {
             return function() { return null }
         } else {
-            return function(params) {
+            return (params) => {
                 let callback = params.pop()
                 if (typeof callback !== 'function') {
-                    this.$systemError('createLambda', 'Action must a callback, no need ? try direct!')
+                    this.$systemError('createLambda', 'Action must a callback.')
                 }
                 return callback
             }

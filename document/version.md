@@ -89,3 +89,14 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 
 * exports: 新的export模式
 * 系統優化，系統運行比1.0.6快4倍左右，但還是很慢...
+
+## 1.0.8
+
+### INFO
+
+邏輯被狗啃了T_T
+
+### FIX
+
+* system_error: 系統錯誤的this被指引錯誤，錯誤的錯誤
+* packing: 參數計算的錯誤

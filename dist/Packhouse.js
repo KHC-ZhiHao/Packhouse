@@ -917,14 +917,14 @@ class Tool extends ModuleBase {
      */
 
     createSupport(exps, supData) {
-        let ng = function(broadcast) {
+        let ng = (broadcast) => {
             if (typeof broadcast === 'function') {
                 supData.noGood = broadcast
                 return exps
             }
             this.$systemError('setNG', 'NG param not a function.', broadcast)
         }
-        let sop = function(broadcast) {
+        let sop = (broadcast) => {
             if (typeof broadcast === 'function') {
                 supData.sop = broadcast
                 return exps
@@ -977,7 +977,8 @@ class Tool extends ModuleBase {
                 let params = new Array(argsLength)
                 for (let i = 0; i < argsLength; i++) {
                     if (i >= packagesLength) {
-                        params[i] = options[i]
+                        let j = i - packagesLength
+                        params[i] = options[j]
                     } else {
                         params[i] = packages[i]
                     }
@@ -1002,10 +1003,10 @@ class Tool extends ModuleBase {
         if (type !== 'action') {
             return function() { return null }
         } else {
-            return function(params) {
+            return (params) => {
                 let callback = params.pop()
                 if (typeof callback !== 'function') {
-                    this.$systemError('createLambda', 'Action must a callback, no need ? try direct!')
+                    this.$systemError('createLambda', 'Action must a callback.')
                 }
                 return callback
             }
@@ -1820,6 +1821,7 @@ class Group extends ModuleBase {
 
 }
 class FactoryExports {
+
     constructor(factory) {
         this.line = factory.line.bind(factory)
         this.tool = factory.tool.bind(factory)
@@ -1829,9 +1831,11 @@ class FactoryExports {
         this.hasGroup = factory.hasGroup.bind(factory)
         this.setBridge = factory.setBridge.bind(factory)
     }
+
 }
 
 class GroupExports {
+
     constructor(group) {
         this.alone = group.alone.bind(group)
         this.create = group.create.bind(group)
@@ -1846,9 +1850,11 @@ class GroupExports {
         this.callTool = group.callTool.bind(group)
         this.callLine = group.callLine.bind(group)
     }
+
 }
 
 class OrderExports {
+
     constructor(order) {
         this.has = order.has.bind(order)
         this.get = order.get.bind(order)
@@ -1858,6 +1864,7 @@ class OrderExports {
         this.remove = order.remove.bind(order)
         this.getOrCreate = order.getOrCreate.bind(order)
     }
+
 }
 
             let __re = Packhouse;
