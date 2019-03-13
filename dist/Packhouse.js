@@ -64,6 +64,7 @@ class Functions {
  * @desc 系統殼層
  */
 
+class Case {}
 class ModuleBase {
 
     constructor(name){
@@ -74,53 +75,58 @@ class ModuleBase {
 
     /**
      * @function $systemError(functionName,maessage,object)
+     * @private
      * @desc 於console呼叫錯誤，中斷程序並顯示錯誤的物件
      */
 
     $systemError(functionName, message, object = '$_no_error'){
         if (object !== '$_no_error') {
-            console.log('error data => ', object );
+            console.log('error data => ', object )
         }
-        throw new Error(`(☉д⊙)!! PackHouse::${this.$moduleBase.name} => ${functionName} -> ${message}`);
+        throw new Error(`(☉д⊙)!! PackHouse::${this.$moduleBase.name} => ${functionName} -> ${message}`)
     }
 
-    $noKey( functionName, target, key ) {
-        if( target[key] == null ){
-            return true;
+    /**
+     * @noKey $systemError(functionName,maessage,object)
+     * @private
+     * @desc 於console呼叫錯誤，中斷程序並顯示錯誤的物件
+     */
+
+    $noKey(functionName, target, key) {
+        if (target[key] == null) {
+            return true
         } else {
-            this.$systemError(functionName, `Name(${key}) already exists.`);
-            return false;
+            this.$systemError(functionName, `Name(${key}) already exists.`)
+            return false
         } 
     }
 
     $verify(data, validate, assign = {}) {
         let newData = {}
-        for( let key in validate ){
-            let v = validate[key];
-            if( v[0] && data[key] == null ){
-                this.$systemError('verify', 'Must required', key);
-                return;
+        for (let key in validate) {
+            let v = validate[key]
+            if (v[0] && data[key] == null) {
+                this.$systemError('verify', 'Must required', key)
+                return
             }
-            if( data[key] != null ){
-                if( typeof v[1] === (typeof data[key] === 'string' && data[key][0] === "#") ? data[key].slice(1) : 'string' ){
-                    newData[key] = data[key];
+            if (data[key] != null) {
+                if (typeof v[1] === (typeof data[key] === 'string' && data[key][0] === "#") ? data[key].slice(1) : 'string') {
+                    newData[key] = data[key]
                 } else {
-                    this.$systemError('verify', `Type(${typeof v[1]}) error`, key);
+                    this.$systemError('verify', `Type(${typeof v[1]}) error`, key)
                 }
             } else {
-                newData[key] = v[1];
+                newData[key] = v[1]
             }
         }
-        return Object.assign(newData, assign);
+        return Object.assign(newData, assign)
     }
 
 }
 
-class Case {}
-
 /**
  * @class Packhouse
- * @desc 主核心
+ * @desc 主核心，實體化名為Factory
  */
 
 class Packhouse extends ModuleBase {
@@ -130,10 +136,13 @@ class Packhouse extends ModuleBase {
      * @member {function} bridge 每次請求時的一個呼叫函數
      */
 
-    constructor() {
+    constructor(options = {}) {
         super("Packhouse")
         this.groups = {}
         this.bridge = null
+        if (options.bridge) {
+            this.setBridge(options.bridge)
+        }
     }
 
     /**
@@ -148,18 +157,18 @@ class Packhouse extends ModuleBase {
     }
 
     /**
-     * @function createOrder()
+     * @function createOrder(options)
      * @static
      * @desc 建立一個order
      */
 
-    static createOrder() {
-        let order = new Order()
-        return order.exports
+    static createOrder(options) {
+        let order = new Order(options)
+        return new OrderExports(order)
     }
 
     /**
-     * @function createGroup()
+     * @function createGroup(options)
      * @static
      * @desc 建立一個Group
      */
@@ -170,13 +179,13 @@ class Packhouse extends ModuleBase {
     }
 
     /**
-     * @function createFactory()
+     * @function createFactory(options)
      * @static
      * @desc 建立一個Factory
      */
 
-    static createFactory() {
-        let factory = new Packhouse()
+    static createFactory(options) {
+        let factory = new Packhouse(options)
         return new FactoryExports(factory)
     }
 
@@ -236,6 +245,7 @@ class Packhouse extends ModuleBase {
 
     /**
      * @function getGroup(name)
+     * @private
      * @desc 獲取一個Group
      */
 
@@ -249,6 +259,7 @@ class Packhouse extends ModuleBase {
 
     /**
      * @function getTool(groupName,name)
+     * @private
      * @desc 獲取一個Tool
      */
 
@@ -258,6 +269,7 @@ class Packhouse extends ModuleBase {
 
     /**
      * @function getLine(groupName,name)
+     * @private
      * @desc 獲取一個Line
      */
 
@@ -359,34 +371,6 @@ class Packhouse extends ModuleBase {
 
 }
 
-class FactoryExports {
-    constructor(factory) {
-        this.line = factory.line.bind(factory)
-        this.tool = factory.tool.bind(factory)
-        this.hasLine = factory.hasLine.bind(factory)
-        this.hasTool = factory.hasTool.bind(factory)
-        this.addGroup = factory.addGroup.bind(factory)
-        this.hasGroup = factory.hasGroup.bind(factory)
-        this.setBridge = factory.setBridge.bind(factory)
-    }
-}
-
-class GroupExports {
-    constructor(group) {
-        this.alone = group.alone.bind(group)
-        this.create = group.create.bind(group)
-        this.addMold = group.addMold.bind(group)
-        this.addMolds = group.addMolds.bind(group)
-        this.addTool = group.addTool.bind(group)
-        this.addTools = group.addTools.bind(group)
-        this.addLine = group.addLine.bind(group)
-        this.hasTool = group.hasTool.bind(group)
-        this.hasMold = group.hasMold.bind(group)
-        this.hasLine = group.hasLine.bind(group)
-        this.callTool = group.callTool.bind(group)
-        this.callLine = group.callLine.bind(group)
-    }
-}
 /**
  * @class Order
  * @desc 緩衝與快取物件
@@ -394,17 +378,24 @@ class GroupExports {
 
 class Order extends ModuleBase {
 
-    constructor() {
+    constructor(options = {}) {
         super('Order')
+        this.init()
+        this.options = this.$verify(options, {
+            max: [false, 1000]
+        })
+    }
+
+    /**
+     * @function init()
+     * @private
+     * @desc 初始化數據
+     */
+
+    init() {
+        this.keys = []
         this.caches = {}
-        this.exports = {
-            has: this.has.bind(this),
-            get: this.get.bind(this),
-            list: this.list.bind(this),
-            clear: this.clear.bind(this),
-            create: this.create.bind(this),
-            getOrCreate: this.getOrCreate.bind(this)
-        }
+        this.length = 0
     }
 
     /**
@@ -452,7 +443,7 @@ class Order extends ModuleBase {
      */
 
     clear() {
-        this.caches = {}
+        this.init()
     }
 
     /**
@@ -461,8 +452,27 @@ class Order extends ModuleBase {
      */
 
     create(key) {
+        this.length += 1
+        this.keys.push(key)
         this.caches[key] = new OrderCache()
+        if (this.length > this.options.max) {
+            this.remove(this.keys[0])
+        }
         return this.get(key)
+    }
+
+    /**
+     * @function remove(key)
+     * @desc 指定移除一個快取
+     */
+
+    remove(key) {
+        if (this.has(key)) {
+            this.length -= 1
+            delete this.caches[this.keys.shift()]
+        } else {
+            this.$systemError('remove', `Key(${key}) not found.`)
+        }
     }
 
     /**
@@ -616,6 +626,117 @@ class OrderCache extends ModuleBase {
     }
 
 }
+class Response {
+
+    constructor(supports) {
+        this.over = false
+        this.sop = supports.sop
+        this.noGood = supports.noGood
+    }
+
+    getError(message) {
+        return message || 'unknown error'
+    }
+
+    exports() {
+        return {
+            error: m => this.error(m),
+            success: m => this.success(m)
+        }
+    }
+
+    error(result) {
+        if (this.over === false) {
+            this.over = true
+            this.errorBase(result)
+            this.callSop({ success: false, result: result })
+        }
+    }
+
+    success(result) {
+        if (this.over === false) {
+            this.over = true
+            this.successBase(result)
+            this.callSop({ success: true, result: result })
+        }
+    }
+
+    callSop(context) {
+        if (this.sop) {
+            this.sop(context)
+        }
+    }
+
+}
+
+class ResponseDirect extends Response {
+
+    constructor(supports) {
+        super(supports)
+        this.result = null
+    }
+
+    errorBase(result) {
+        if (this.noGood) {
+            this.noGood(this.getError(result))
+        } else {
+            throw new Error(this.getError(result))
+        }
+    }
+
+    successBase(result) {
+        this.result = result
+    }
+
+}
+
+class ResponseAction extends Response {
+
+    constructor(supports, callback) {
+        super(supports)
+        this.callback = callback || function () {}
+    }
+
+    errorBase(result) {
+        let message = this.getError(result)
+        if (this.noGood) {
+            this.noGood(message)
+        } else {
+            this.callback(message, null)
+        }
+    }
+
+    successBase(result) {
+        if (this.noGood) {
+            this.callback(result)
+        } else {
+            this.callback(null, result)
+        }
+    }
+
+}
+
+class ResponsePromise extends Response {
+
+    constructor(supports, resolve, reject) {
+        super(supports)
+        this.resolve = resolve
+        this.reject = reject
+    }
+
+    errorBase(result) {
+        let message = this.getError(result)
+        if (this.noGood) {
+            this.noGood(message)
+        }
+        this.reject(message)
+    }
+
+    successBase(result) {
+        this.resolve(result)
+    }
+
+}
 /**
  * @class Tool
  * @desc Assembly的最小單位，負責執行指定邏輯
@@ -672,9 +793,14 @@ class Tool extends ModuleBase {
         this.install = null
     }
 
+    /**
+     * @function initCatchData()
+     * @private
+     * @desc 快取一些資源協助優化
+     */
+
     initCatchData() {
-        this._moldLength = this.data.molds.length
-        this._bindAction = this.data.action.bind(this.user)
+        this.moldLength = this.data.molds.length
     }
 
     /**
@@ -839,29 +965,56 @@ class Tool extends ModuleBase {
 
     createLambda(func, type, supports) {
         let name = Symbol(this.group.data.alias + '_' + this.name + '_' + type)
+        let call = func.bind(this)
+        let actionCallback = this.getActionCallback(type)
         let tool = {
             [name]: (...options) => {
-                let args = []
+                let packages = supports.package
                 let length = this.argumentLength
-                let params = supports.package.concat(options)
-                let callback = null
-                if (type === 'action') {
-                    callback = params.pop()
-                    if (typeof callback !== 'function') {
-                        this.$systemError('createLambda', 'Action must a callback, no need ? try direct!')
+                let argsLength = packages.length + options.length
+                let packagesLength = packages.length
+                let args = new Array(length + 3)
+                let params = new Array(argsLength)
+                for (let i = 0; i < argsLength; i++) {
+                    if (i >= packagesLength) {
+                        params[i] = options[i]
+                    } else {
+                        params[i] = packages[i]
                     }
                 }
+                let callback = actionCallback(params)
                 for (let i = 0; i < length; i++) {
-                    args[i] = params[i] || undefined
+                    args[i] = params[i]
                 }
-                return func.call(this, args, callback, supports)
+                return call(args, callback, supports)
             }
         }
         return tool[name]
     }
 
     /**
+     * @function getActionCallback
+     * @private
+     * @desc 解讀action的callback
+     */
+
+    getActionCallback(type) {
+        if (type !== 'action') {
+            return function() { return null }
+        } else {
+            return function(params) {
+                let callback = params.pop()
+                if (typeof callback !== 'function') {
+                    this.$systemError('createLambda', 'Action must a callback, no need ? try direct!')
+                }
+                return callback
+            }
+        }
+    }
+
+    /**
      * @function parseMold
+     * @private
      * @desc 解讀Mold是否正確
      */
 
@@ -911,50 +1064,19 @@ class Tool extends ModuleBase {
             this.checkUpdate()
         }
         // 驗證參數是否使用mold
-        let length = this._moldLength
-        for (let i = 0; i < length; i++) {
+        let moldLength = this.moldLength
+        for (let i = 0; i < moldLength; i++) {
             let name = this.data.molds[i]
             if (name) {
                 params[i] = this.parseMold(name, params[i], error)
             }
         }
         // 執行action
-        this._bindAction(...params, this.system, error, success)
-    }
-
-    /**
-     * @function createResponse
-     * @private
-     * @desc 建構通用的success和error
-     */
-
-    createResponse({ error, success }, supports) {
-        let over = false
-        let doSop = function(context) {
-            if (supports.sop) {
-                supports.sop(context)
-            }
-        }
-        return {
-            error: (err) => {
-                if (over) return
-                over = true
-                error(err)
-                doSop({
-                    success: false,
-                    result: err
-                })
-            },
-            success: (result) => {
-                if (over) return
-                over = true
-                success(result)
-                doSop({
-                    success: true,
-                    result: result
-                })
-            }
-        }
+        let paramLength = params.length - 3
+        params[paramLength] = this.system
+        params[paramLength + 1] = error
+        params[paramLength + 2] = success
+        this.data.action.apply(this.user, params)
     }
 
     /**
@@ -967,21 +1089,10 @@ class Tool extends ModuleBase {
         if (this.data.allowDirect === false) {
             this.$systemError('direct', `Tool(${this.data.name}) no allow direct.`)
         }
-        let output = null
-        let response = this.createResponse({
-            error: (err) => {
-                if (supports.noGood) {
-                    supports.noGood(this.getError(err))
-                } else {
-                    throw new Error(this.getError(err))
-                }
-            },
-            success: (result) => {
-                output = result
-            }
-        }, supports)
-        this.call(params, response.error, response.success)
-        return output
+        let response = new ResponseDirect(supports)
+        let responseExports = response.exports()
+        this.call(params, responseExports.error, responseExports.success)
+        return response.result
     }
 
     /**
@@ -990,24 +1101,8 @@ class Tool extends ModuleBase {
      * @desc 宣告一個具有callback的function
      */
 
-    action(params, callback = function () {}, supports) {
-        let response = this.createResponse({
-            error: (err) => {
-                let message = this.getError(err)
-                if (supports.noGood) {
-                    supports.noGood(message)
-                } else {
-                    callback(message, null)
-                }
-            },
-            success: (result) => {
-                if (supports.noGood) {
-                    callback(result)
-                } else {
-                    callback(null, result)
-                }
-            }
-        }, supports)
+    action(params, callback, supports) {
+        let response = (new ResponseAction(supports, callback)).exports()
         this.call(params, response.error, response.success)
     }
 
@@ -1019,18 +1114,7 @@ class Tool extends ModuleBase {
 
     promise(params, callback, supports) {
         return new Promise((resolve, reject) => {
-            let response = this.createResponse({
-                error: (err) => {
-                    let message = this.getError(err)
-                    if (supports.noGood) {
-                        supports.noGood(message)
-                    }
-                    reject(message)
-                },
-                success: (result) => {
-                    resolve(result)
-                }
-            }, supports)
+            let response = (new ResponsePromise(supports, resolve, reject)).exports()
             this.call(params, response.error, response.success)
         })
     }
@@ -1607,7 +1691,6 @@ class Group extends ModuleBase {
 
     /**
      * @function callTool
-     * @private
      * @param {string} name 使用Group的Tool
      */
 
@@ -1617,7 +1700,6 @@ class Group extends ModuleBase {
 
     /**
      * @function callLine
-     * @private
      * @param {string} name 使用Group的Tool
      */
 
@@ -1728,6 +1810,7 @@ class Group extends ModuleBase {
 
     /**
      * @function updateCall
+     * @private
      * @desc 指定tool update
      */
 
@@ -1735,6 +1818,46 @@ class Group extends ModuleBase {
         this.getTool(name).update()
     }
 
+}
+class FactoryExports {
+    constructor(factory) {
+        this.line = factory.line.bind(factory)
+        this.tool = factory.tool.bind(factory)
+        this.hasLine = factory.hasLine.bind(factory)
+        this.hasTool = factory.hasTool.bind(factory)
+        this.addGroup = factory.addGroup.bind(factory)
+        this.hasGroup = factory.hasGroup.bind(factory)
+        this.setBridge = factory.setBridge.bind(factory)
+    }
+}
+
+class GroupExports {
+    constructor(group) {
+        this.alone = group.alone.bind(group)
+        this.create = group.create.bind(group)
+        this.hasTool = group.hasTool.bind(group)
+        this.hasMold = group.hasMold.bind(group)
+        this.hasLine = group.hasLine.bind(group)
+        this.addMold = group.addMold.bind(group)
+        this.addLine = group.addLine.bind(group)
+        this.addTool = group.addTool.bind(group)
+        this.addMolds = group.addMolds.bind(group)
+        this.addTools = group.addTools.bind(group)
+        this.callTool = group.callTool.bind(group)
+        this.callLine = group.callLine.bind(group)
+    }
+}
+
+class OrderExports {
+    constructor(order) {
+        this.has = order.has.bind(order)
+        this.get = order.get.bind(order)
+        this.list = order.list.bind(order)
+        this.clear = order.clear.bind(order)
+        this.create = order.create.bind(order)
+        this.remove = order.remove.bind(order)
+        this.getOrCreate = order.getOrCreate.bind(order)
+    }
 }
 
             let __re = Packhouse;

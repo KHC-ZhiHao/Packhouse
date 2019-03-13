@@ -140,7 +140,6 @@ class Group extends ModuleBase {
 
     /**
      * @function callTool
-     * @private
      * @param {string} name 使用Group的Tool
      */
 
@@ -150,7 +149,6 @@ class Group extends ModuleBase {
 
     /**
      * @function callLine
-     * @private
      * @param {string} name 使用Group的Tool
      */
 
@@ -261,6 +259,7 @@ class Group extends ModuleBase {
 
     /**
      * @function updateCall
+     * @private
      * @desc 指定tool update
      */
 

@@ -42,10 +42,11 @@ Factory是集結Group的物件。
 > Bridge是每次從工廠呼叫function時都會執行的函式，初始目的是為了動態載入group
 
 ```js
-let factory = Packhouse.createFactory()
-factory.setBridge((factory, groupName, toolName) => {
-    if (factory.hasGroup(groupName) === false) {
-        factory.addGroup(groupName, require(`./${groupName}`))
+let factory = Packhouse.createFactory({
+    bridge(factory, groupName, toolName) {
+        if (factory.hasGroup(groupName) === false) {
+            factory.addGroup(groupName, require(`./${groupName}`))
+        }
     }
 })
 ```
@@ -530,7 +531,9 @@ group.addTool({
     paramLength: 1,
     allowDirect: false,
     create: function(store, system) {
-        this.order = Packhouse.createOrder()
+        this.order = Packhouse.createOrder({
+            max: 500
+        })
         this.request = require('request')
     },
     update: function(store, system) {

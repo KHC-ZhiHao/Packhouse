@@ -14,17 +14,18 @@ factory.setBridge((factory, groupName, toolName) => {
 })
 
 
-factory.tool('math', 'sum').ng((err) => {
-    console.log(err)
-}).sop(c => console.log(c)).action(90, 87, (result) => {
-    console.log(result)
-})
+factory.tool('math', 'sum').ng(console.log).sop(console.log).action(90, 87, console.log)
 
-factory.tool('math', 'double').ng((err) => {
-    console.log(err)
-}).action(90, (result) => {
-    console.log(result)
-})
+factory.tool('math', 'sum').ng(console.log).sop(console.log).action(90, '87', console.log)
+
+factory.tool('math', 'sum').promise(100, 200).then(console.log).catch(console.log)
+
+factory.tool('math', 'sum').promise(100, '200').then(console.log).catch(console.log)
+
+factory.tool('math', 'double').ng(console.log).action(90, console.log)
+
+console.log(factory.tool('math', 'sum').ng(console.log).direct(600, '800'))
+console.log(factory.tool('math', 'sum').direct(600, 600))
 
 factory.tool('request', 'get').ng((err) => {
     console.log('error => ', err)

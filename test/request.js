@@ -39,7 +39,9 @@ group.addTools([
         allowDirect: false,
         create: function(store, system) {
             this.send = system.include('sendBase')
-            this.order = Packhouse.createOrder()
+            this.order = Packhouse.createOrder({
+                max: 500
+            })
         },
         update: function(store, system) {
             console.log('update success')

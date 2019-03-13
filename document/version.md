@@ -77,3 +77,15 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 ### MODIFY
 
 * line: 新的Private Key => setRule。
+
+## 1.0.7
+
+### NEW
+
+* Order、Factory都能接收options
+* Order => max : 能夠承受快取的最大值，若超過則先移除第一筆快取，預設為1000
+
+### MODIFY
+
+* exports: 新的export模式
+* 系統優化，系統運行比1.0.6快4倍左右，但還是很慢...

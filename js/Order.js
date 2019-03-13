@@ -5,17 +5,24 @@
 
 class Order extends ModuleBase {
 
-    constructor() {
+    constructor(options = {}) {
         super('Order')
+        this.init()
+        this.options = this.$verify(options, {
+            max: [false, 1000]
+        })
+    }
+
+    /**
+     * @function init()
+     * @private
+     * @desc 初始化數據
+     */
+
+    init() {
+        this.keys = []
         this.caches = {}
-        this.exports = {
-            has: this.has.bind(this),
-            get: this.get.bind(this),
-            list: this.list.bind(this),
-            clear: this.clear.bind(this),
-            create: this.create.bind(this),
-            getOrCreate: this.getOrCreate.bind(this)
-        }
+        this.length = 0
     }
 
     /**
@@ -63,7 +70,7 @@ class Order extends ModuleBase {
      */
 
     clear() {
-        this.caches = {}
+        this.init()
     }
 
     /**
@@ -72,8 +79,27 @@ class Order extends ModuleBase {
      */
 
     create(key) {
+        this.length += 1
+        this.keys.push(key)
         this.caches[key] = new OrderCache()
+        if (this.length > this.options.max) {
+            this.remove(this.keys[0])
+        }
         return this.get(key)
+    }
+
+    /**
+     * @function remove(key)
+     * @desc 指定移除一個快取
+     */
+
+    remove(key) {
+        if (this.has(key)) {
+            this.length -= 1
+            delete this.caches[this.keys.shift()]
+        } else {
+            this.$systemError('remove', `Key(${key}) not found.`)
+        }
     }
 
     /**

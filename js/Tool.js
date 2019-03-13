@@ -54,9 +54,14 @@ class Tool extends ModuleBase {
         this.install = null
     }
 
+    /**
+     * @function initCatchData()
+     * @private
+     * @desc 快取一些資源協助優化
+     */
+
     initCatchData() {
-        this._moldLength = this.data.molds.length
-        this._bindAction = this.data.action.bind(this.user)
+        this.moldLength = this.data.molds.length
     }
 
     /**
@@ -221,29 +226,56 @@ class Tool extends ModuleBase {
 
     createLambda(func, type, supports) {
         let name = Symbol(this.group.data.alias + '_' + this.name + '_' + type)
+        let call = func.bind(this)
+        let actionCallback = this.getActionCallback(type)
         let tool = {
             [name]: (...options) => {
-                let args = []
+                let packages = supports.package
                 let length = this.argumentLength
-                let params = supports.package.concat(options)
-                let callback = null
-                if (type === 'action') {
-                    callback = params.pop()
-                    if (typeof callback !== 'function') {
-                        this.$systemError('createLambda', 'Action must a callback, no need ? try direct!')
+                let argsLength = packages.length + options.length
+                let packagesLength = packages.length
+                let args = new Array(length + 3)
+                let params = new Array(argsLength)
+                for (let i = 0; i < argsLength; i++) {
+                    if (i >= packagesLength) {
+                        params[i] = options[i]
+                    } else {
+                        params[i] = packages[i]
                     }
                 }
+                let callback = actionCallback(params)
                 for (let i = 0; i < length; i++) {
-                    args[i] = params[i] || undefined
+                    args[i] = params[i]
                 }
-                return func.call(this, args, callback, supports)
+                return call(args, callback, supports)
             }
         }
         return tool[name]
     }
 
     /**
+     * @function getActionCallback
+     * @private
+     * @desc 解讀action的callback
+     */
+
+    getActionCallback(type) {
+        if (type !== 'action') {
+            return function() { return null }
+        } else {
+            return function(params) {
+                let callback = params.pop()
+                if (typeof callback !== 'function') {
+                    this.$systemError('createLambda', 'Action must a callback, no need ? try direct!')
+                }
+                return callback
+            }
+        }
+    }
+
+    /**
      * @function parseMold
+     * @private
      * @desc 解讀Mold是否正確
      */
 
@@ -293,50 +325,19 @@ class Tool extends ModuleBase {
             this.checkUpdate()
         }
         // 驗證參數是否使用mold
-        let length = this._moldLength
-        for (let i = 0; i < length; i++) {
+        let moldLength = this.moldLength
+        for (let i = 0; i < moldLength; i++) {
             let name = this.data.molds[i]
             if (name) {
                 params[i] = this.parseMold(name, params[i], error)
             }
         }
         // 執行action
-        this._bindAction(...params, this.system, error, success)
-    }
-
-    /**
-     * @function createResponse
-     * @private
-     * @desc 建構通用的success和error
-     */
-
-    createResponse({ error, success }, supports) {
-        let over = false
-        let doSop = function(context) {
-            if (supports.sop) {
-                supports.sop(context)
-            }
-        }
-        return {
-            error: (err) => {
-                if (over) return
-                over = true
-                error(err)
-                doSop({
-                    success: false,
-                    result: err
-                })
-            },
-            success: (result) => {
-                if (over) return
-                over = true
-                success(result)
-                doSop({
-                    success: true,
-                    result: result
-                })
-            }
-        }
+        let paramLength = params.length - 3
+        params[paramLength] = this.system
+        params[paramLength + 1] = error
+        params[paramLength + 2] = success
+        this.data.action.apply(this.user, params)
     }
 
     /**
@@ -349,21 +350,10 @@ class Tool extends ModuleBase {
         if (this.data.allowDirect === false) {
             this.$systemError('direct', `Tool(${this.data.name}) no allow direct.`)
         }
-        let output = null
-        let response = this.createResponse({
-            error: (err) => {
-                if (supports.noGood) {
-                    supports.noGood(this.getError(err))
-                } else {
-                    throw new Error(this.getError(err))
-                }
-            },
-            success: (result) => {
-                output = result
-            }
-        }, supports)
-        this.call(params, response.error, response.success)
-        return output
+        let response = new ResponseDirect(supports)
+        let responseExports = response.exports()
+        this.call(params, responseExports.error, responseExports.success)
+        return response.result
     }
 
     /**
@@ -372,24 +362,8 @@ class Tool extends ModuleBase {
      * @desc 宣告一個具有callback的function
      */
 
-    action(params, callback = function () {}, supports) {
-        let response = this.createResponse({
-            error: (err) => {
-                let message = this.getError(err)
-                if (supports.noGood) {
-                    supports.noGood(message)
-                } else {
-                    callback(message, null)
-                }
-            },
-            success: (result) => {
-                if (supports.noGood) {
-                    callback(result)
-                } else {
-                    callback(null, result)
-                }
-            }
-        }, supports)
+    action(params, callback, supports) {
+        let response = (new ResponseAction(supports, callback)).exports()
         this.call(params, response.error, response.success)
     }
 
@@ -401,18 +375,7 @@ class Tool extends ModuleBase {
 
     promise(params, callback, supports) {
         return new Promise((resolve, reject) => {
-            let response = this.createResponse({
-                error: (err) => {
-                    let message = this.getError(err)
-                    if (supports.noGood) {
-                        supports.noGood(message)
-                    }
-                    reject(message)
-                },
-                success: (result) => {
-                    resolve(result)
-                }
-            }, supports)
+            let response = (new ResponsePromise(supports, resolve, reject)).exports()
             this.call(params, response.error, response.success)
         })
     }

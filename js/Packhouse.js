@@ -1,6 +1,6 @@
 /**
  * @class Packhouse
- * @desc 主核心
+ * @desc 主核心，實體化名為Factory
  */
 
 class Packhouse extends ModuleBase {
@@ -10,10 +10,13 @@ class Packhouse extends ModuleBase {
      * @member {function} bridge 每次請求時的一個呼叫函數
      */
 
-    constructor() {
+    constructor(options = {}) {
         super("Packhouse")
         this.groups = {}
         this.bridge = null
+        if (options.bridge) {
+            this.setBridge(options.bridge)
+        }
     }
 
     /**
@@ -28,18 +31,18 @@ class Packhouse extends ModuleBase {
     }
 
     /**
-     * @function createOrder()
+     * @function createOrder(options)
      * @static
      * @desc 建立一個order
      */
 
-    static createOrder() {
-        let order = new Order()
-        return order.exports
+    static createOrder(options) {
+        let order = new Order(options)
+        return new OrderExports(order)
     }
 
     /**
-     * @function createGroup()
+     * @function createGroup(options)
      * @static
      * @desc 建立一個Group
      */
@@ -50,13 +53,13 @@ class Packhouse extends ModuleBase {
     }
 
     /**
-     * @function createFactory()
+     * @function createFactory(options)
      * @static
      * @desc 建立一個Factory
      */
 
-    static createFactory() {
-        let factory = new Packhouse()
+    static createFactory(options) {
+        let factory = new Packhouse(options)
         return new FactoryExports(factory)
     }
 
@@ -116,6 +119,7 @@ class Packhouse extends ModuleBase {
 
     /**
      * @function getGroup(name)
+     * @private
      * @desc 獲取一個Group
      */
 
@@ -129,6 +133,7 @@ class Packhouse extends ModuleBase {
 
     /**
      * @function getTool(groupName,name)
+     * @private
      * @desc 獲取一個Tool
      */
 
@@ -138,6 +143,7 @@ class Packhouse extends ModuleBase {
 
     /**
      * @function getLine(groupName,name)
+     * @private
      * @desc 獲取一個Line
      */
 
@@ -237,33 +243,4 @@ class Packhouse extends ModuleBase {
         }
     }
 
-}
-
-class FactoryExports {
-    constructor(factory) {
-        this.line = factory.line.bind(factory)
-        this.tool = factory.tool.bind(factory)
-        this.hasLine = factory.hasLine.bind(factory)
-        this.hasTool = factory.hasTool.bind(factory)
-        this.addGroup = factory.addGroup.bind(factory)
-        this.hasGroup = factory.hasGroup.bind(factory)
-        this.setBridge = factory.setBridge.bind(factory)
-    }
-}
-
-class GroupExports {
-    constructor(group) {
-        this.alone = group.alone.bind(group)
-        this.create = group.create.bind(group)
-        this.addMold = group.addMold.bind(group)
-        this.addMolds = group.addMolds.bind(group)
-        this.addTool = group.addTool.bind(group)
-        this.addTools = group.addTools.bind(group)
-        this.addLine = group.addLine.bind(group)
-        this.hasTool = group.hasTool.bind(group)
-        this.hasMold = group.hasMold.bind(group)
-        this.hasLine = group.hasLine.bind(group)
-        this.callTool = group.callTool.bind(group)
-        this.callLine = group.callLine.bind(group)
-    }
 }
