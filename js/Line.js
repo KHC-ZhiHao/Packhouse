@@ -14,17 +14,17 @@ class Line extends ModuleBase {
 
     constructor(options, group) {
         super("Line");
-        this.group = group;
-        this.data = this.$verify(options, {
-            name: [true, ''],
-            fail: [true, '#function'],
-            inlet: [false, []],
-            input: [true, '#function'],
-            output: [true, '#function'],
-            layout: [true, {}]
-        })
-        this.inlet = this.data.inlet || null
         this.tools = {}
+        this.group = group
+        this.data = this.$verify(options, {
+            name: [true, ['string']],
+            fail: [true, ['function']],
+            inlet: [false, ['object'], null],
+            input: [true, ['object', 'function']],
+            output: [true, ['object', 'function']],
+            layout: [true, ['object']]
+        })
+        this.layoutKeys = Object.keys(this.data.layout)
         this.checkPrivateKey()
     }
 
@@ -38,7 +38,7 @@ class Line extends ModuleBase {
 
     checkPrivateKey() {
         let layout = this.data.layout
-        if( layout.action || layout.promise || layout.setRule ){
+        if (layout.action || layout.promise || layout.setRule) {
             this.$systemError('init', 'Layout has private key(action, promise, setRule)')
         }
     }
@@ -50,10 +50,8 @@ class Line extends ModuleBase {
      */
 
     use() {
-        let self = this
-        return function() {
-            let unit = new Deploy(self, [...arguments])
-            return unit.getConveyer()
+        return (...options) => {
+            return (new Deploy(this, options)).conveyer
         }
     }
 
@@ -78,6 +76,7 @@ class Deploy extends ModuleBase {
         this.main = main
         this.layout = main.data.layout
         this.params = params
+        this.supports = new Support()
         this.init()
     }
 
@@ -87,8 +86,17 @@ class Deploy extends ModuleBase {
      * @desc 實例化layout
      */
 
-    createTool(name, action) {
-        return (new Tool({ name, action }, this.main.group, this.case)).use()
+    createTool(name, target, nonTool) {
+        if (typeof target === 'function') {
+            return (new Tool({ name, action: target }, this.main.group, this.case)).use()
+        } else if (nonTool) {
+            this.$systemError('createTool', `${name} not a function.`)
+        } else {
+            if (target.name) {
+                delete target.name
+            }
+            return (new Tool({ name, ...target }, this.main.group, this.case)).use()
+        }
     }
 
     /**
@@ -99,7 +107,7 @@ class Deploy extends ModuleBase {
 
     init() {
         this.input = this.createTool('input', this.main.data.input)
-        this.output = this.createTool('output', this.main.data.output)
+        this.output = this.createTool('output', this.main.data.output, true)
         this.initConveyer()
     }
 
@@ -110,27 +118,17 @@ class Deploy extends ModuleBase {
      */
 
     initConveyer() {
-        let self = this;
         this.conveyer = {
             action: this.action.bind(this),
-            promise: this.promise.bind(this)
+            promise: this.promise.bind(this),
+            setRule: this.setRule.bind(this)
         }
-        for (let name in this.layout) {
-            this.conveyer[name] = function() {
-                self.register(name, [...arguments])
-                return self.getConveyer()
+        for (let name of this.main.layoutKeys) {
+            this.conveyer[name] = (...options) => {
+                this.register(name, options)
+                return this.conveyer
             }
         }
-    }
-
-    /**
-     * @function getConveyer
-     * @private
-     * @desc 輸送帶的對外接口
-     */
-
-    getConveyer() {
-        return this.conveyer
     }
 
     /**
@@ -140,17 +138,17 @@ class Deploy extends ModuleBase {
      */
 
     register(name, params) {
-        if (this.main.inlet.length !== 0 && this.flow.length === 0) {
-            if (!this.main.inlet.includes(name)) {
-                this.$systemError('register', `First call method not inside inlet, you use'${name}'.`)
+        let inlet = this.main.data.inlet
+        if (inlet && inlet.length !== 0 && this.flow.length === 0) {
+            if (inlet.includes(name) === false) {
+                this.$systemError('register', `First call method not inside inlet, you use '${name}'.`)
             }
         }
-        let data = {
+        this.flow.push({
             name: name,
             method: this.createTool(name, this.layout[name]),
             params: params
-        }
-        this.flow.push(data)
+        })
     }
 
     /**
@@ -160,15 +158,10 @@ class Deploy extends ModuleBase {
      */
 
     action(callback) {
-        let error = (error) => {
-            this.main.data.fail(error, (report) => {
-                callback(report, null)
-            })
-        }
-        let success = (success) => {
-            callback(null, success)
-        }
-        this.process(error, success)
+        let fail = this.main.data.fail
+        let supports = this.supports.copy()
+        let response = (new ResponseAction(this.main.group, supports, callback)).exports
+        this.process(error => fail(error, response.error), response.success)
     }
 
     /**
@@ -178,15 +171,23 @@ class Deploy extends ModuleBase {
      */
 
     promise() {
-        return new Promise(( resolve, reject )=>{
-            this.action((err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(result)
-                }
-            })
+        return new Promise(( resolve, reject ) => {
+            let fail = this.main.data.fail
+            let supports = this.supports.copy()
+            let response = (new ResponsePromise(this.main.group, supports, resolve, reject)).exports
+            this.process(error => fail(error, response.error), response.success)
         })
+    }
+
+    /**
+     * @function setRule
+     * @private
+     * @desc 效力等同rule(ng, sop, ngOptions)
+     */
+
+    setRule(...options) {
+        this.supports.setRule(...options)
+        return this.conveyer
     }
 
     /**
@@ -196,8 +197,7 @@ class Deploy extends ModuleBase {
      */
 
     process(error, success) {
-        let rightNow = new Process(this.params, this.flow, this.input, this.output)
-        rightNow.start(error, success)
+        (new Process(this.params, this.flow, this.input, this.output)).start(error, success)
     }
 
 }
@@ -211,12 +211,12 @@ class Process extends ModuleBase {
 
     constructor(params, flow, input, output) {
         super('Process')
-        this.params = params
         this.stop = false
         this.flow = flow
         this.index = 0
         this.stack = []
         this.input = input
+        this.params = params
         this.output = output
     }
 
@@ -230,13 +230,7 @@ class Process extends ModuleBase {
         this.error = error
         this.success = success
         this.stack.push('input')
-        this.input.action(...this.params, (err) => {
-            if (err) {
-                this.fail(err)
-            } else {
-                this.next()
-            }
-        })
+        this.input.ng(this.fail).action(...this.params, this.next.bind(this))
     }
 
     /**
@@ -247,13 +241,7 @@ class Process extends ModuleBase {
 
     finish() {
         this.stack.push('output')
-        this.output.action((err, result) => {
-            if (err) {
-                this.fail(err)
-            } else {
-                this.success(result)
-            }
-        })
+        this.output.ng(this.fail).action(this.success)
     }
 
     /**
@@ -289,18 +277,15 @@ class Process extends ModuleBase {
      */
 
     next() {
+        if (this.stop === true) { return }
         let flow = this.flow[this.index]
-        if (flow && this.stop === false) {
+        if (flow) {
             this.stack.push(flow.name)
-            flow.method.action(...flow.params, (err) => {
-                if (err) {
-                    this.fail(err)
-                } else {
-                    this.index += 1
-                    this.next()
-                }
+            flow.method.ng(this.fail).action(...flow.params, () => {
+                this.index += 1
+                this.next()
             })
-        } else if (this.stop === false) {
+        } else {
             this.finish()
         }
     }

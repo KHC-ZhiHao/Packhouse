@@ -25,15 +25,16 @@ class Tool extends ModuleBase {
         this.store = {}
         this.group = group
         this.updateStamp = 0
+        this.exportStore = this.group.data.secure ? this.$protection(this.store) : this.store
         this.argumentLength = typeof options.paramLength === 'number' ? options.paramLength : -1
         this.data = this.$verify(options, {
-            name: [true, ''],
-            molds: [false, []],
-            create: [false, function () {}],
-            action: [true, '#function'],
-            update: [false, function () {}],
-            updateTime: [false, -1],
-            allowDirect: [false, true]
+            name: [true, ['string']],
+            molds: [false, ['object'], []],
+            create: [false, ['function'], function () {}],
+            action: [true, ['function']],
+            update: [false, ['function'], function () {}],
+            updateTime: [false, ['number'], -1],
+            allowDirect: [false, ['boolean'], true]
         })
     }
 
@@ -125,11 +126,13 @@ class Tool extends ModuleBase {
     initSystem() {
         this.system = {
             coop: this.coop.bind(this),
-            store: this.store,
-            group: this.group.case,
+            tool: this.useTool.bind(this),
+            line: this.useLine.bind(this),
+            store: this.exportStore,
+            group: this.group.exportCase,
             update: this.update.bind(this),
-            include: this.include.bind(this),
-            casting: this.parseMold.bind(this),
+            include: this.useTool.bind(this),
+            casting: this.casting.bind(this),
             updateCall: this.updateCall.bind(this)
         }
     }
@@ -156,56 +159,14 @@ class Tool extends ModuleBase {
      */
 
     createExports() {
-        let supData = {
-            sop: null,
-            noGood: null,
-            package: []
-        }
-        let exps = {
+        let support = new Support()
+        let exports = {
             store: this.getStore.bind(this),
-            direct: this.createLambda(this.direct, 'direct', supData),
-            action: this.createLambda(this.action, 'action', supData),
-            promise: this.createLambda(this.promise, 'promise', supData)
+            direct: this.createLambda(this.direct, 'direct', support),
+            action: this.createLambda(this.action, 'action', support),
+            promise: this.createLambda(this.promise, 'promise', support)
         }
-        let supports = this.createSupport(exps, supData)
-        return Object.assign(exps, supports)
-    }
-
-    /**
-     * @function createSupport
-     * @private
-     * @desc 建立輔助方法
-     */
-
-    createSupport(exps, supData) {
-        let ng = (broadcast) => {
-            if (typeof broadcast === 'function') {
-                supData.noGood = broadcast
-                return exps
-            }
-            this.$systemError('setNG', 'NG param not a function.', broadcast)
-        }
-        let sop = (broadcast) => {
-            if (typeof broadcast === 'function') {
-                supData.sop = broadcast
-                return exps
-            }
-            this.$systemError('setSOP', 'SOP param not a function.', broadcast)
-        }
-        let unSop = function() {
-            supData.sop = null
-            return exps
-        }
-        let packing = function() {
-            supData.package = supData.package.concat([...arguments])
-            return exps
-        }
-
-        let unPacking = function() {
-            supData.package = []
-            return exps
-        }
-        return { ng, packing, unPacking, sop, unSop }
+        return support.createExports(exports)
     }
 
     /**
@@ -224,29 +185,20 @@ class Tool extends ModuleBase {
      * @desc 封裝function，神奇的地方，同時也是可怕的效能吞噬者
      */
 
-    createLambda(func, type, supports) {
+    createLambda(func, type, support) {
         let name = Symbol(this.group.data.alias + '_' + this.name + '_' + type)
         let call = func.bind(this)
         let actionCallback = this.getActionCallback(type)
         let tool = {
             [name]: (...options) => {
-                let packages = supports.package
+                let supports = support.copy()
+                let args = new Array(this.argumentLength + 3)
                 let length = this.argumentLength
-                let argsLength = packages.length + options.length
+                let callback = actionCallback(options)
+                let packages = supports.package
                 let packagesLength = packages.length
-                let args = new Array(length + 3)
-                let params = new Array(argsLength)
-                for (let i = 0; i < argsLength; i++) {
-                    if (i >= packagesLength) {
-                        let j = i - packagesLength
-                        params[i] = options[j]
-                    } else {
-                        params[i] = packages[i]
-                    }
-                }
-                let callback = actionCallback(params)
-                for (let i = 0; i < length; i++) {
-                    args[i] = params[i]
+                for (let i = length; i--;) {
+                    args[i] = i >= packagesLength ? options[i - packagesLength] : packages[i]
                 }
                 return call(args, callback, supports)
             }
@@ -261,9 +213,7 @@ class Tool extends ModuleBase {
      */
 
     getActionCallback(type) {
-        if (type !== 'action') {
-            return function() { return null }
-        } else {
+        if (type === 'action') {
             return (params) => {
                 let callback = params.pop()
                 if (typeof callback !== 'function') {
@@ -271,6 +221,8 @@ class Tool extends ModuleBase {
                 }
                 return callback
             }
+        } else {
+            return function() { return null }
         }
     }
 
@@ -280,9 +232,9 @@ class Tool extends ModuleBase {
      * @desc 解讀Mold是否正確
      */
 
-    parseMold(name, params, error) {
+    parseMold(name, params, error, system) {
         let mold = this.group.getMold(name)
-        let check = mold.check(params)
+        let check = mold.check(params, system)
         if (check === true) {
             return mold.casting(params)
         } else {
@@ -295,13 +247,39 @@ class Tool extends ModuleBase {
     }
 
     /**
-     * @function include
+     * @function casting
+     * @private
+     * @desc 從system引用的casting接口
+     */
+
+    casting(name, data, callback) {
+        let split = name.split('|')
+        let call = split.shift()
+        let type = 'system'
+        let index = 0
+        let extras = split
+        let caller = this.name
+        this.parseMold(call, data, callback, { type, index, extras, caller })
+    }
+
+    /**
+     * @function useTool
      * @private
      * @desc 引入同Group的Tool
      */
 
-    include(name) {
-        return this.group.getTool(name).use()
+    useTool(name) {
+        return this.group.callTool(name)
+    }
+
+    /**
+     * @function useLine
+     * @private
+     * @desc 引入同Group的Line
+     */
+
+    useLine(name) {
+        return this.group.callLine(name)
     }
 
     /**
@@ -328,9 +306,18 @@ class Tool extends ModuleBase {
         // 驗證參數是否使用mold
         let moldLength = this.moldLength
         for (let i = 0; i < moldLength; i++) {
-            let name = this.data.molds[i]
+            if (this.data.molds[i] == null) {
+                continue
+            }
+            let split = this.data.molds[i].split('|')
+            let name = split.shift()
             if (name) {
-                params[i] = this.parseMold(name, params[i], error)
+                params[i] = this.parseMold(name, params[i], error, {
+                    type: 'call',
+                    index: i,
+                    extras: split,
+                    caller: this.name
+                })
             }
         }
         // 執行action
@@ -351,9 +338,11 @@ class Tool extends ModuleBase {
         if (this.data.allowDirect === false) {
             this.$systemError('direct', `Tool(${this.data.name}) no allow direct.`)
         }
-        let response = new ResponseDirect(supports)
-        let responseExports = response.exports()
-        this.call(params, responseExports.error, responseExports.success)
+        if (supports.welds.length > 0) {
+            this.$systemError('direct', `Tool(${this.data.name}) use weld, can do direct.`)
+        }
+        let response = new ResponseDirect(this.group, supports)
+        this.call(params, response.exports.error, response.exports.success)
         return response.result
     }
 
@@ -364,7 +353,7 @@ class Tool extends ModuleBase {
      */
 
     action(params, callback, supports) {
-        let response = (new ResponseAction(supports, callback)).exports()
+        let response = (new ResponseAction(this.group, supports, callback)).exports
         this.call(params, response.error, response.success)
     }
 
@@ -376,7 +365,7 @@ class Tool extends ModuleBase {
 
     promise(params, callback, supports) {
         return new Promise((resolve, reject) => {
-            let response = (new ResponsePromise(supports, resolve, reject)).exports()
+            let response = (new ResponsePromise(this.group, supports, resolve, reject)).exports
             this.call(params, response.error, response.success)
         })
     }

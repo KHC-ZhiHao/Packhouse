@@ -13,9 +13,10 @@ class Group extends ModuleBase {
         super("Group")
         this.case = new Case()
         this.data = this.$verify(options, {
-            alias: [false, 'no_alias_group'],
-            merger: [false, {}],
-            create: [false, function(){}]
+            alias: [false, ['string'], 'no_alias_group'],
+            secure: [false, ['boolean'], false],
+            merger: [false, ['object'], {}],
+            create: [false, ['function'], function(){}]
         })
         this.linebox = {}
         this.moldbox = {}
@@ -35,6 +36,7 @@ class Group extends ModuleBase {
      */
 
     initStatus() {
+        this.exportCase = this.data.secure ? this.$protection(this.case) : this.case
         this.status = {
             created: false
         }
@@ -172,7 +174,7 @@ class Group extends ModuleBase {
     /**
      * @function addMolds
      * @desc 加入多個模塊
-     * @param {array} molds 建立mold所需要多個物件
+     * @param {object|array} molds 建立mold所需要多個物件
      */
 
     addMolds(molds) {
@@ -180,9 +182,18 @@ class Group extends ModuleBase {
             for (let mold of molds) {
                 this.addMold(mold)
             }
-        } else {
-            this.$systemError('addMolds', 'Molds not a array.', molds)
+            return true
         }
+        if (typeof molds === 'object') {
+            for (let key in molds) {
+                this.addTool({
+                    name: key,
+                    ...molds[key]
+                })
+            }
+            return true
+        }
+        this.$systemError('addMolds', 'Molds not a array or object.', molds)
     }
 
     /**
@@ -196,6 +207,31 @@ class Group extends ModuleBase {
         if (this.$noKey('addLine', this.linebox, line.name)) {
             this.linebox[line.name] = line
         }
+    }
+
+    /**
+     * @function addLines
+     * @desc 加入多個產線
+     * @param {object|array} options 建立line所需要的物件
+     */
+
+    addLines(lines){
+        if (Array.isArray(lines)) {
+            for (let line of lines) {
+                this.addLine(line)
+            }
+            return true
+        }
+        if (typeof lines === 'object') {
+            for (let key in lines) {
+                this.addLine({
+                    name: key,
+                    ...lines[key]
+                })
+            }
+            return true
+        }
+        this.$systemError('addLines', 'Lines not a array or object.', lines)
     }
 
     /**
@@ -214,7 +250,7 @@ class Group extends ModuleBase {
     /**
      * @function addTools
      * @desc 加入多個工具
-     * @param {array} tools 建立tool所需要多個物件
+     * @param {object|array} tools 建立tool所需要多個物件
      */
 
     addTools(tools) {
@@ -222,9 +258,18 @@ class Group extends ModuleBase {
             for (let tool of tools) {
                 this.addTool(tool)
             }
-        } else {
-            this.$systemError('addTools', 'Tools not a array.', tools)
+            return true
         }
+        if (typeof tools === 'object') {
+            for (let key in tools) {
+                this.addTool({
+                    name: key,
+                    ...tools[key]
+                })
+            }
+            return true
+        }
+        this.$systemError('addTools', 'Tools not a array or object.', tools)
     }
 
     /**

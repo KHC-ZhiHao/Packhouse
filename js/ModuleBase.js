@@ -26,7 +26,7 @@ class ModuleBase {
     }
 
     /**
-     * @noKey $systemError(functionName,maessage,object)
+     * @function $noKey(functionName,maessage,object)
      * @private
      * @desc 於console呼叫錯誤，中斷程序並顯示錯誤的物件
      */
@@ -40,25 +40,40 @@ class ModuleBase {
         } 
     }
 
-    $verify(data, validate, assign = {}) {
+    /**
+     * @function $verify
+     * @private
+     * @desc 驗證格式是否正確
+     */
+
+    $verify(data, validates, assign = {}) {
         let newData = {}
-        for (let key in validate) {
-            let v = validate[key]
-            if (v[0] && data[key] == null) {
-                this.$systemError('verify', 'Must required', key)
-                return
+        for (let key in validates) {
+            let validate = validates[key]
+            let required = validate[0]
+            let type = validate[1]
+            let defaultValue = validate[2]
+            if (required && data[key] == null) {
+                this.$systemError('verify', `Key(${key}) is required`)
             }
-            if (data[key] != null) {
-                if (typeof v[1] === (typeof data[key] === 'string' && data[key][0] === "#") ? data[key].slice(1) : 'string') {
-                    newData[key] = data[key]
-                } else {
-                    this.$systemError('verify', `Type(${typeof v[1]}) error`, key)
-                }
-            } else {
-                newData[key] = v[1]
+            if (type && data[key] != null && !type.includes(typeof data[key])) {
+                this.$systemError('verify', `Type(${key}::${typeof data[key]}) error, need ${type.join(' or ')}`)
             }
+            newData[key] = data[key] || defaultValue
         }
         return Object.assign(newData, assign)
+    }
+
+    /**
+     * @function $protection
+     * @private
+     * @desc 保護物件不被修改
+     */
+
+    $protection(data) {
+        return new Proxy(data, {
+            set: (target, key) => this.$systemError('$protection', `Key(${key}) is protection`, target)
+        })
     }
 
 }

@@ -100,3 +100,32 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 
 * system_error: 系統錯誤的this被指引錯誤，錯誤的錯誤
 * packing: 參數計算的錯誤
+
+## 1.0.9
+
+### INFO
+
+稍微拯救了孤兒Line，共享tool的紅利。
+
+做了一點比較長遠的規劃，基本上是定型的一個版本，下一步應該會是完整的說明文件。
+
+## NEW
+
+* Line => input to tool: 可以使用tool的模式宣告input
+* Line => layout to tool: 可以使用tool的模式宣告layout
+* Line => setRule: 可以宣告rule獲取和tool一樣的效果
+* Tool => promise => ng : 可以接受第二個參數 { resolve: true } 來使錯誤回報resolve
+* Tool => tool: include的簡寫
+* Tool => line: 可以引入line了
+* Tool => weld: 將結果引入外部tool並共享ng
+* Tool => rule : 一同宣告ng和sop
+* Tool => clear: 清空所有狀態
+* Mold => extras : 能用|分割參數
+* Mold => 取得index與call name
+* Group => secure : 保護數值不被更動
+
+### MODIFY
+
+* copy support機制 : 現在重複用tool更安全了
+* Public mold : 不可被取代。
+* order : onReady重複宣告時不會做動也不會報錯

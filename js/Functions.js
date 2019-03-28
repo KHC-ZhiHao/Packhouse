@@ -41,4 +41,5 @@ class Functions {
         }
         return commaCount + 1
     }
+
 }

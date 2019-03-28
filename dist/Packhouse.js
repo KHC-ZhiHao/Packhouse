@@ -58,6 +58,7 @@ class Functions {
         }
         return commaCount + 1
     }
+
 }
 /**
  * @class ModuleBase
@@ -87,7 +88,7 @@ class ModuleBase {
     }
 
     /**
-     * @noKey $systemError(functionName,maessage,object)
+     * @function $noKey(functionName,maessage,object)
      * @private
      * @desc 於console呼叫錯誤，中斷程序並顯示錯誤的物件
      */
@@ -101,25 +102,40 @@ class ModuleBase {
         } 
     }
 
-    $verify(data, validate, assign = {}) {
+    /**
+     * @function $verify
+     * @private
+     * @desc 驗證格式是否正確
+     */
+
+    $verify(data, validates, assign = {}) {
         let newData = {}
-        for (let key in validate) {
-            let v = validate[key]
-            if (v[0] && data[key] == null) {
-                this.$systemError('verify', 'Must required', key)
-                return
+        for (let key in validates) {
+            let validate = validates[key]
+            let required = validate[0]
+            let type = validate[1]
+            let defaultValue = validate[2]
+            if (required && data[key] == null) {
+                this.$systemError('verify', `Key(${key}) is required`)
             }
-            if (data[key] != null) {
-                if (typeof v[1] === (typeof data[key] === 'string' && data[key][0] === "#") ? data[key].slice(1) : 'string') {
-                    newData[key] = data[key]
-                } else {
-                    this.$systemError('verify', `Type(${typeof v[1]}) error`, key)
-                }
-            } else {
-                newData[key] = v[1]
+            if (type && data[key] != null && !type.includes(typeof data[key])) {
+                this.$systemError('verify', `Type(${key}::${typeof data[key]}) error, need ${type.join(' or ')}`)
             }
+            newData[key] = data[key] || defaultValue
         }
         return Object.assign(newData, assign)
+    }
+
+    /**
+     * @function $protection
+     * @private
+     * @desc 保護物件不被修改
+     */
+
+    $protection(data) {
+        return new Proxy(data, {
+            set: (target, key) => this.$systemError('$protection', `Key(${key}) is protection`, target)
+        })
     }
 
 }
@@ -153,7 +169,11 @@ class Packhouse extends ModuleBase {
 
     static createPublicMold(options) {
         let mold = new Mold(options)
-        PublicMolds[mold.name] = mold
+        if (PublicMolds[mold.name]) {
+            throw new Error(`(☉д⊙)!! PackHouse::createPublicMold -> Public mold name(${mold.name}) already exists.`)
+        } else {
+            PublicMolds[mold.name] = mold
+        }
     }
 
     /**
@@ -382,7 +402,7 @@ class Order extends ModuleBase {
         super('Order')
         this.init()
         this.options = this.$verify(options, {
-            max: [false, 1000]
+            max: [false, ['number'], 1000]
         })
     }
 
@@ -481,11 +501,7 @@ class Order extends ModuleBase {
      */
 
     getOrCreate(key) {
-        if (this.has(key)) {
-            return this.get(key)
-        } else {
-            return this.create(key)
-        }
+        return this.has(key) ? this.get(key) : this.create(key)
     }
 
 }
@@ -558,8 +574,6 @@ class OrderCache extends ModuleBase {
         if (this.isReady() === false) {
             this.ready = true
             callback(this.setError.bind(this), this.setSuccess.bind(this))
-        } else {
-            this.$systemError('onReady', 'This cache is ready, use order.clear() reset cache.')
         }
     }
 
@@ -626,40 +640,98 @@ class OrderCache extends ModuleBase {
     }
 
 }
+/**
+ * @class Response
+ * @desc 控制result的class
+ */
+
 class Response {
 
-    constructor(supports) {
-        this.over = false
+    constructor(group, supports) {
         this.sop = supports.sop
-        this.noGood = supports.noGood
+        this.over = false
+        this.group = group
+        this.welds = null
+        this.exports = {
+            error: this.error.bind(this),
+            success: this.success.bind(this)
+        }
+        if (supports.welds.length > 0) {
+            this.welds = supports.welds
+        }
+        if (supports.noGood) {
+            this.noGood = supports.noGood.action
+            this.noGoodOptions = supports.noGood.options
+        }
     }
+
+    /**
+     * @function getError
+     * @private
+     * @desc 獲取錯誤狀態
+     */
 
     getError(message) {
         return message || 'unknown error'
     }
 
-    exports() {
-        return {
-            error: m => this.error(m),
-            success: m => this.success(m)
-        }
-    }
+    /**
+     * @function error
+     * @desc 宣告錯誤狀態
+     */
 
     error(result) {
         if (this.over === false) {
             this.over = true
             this.errorBase(result)
-            this.callSop({ success: false, result: result })
+            this.callSop({ result, success: false })
         }
     }
+
+    /**
+     * @function success
+     * @desc 宣告成功狀態
+     */
 
     success(result) {
         if (this.over === false) {
             this.over = true
-            this.successBase(result)
-            this.callSop({ success: true, result: result })
+            this.runWeld(result, (result) => {
+                this.successBase(result)
+                this.callSop({ result, success: true })
+            })
         }
     }
+
+    /**
+     * @function runWeld
+     * @private
+     * @desc 運行Weld
+     */
+
+    runWeld(result, callback) {
+        if (this.welds == null) {
+            callback(result)
+            return null
+        }
+        let weld = this.welds.pop()
+        if (weld) {
+            let tool = this.group.callTool(weld.tool)
+            weld.packing(result, tool.packing)
+            tool.ng(this.noGood, this.noGoodOptions)
+                .action((result) => {
+                    this.runWeld(result, callback)
+                })
+        } else {
+            callback(result)
+        }
+    }
+
+    /**
+     * @function callSop
+     * @private
+     * @desc 呼叫sup
+     */
 
     callSop(context) {
         if (this.sop) {
@@ -669,12 +741,23 @@ class Response {
 
 }
 
+/**
+ * @class ResponseDirect
+ * @desc Direct的Response模型
+ */
+
 class ResponseDirect extends Response {
 
-    constructor(supports) {
-        super(supports)
+    constructor(group, supports) {
+        super(group, supports)
         this.result = null
     }
+
+    /**
+     * @function errorBase
+     * @private
+     * @desc 專屬的錯誤執行殼層
+     */
 
     errorBase(result) {
         if (this.noGood) {
@@ -684,18 +767,35 @@ class ResponseDirect extends Response {
         }
     }
 
+    /**
+     * @function successBase
+     * @private
+     * @desc 專屬的成功執行殼層
+     */
+
     successBase(result) {
         this.result = result
     }
 
 }
 
+/**
+ * @class ResponseAction
+ * @desc Action的Response模型
+ */
+
 class ResponseAction extends Response {
 
-    constructor(supports, callback) {
-        super(supports)
+    constructor(group, supports, callback) {
+        super(group, supports)
         this.callback = callback || function () {}
     }
+
+    /**
+     * @function errorBase
+     * @private
+     * @desc 專屬的錯誤執行殼層
+     */
 
     errorBase(result) {
         let message = this.getError(result)
@@ -705,6 +805,12 @@ class ResponseAction extends Response {
             this.callback(message, null)
         }
     }
+
+    /**
+     * @function successBase
+     * @private
+     * @desc 專屬的成功執行殼層
+     */
 
     successBase(result) {
         if (this.noGood) {
@@ -716,27 +822,223 @@ class ResponseAction extends Response {
 
 }
 
+/**
+ * @class ResponsePromise
+ * @desc Promise的Response模型
+ */
+
 class ResponsePromise extends Response {
 
-    constructor(supports, resolve, reject) {
-        super(supports)
+    constructor(group, supports, resolve, reject) {
+        super(group, supports)
         this.resolve = resolve
         this.reject = reject
     }
+
+    /**
+     * @function errorBase
+     * @private
+     * @desc 專屬的錯誤執行殼層
+     */
 
     errorBase(result) {
         let message = this.getError(result)
         if (this.noGood) {
             this.noGood(message)
         }
-        this.reject(message)
+        if (this.noGood && this.noGoodOptions.resolve) {
+            this.resolve(message)
+        } else {
+            this.reject(message)
+        }
     }
+
+    /**
+     * @function successBase
+     * @private
+     * @desc 專屬的成功執行殼層
+     */
 
     successBase(result) {
         this.resolve(result)
     }
 
 }
+/**
+ * @class Support
+ * @desc 建立tool後的Exports的攜帶物件
+ */
+
+class Support extends ModuleBase {
+
+    constructor() {
+        super('Support')
+        this.sop = null
+        this.welds = []
+        this.noGood = null
+        this.package = []
+        this.exports = null
+    }
+
+    /**
+     * @function createExports
+     * @private
+     * @desc 擲出Exports
+     */
+
+    createExports(lambdas) {
+        this.exports = {
+            ...lambdas,
+            ng: this.setNoGood.bind(this),
+            unNg: this.unNoGood.bind(this),
+            sop: this.setSop.bind(this),
+            rule: this.setRule.bind(this),
+            unSop: this.unSop.bind(this),
+            weld: this.addWeld.bind(this),
+            clear: this.clear.bind(this),
+            unWeld: this.unWeld.bind(this),
+            packing: this.addPacking.bind(this),
+            unPacking: this.unPacking.bind(this)
+        }
+        return this.exports
+    }
+
+    /**
+     * @function copy
+     * @private
+     * @desc 當lambda被執行後要拷貝狀態
+     */
+
+    copy() {
+        return {
+            sop: this.sop,
+            welds: this.welds.slice(),
+            noGood: this.noGood,
+            package: this.package.slice()
+        }
+    }
+
+    /**
+     * @function addWeld
+     * @desc 加入一則Weld
+     */
+
+    addWeld(tool, packing) {
+        this.welds.push({ tool, packing })
+        return this.exports
+    }
+
+    /**
+     * @function unWeld
+     * @desc 移除所有Weld
+     */
+
+    unWeld() {
+        this.welds = []
+        return this.exports
+    }
+
+    /**
+     * @function setRule
+     * @desc 設置規則
+     */
+
+    setRule(noGood, sop, options) {
+        if (noGood) {
+            this.setNoGood(noGood, options)
+        }
+        if (sop) {
+            this.setSop(sop)
+        }
+        return this.exports
+    }
+
+    /**
+     * @function setNoGood
+     * @desc 設置ng
+     */
+
+    setNoGood(action, options = {}) {
+        if (typeof action === 'function') {
+            this.noGood = {
+                action: action,
+                options: this.$verify(options, {
+                    resolve: [false, ['boolean'], false]
+                })
+            }
+            return this.exports
+        }
+        this.$systemError('setNG', 'NG param not a function.', action)
+    }
+
+    /**
+     * @function unNoGood
+     * @desc 移除ng
+     */
+
+    unNoGood() {
+        this.noGood = null
+        return this.exports
+    }
+
+    /**
+     * @function setSop
+     * @desc 設置sop
+     */
+
+    setSop(action) {
+        if (typeof action === 'function') {
+            this.sop = action
+            return this.exports
+        }
+        this.$systemError('setSOP', 'SOP param not a function.', action)
+    }
+
+    /**
+     * @function unSop
+     * @desc 移除sop
+     */
+
+    unSop() {
+        this.sop = null
+        return this.exports
+    }
+
+    /**
+     * @function addPacking
+     * @desc 加入一則預參數
+     */
+
+    addPacking() {
+        this.package = this.package.concat([...arguments])
+        return this.exports
+    }
+
+    /**
+     * @function unPacking
+     * @desc 移除所有預參數
+     */
+
+    unPacking() {
+        this.package = []
+        return this.exports
+    }
+
+    /**
+     * @function clear
+     * @desc 移除所有參數
+     */
+
+    clear() {
+        this.unNoGood()
+        this.unSop()
+        this.unWeld()
+        this.unPacking()
+        return this.exports
+    }
+
+}
+
 /**
  * @class Tool
  * @desc Assembly的最小單位，負責執行指定邏輯
@@ -764,15 +1066,16 @@ class Tool extends ModuleBase {
         this.store = {}
         this.group = group
         this.updateStamp = 0
+        this.exportStore = this.group.data.secure ? this.$protection(this.store) : this.store
         this.argumentLength = typeof options.paramLength === 'number' ? options.paramLength : -1
         this.data = this.$verify(options, {
-            name: [true, ''],
-            molds: [false, []],
-            create: [false, function () {}],
-            action: [true, '#function'],
-            update: [false, function () {}],
-            updateTime: [false, -1],
-            allowDirect: [false, true]
+            name: [true, ['string']],
+            molds: [false, ['object'], []],
+            create: [false, ['function'], function () {}],
+            action: [true, ['function']],
+            update: [false, ['function'], function () {}],
+            updateTime: [false, ['number'], -1],
+            allowDirect: [false, ['boolean'], true]
         })
     }
 
@@ -864,11 +1167,13 @@ class Tool extends ModuleBase {
     initSystem() {
         this.system = {
             coop: this.coop.bind(this),
-            store: this.store,
-            group: this.group.case,
+            tool: this.useTool.bind(this),
+            line: this.useLine.bind(this),
+            store: this.exportStore,
+            group: this.group.exportCase,
             update: this.update.bind(this),
-            include: this.include.bind(this),
-            casting: this.parseMold.bind(this),
+            include: this.useTool.bind(this),
+            casting: this.casting.bind(this),
             updateCall: this.updateCall.bind(this)
         }
     }
@@ -895,56 +1200,14 @@ class Tool extends ModuleBase {
      */
 
     createExports() {
-        let supData = {
-            sop: null,
-            noGood: null,
-            package: []
-        }
-        let exps = {
+        let support = new Support()
+        let exports = {
             store: this.getStore.bind(this),
-            direct: this.createLambda(this.direct, 'direct', supData),
-            action: this.createLambda(this.action, 'action', supData),
-            promise: this.createLambda(this.promise, 'promise', supData)
+            direct: this.createLambda(this.direct, 'direct', support),
+            action: this.createLambda(this.action, 'action', support),
+            promise: this.createLambda(this.promise, 'promise', support)
         }
-        let supports = this.createSupport(exps, supData)
-        return Object.assign(exps, supports)
-    }
-
-    /**
-     * @function createSupport
-     * @private
-     * @desc 建立輔助方法
-     */
-
-    createSupport(exps, supData) {
-        let ng = (broadcast) => {
-            if (typeof broadcast === 'function') {
-                supData.noGood = broadcast
-                return exps
-            }
-            this.$systemError('setNG', 'NG param not a function.', broadcast)
-        }
-        let sop = (broadcast) => {
-            if (typeof broadcast === 'function') {
-                supData.sop = broadcast
-                return exps
-            }
-            this.$systemError('setSOP', 'SOP param not a function.', broadcast)
-        }
-        let unSop = function() {
-            supData.sop = null
-            return exps
-        }
-        let packing = function() {
-            supData.package = supData.package.concat([...arguments])
-            return exps
-        }
-
-        let unPacking = function() {
-            supData.package = []
-            return exps
-        }
-        return { ng, packing, unPacking, sop, unSop }
+        return support.createExports(exports)
     }
 
     /**
@@ -963,29 +1226,20 @@ class Tool extends ModuleBase {
      * @desc 封裝function，神奇的地方，同時也是可怕的效能吞噬者
      */
 
-    createLambda(func, type, supports) {
+    createLambda(func, type, support) {
         let name = Symbol(this.group.data.alias + '_' + this.name + '_' + type)
         let call = func.bind(this)
         let actionCallback = this.getActionCallback(type)
         let tool = {
             [name]: (...options) => {
-                let packages = supports.package
+                let supports = support.copy()
+                let args = new Array(this.argumentLength + 3)
                 let length = this.argumentLength
-                let argsLength = packages.length + options.length
+                let callback = actionCallback(options)
+                let packages = supports.package
                 let packagesLength = packages.length
-                let args = new Array(length + 3)
-                let params = new Array(argsLength)
-                for (let i = 0; i < argsLength; i++) {
-                    if (i >= packagesLength) {
-                        let j = i - packagesLength
-                        params[i] = options[j]
-                    } else {
-                        params[i] = packages[i]
-                    }
-                }
-                let callback = actionCallback(params)
-                for (let i = 0; i < length; i++) {
-                    args[i] = params[i]
+                for (let i = length; i--;) {
+                    args[i] = i >= packagesLength ? options[i - packagesLength] : packages[i]
                 }
                 return call(args, callback, supports)
             }
@@ -1000,9 +1254,7 @@ class Tool extends ModuleBase {
      */
 
     getActionCallback(type) {
-        if (type !== 'action') {
-            return function() { return null }
-        } else {
+        if (type === 'action') {
             return (params) => {
                 let callback = params.pop()
                 if (typeof callback !== 'function') {
@@ -1010,6 +1262,8 @@ class Tool extends ModuleBase {
                 }
                 return callback
             }
+        } else {
+            return function() { return null }
         }
     }
 
@@ -1019,9 +1273,9 @@ class Tool extends ModuleBase {
      * @desc 解讀Mold是否正確
      */
 
-    parseMold(name, params, error) {
+    parseMold(name, params, error, system) {
         let mold = this.group.getMold(name)
-        let check = mold.check(params)
+        let check = mold.check(params, system)
         if (check === true) {
             return mold.casting(params)
         } else {
@@ -1034,13 +1288,39 @@ class Tool extends ModuleBase {
     }
 
     /**
-     * @function include
+     * @function casting
+     * @private
+     * @desc 從system引用的casting接口
+     */
+
+    casting(name, data, callback) {
+        let split = name.split('|')
+        let call = split.shift()
+        let type = 'system'
+        let index = 0
+        let extras = split
+        let caller = this.name
+        this.parseMold(call, data, callback, { type, index, extras, caller })
+    }
+
+    /**
+     * @function useTool
      * @private
      * @desc 引入同Group的Tool
      */
 
-    include(name) {
-        return this.group.getTool(name).use()
+    useTool(name) {
+        return this.group.callTool(name)
+    }
+
+    /**
+     * @function useLine
+     * @private
+     * @desc 引入同Group的Line
+     */
+
+    useLine(name) {
+        return this.group.callLine(name)
     }
 
     /**
@@ -1067,9 +1347,18 @@ class Tool extends ModuleBase {
         // 驗證參數是否使用mold
         let moldLength = this.moldLength
         for (let i = 0; i < moldLength; i++) {
-            let name = this.data.molds[i]
+            if (this.data.molds[i] == null) {
+                continue
+            }
+            let split = this.data.molds[i].split('|')
+            let name = split.shift()
             if (name) {
-                params[i] = this.parseMold(name, params[i], error)
+                params[i] = this.parseMold(name, params[i], error, {
+                    type: 'call',
+                    index: i,
+                    extras: split,
+                    caller: this.name
+                })
             }
         }
         // 執行action
@@ -1090,9 +1379,11 @@ class Tool extends ModuleBase {
         if (this.data.allowDirect === false) {
             this.$systemError('direct', `Tool(${this.data.name}) no allow direct.`)
         }
-        let response = new ResponseDirect(supports)
-        let responseExports = response.exports()
-        this.call(params, responseExports.error, responseExports.success)
+        if (supports.welds.length > 0) {
+            this.$systemError('direct', `Tool(${this.data.name}) use weld, can do direct.`)
+        }
+        let response = new ResponseDirect(this.group, supports)
+        this.call(params, response.exports.error, response.exports.success)
         return response.result
     }
 
@@ -1103,7 +1394,7 @@ class Tool extends ModuleBase {
      */
 
     action(params, callback, supports) {
-        let response = (new ResponseAction(supports, callback)).exports()
+        let response = (new ResponseAction(this.group, supports, callback)).exports
         this.call(params, response.error, response.success)
     }
 
@@ -1115,7 +1406,7 @@ class Tool extends ModuleBase {
 
     promise(params, callback, supports) {
         return new Promise((resolve, reject) => {
-            let response = (new ResponsePromise(supports, resolve, reject)).exports()
+            let response = (new ResponsePromise(this.group, supports, resolve, reject)).exports
             this.call(params, response.error, response.success)
         })
     }
@@ -1163,17 +1454,17 @@ class Line extends ModuleBase {
 
     constructor(options, group) {
         super("Line");
-        this.group = group;
-        this.data = this.$verify(options, {
-            name: [true, ''],
-            fail: [true, '#function'],
-            inlet: [false, []],
-            input: [true, '#function'],
-            output: [true, '#function'],
-            layout: [true, {}]
-        })
-        this.inlet = this.data.inlet || null
         this.tools = {}
+        this.group = group
+        this.data = this.$verify(options, {
+            name: [true, ['string']],
+            fail: [true, ['function']],
+            inlet: [false, ['object'], null],
+            input: [true, ['object', 'function']],
+            output: [true, ['object', 'function']],
+            layout: [true, ['object']]
+        })
+        this.layoutKeys = Object.keys(this.data.layout)
         this.checkPrivateKey()
     }
 
@@ -1187,7 +1478,7 @@ class Line extends ModuleBase {
 
     checkPrivateKey() {
         let layout = this.data.layout
-        if( layout.action || layout.promise || layout.setRule ){
+        if (layout.action || layout.promise || layout.setRule) {
             this.$systemError('init', 'Layout has private key(action, promise, setRule)')
         }
     }
@@ -1199,10 +1490,8 @@ class Line extends ModuleBase {
      */
 
     use() {
-        let self = this
-        return function() {
-            let unit = new Deploy(self, [...arguments])
-            return unit.getConveyer()
+        return (...options) => {
+            return (new Deploy(this, options)).conveyer
         }
     }
 
@@ -1227,6 +1516,7 @@ class Deploy extends ModuleBase {
         this.main = main
         this.layout = main.data.layout
         this.params = params
+        this.supports = new Support()
         this.init()
     }
 
@@ -1236,8 +1526,17 @@ class Deploy extends ModuleBase {
      * @desc 實例化layout
      */
 
-    createTool(name, action) {
-        return (new Tool({ name, action }, this.main.group, this.case)).use()
+    createTool(name, target, nonTool) {
+        if (typeof target === 'function') {
+            return (new Tool({ name, action: target }, this.main.group, this.case)).use()
+        } else if (nonTool) {
+            this.$systemError('createTool', `${name} not a function.`)
+        } else {
+            if (target.name) {
+                delete target.name
+            }
+            return (new Tool({ name, ...target }, this.main.group, this.case)).use()
+        }
     }
 
     /**
@@ -1248,7 +1547,7 @@ class Deploy extends ModuleBase {
 
     init() {
         this.input = this.createTool('input', this.main.data.input)
-        this.output = this.createTool('output', this.main.data.output)
+        this.output = this.createTool('output', this.main.data.output, true)
         this.initConveyer()
     }
 
@@ -1259,27 +1558,17 @@ class Deploy extends ModuleBase {
      */
 
     initConveyer() {
-        let self = this;
         this.conveyer = {
             action: this.action.bind(this),
-            promise: this.promise.bind(this)
+            promise: this.promise.bind(this),
+            setRule: this.setRule.bind(this)
         }
-        for (let name in this.layout) {
-            this.conveyer[name] = function() {
-                self.register(name, [...arguments])
-                return self.getConveyer()
+        for (let name of this.main.layoutKeys) {
+            this.conveyer[name] = (...options) => {
+                this.register(name, options)
+                return this.conveyer
             }
         }
-    }
-
-    /**
-     * @function getConveyer
-     * @private
-     * @desc 輸送帶的對外接口
-     */
-
-    getConveyer() {
-        return this.conveyer
     }
 
     /**
@@ -1289,17 +1578,17 @@ class Deploy extends ModuleBase {
      */
 
     register(name, params) {
-        if (this.main.inlet.length !== 0 && this.flow.length === 0) {
-            if (!this.main.inlet.includes(name)) {
-                this.$systemError('register', `First call method not inside inlet, you use'${name}'.`)
+        let inlet = this.main.data.inlet
+        if (inlet && inlet.length !== 0 && this.flow.length === 0) {
+            if (inlet.includes(name) === false) {
+                this.$systemError('register', `First call method not inside inlet, you use '${name}'.`)
             }
         }
-        let data = {
+        this.flow.push({
             name: name,
             method: this.createTool(name, this.layout[name]),
             params: params
-        }
-        this.flow.push(data)
+        })
     }
 
     /**
@@ -1309,15 +1598,10 @@ class Deploy extends ModuleBase {
      */
 
     action(callback) {
-        let error = (error) => {
-            this.main.data.fail(error, (report) => {
-                callback(report, null)
-            })
-        }
-        let success = (success) => {
-            callback(null, success)
-        }
-        this.process(error, success)
+        let fail = this.main.data.fail
+        let supports = this.supports.copy()
+        let response = (new ResponseAction(this.main.group, supports, callback)).exports
+        this.process(error => fail(error, response.error), response.success)
     }
 
     /**
@@ -1327,15 +1611,23 @@ class Deploy extends ModuleBase {
      */
 
     promise() {
-        return new Promise(( resolve, reject )=>{
-            this.action((err, result) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(result)
-                }
-            })
+        return new Promise(( resolve, reject ) => {
+            let fail = this.main.data.fail
+            let supports = this.supports.copy()
+            let response = (new ResponsePromise(this.main.group, supports, resolve, reject)).exports
+            this.process(error => fail(error, response.error), response.success)
         })
+    }
+
+    /**
+     * @function setRule
+     * @private
+     * @desc 效力等同rule(ng, sop, ngOptions)
+     */
+
+    setRule(...options) {
+        this.supports.setRule(...options)
+        return this.conveyer
     }
 
     /**
@@ -1345,8 +1637,7 @@ class Deploy extends ModuleBase {
      */
 
     process(error, success) {
-        let rightNow = new Process(this.params, this.flow, this.input, this.output)
-        rightNow.start(error, success)
+        (new Process(this.params, this.flow, this.input, this.output)).start(error, success)
     }
 
 }
@@ -1360,12 +1651,12 @@ class Process extends ModuleBase {
 
     constructor(params, flow, input, output) {
         super('Process')
-        this.params = params
         this.stop = false
         this.flow = flow
         this.index = 0
         this.stack = []
         this.input = input
+        this.params = params
         this.output = output
     }
 
@@ -1379,13 +1670,7 @@ class Process extends ModuleBase {
         this.error = error
         this.success = success
         this.stack.push('input')
-        this.input.action(...this.params, (err) => {
-            if (err) {
-                this.fail(err)
-            } else {
-                this.next()
-            }
-        })
+        this.input.ng(this.fail).action(...this.params, this.next.bind(this))
     }
 
     /**
@@ -1396,13 +1681,7 @@ class Process extends ModuleBase {
 
     finish() {
         this.stack.push('output')
-        this.output.action((err, result) => {
-            if (err) {
-                this.fail(err)
-            } else {
-                this.success(result)
-            }
-        })
+        this.output.ng(this.fail).action(this.success)
     }
 
     /**
@@ -1438,18 +1717,15 @@ class Process extends ModuleBase {
      */
 
     next() {
+        if (this.stop === true) { return }
         let flow = this.flow[this.index]
-        if (flow && this.stop === false) {
+        if (flow) {
             this.stack.push(flow.name)
-            flow.method.action(...flow.params, (err) => {
-                if (err) {
-                    this.fail(err)
-                } else {
-                    this.index += 1
-                    this.next()
-                }
+            flow.method.ng(this.fail).action(...flow.params, () => {
+                this.index += 1
+                this.next()
             })
-        } else if (this.stop === false) {
+        } else {
             this.finish()
         }
     }
@@ -1470,9 +1746,9 @@ class Mold extends ModuleBase {
         super('Mold')
         this.case = new Case()
         this.data = this.$verify(options, {
-            name: [true, ''],
-            check: [false, function() { return true }],
-            casting: [false, function (param) { return param }]
+            name: [true, ['string']],
+            check: [false, ['function'], function() { return true }],
+            casting: [false, ['function'], function (param) { return param }]
         })
     }
 
@@ -1481,13 +1757,13 @@ class Mold extends ModuleBase {
     }
 
     /**
-     * @function check(param)
+     * @function check(param,system)
      * @private
      * @desc 驗證參數
      */
 
-    check(param) {
-        return this.data.check.call(this.case, param)
+    check(param, system) {
+        return this.data.check.call(this.case, param, system)
     }
 
     /**
@@ -1506,15 +1782,17 @@ let PublicMolds = {
 
     number: new Mold({
         name: 'number',
-        check(param) {
-            return typeof param === 'number' ? true : `Param(${param}) not a number.`
+        check(param, system) {
+            if (param == null && system.extras[0] === 'abe') { return true }
+            return typeof param === 'number' ? true : `Param ${system.index} not a number(${param}).`
         }
     }),
 
     int: new Mold({
         name: 'int',
         check(param) {
-            return typeof param === 'number' ? true : `Param(${param}) not a number.`
+            if (param == null && system.extras[0] === 'abe') { return true }
+            return typeof param === 'number' ? true : `Param ${system.index} not a number(${param}).`
         },
         casting(param) {
             return Math.floor(param)
@@ -1524,32 +1802,37 @@ let PublicMolds = {
     string: new Mold({
         name: 'string',
         check(param) {
-            return typeof param === 'string' ? true : `Param(${param}) not a string.`
+            if (param == null && system.extras[0] === 'abe') { return true }
+            return typeof param === 'string' ? true : `Param ${system.index} not a string(${param}).`
         }
     }),
 
     array: new Mold({
         name: 'array',
         check(param) {
-            return Array.isArray(param) ? true : `Param(${param}) not a array.`
+            if (param == null && system.extras[0] === 'abe') { return true }
+            return Array.isArray(param) ? true : `Param ${system.index} not a array(${param}).`
         }
     }),
 
     object: new Mold({
         name: 'object',
         check(param) {
-            return typeof param === 'object' ? true : `Param(${param}) not a object.`
+            if (param == null && system.extras[0] === 'abe') { return true }
+            return typeof param === 'object' ? true : `Param ${system.index} not a object(${param}).`
         }
     }),
 
     function: new Mold({
         name: 'function',
         check(param) {
-            return typeof param === 'function' ? true : `Param(${param}) not a function.`
+            if (param == null && system.extras[0] === 'abe') { return true }
+            return typeof param === 'function' ? true : `Param ${system.index} not a function(${param}).`
         }
     })
 
 }
+
 /**
  * @class Group
  * @desc 封裝tool的群組，用於歸類與參數設定
@@ -1565,9 +1848,10 @@ class Group extends ModuleBase {
         super("Group")
         this.case = new Case()
         this.data = this.$verify(options, {
-            alias: [false, 'no_alias_group'],
-            merger: [false, {}],
-            create: [false, function(){}]
+            alias: [false, ['string'], 'no_alias_group'],
+            secure: [false, ['boolean'], false],
+            merger: [false, ['object'], {}],
+            create: [false, ['function'], function(){}]
         })
         this.linebox = {}
         this.moldbox = {}
@@ -1587,6 +1871,7 @@ class Group extends ModuleBase {
      */
 
     initStatus() {
+        this.exportCase = this.data.secure ? this.$protection(this.case) : this.case
         this.status = {
             created: false
         }
@@ -1724,7 +2009,7 @@ class Group extends ModuleBase {
     /**
      * @function addMolds
      * @desc 加入多個模塊
-     * @param {array} molds 建立mold所需要多個物件
+     * @param {object|array} molds 建立mold所需要多個物件
      */
 
     addMolds(molds) {
@@ -1732,9 +2017,18 @@ class Group extends ModuleBase {
             for (let mold of molds) {
                 this.addMold(mold)
             }
-        } else {
-            this.$systemError('addMolds', 'Molds not a array.', molds)
+            return true
         }
+        if (typeof molds === 'object') {
+            for (let key in molds) {
+                this.addTool({
+                    name: key,
+                    ...molds[key]
+                })
+            }
+            return true
+        }
+        this.$systemError('addMolds', 'Molds not a array or object.', molds)
     }
 
     /**
@@ -1748,6 +2042,31 @@ class Group extends ModuleBase {
         if (this.$noKey('addLine', this.linebox, line.name)) {
             this.linebox[line.name] = line
         }
+    }
+
+    /**
+     * @function addLines
+     * @desc 加入多個產線
+     * @param {object|array} options 建立line所需要的物件
+     */
+
+    addLines(lines){
+        if (Array.isArray(lines)) {
+            for (let line of lines) {
+                this.addLine(line)
+            }
+            return true
+        }
+        if (typeof lines === 'object') {
+            for (let key in lines) {
+                this.addLine({
+                    name: key,
+                    ...lines[key]
+                })
+            }
+            return true
+        }
+        this.$systemError('addLines', 'Lines not a array or object.', lines)
     }
 
     /**
@@ -1766,7 +2085,7 @@ class Group extends ModuleBase {
     /**
      * @function addTools
      * @desc 加入多個工具
-     * @param {array} tools 建立tool所需要多個物件
+     * @param {object|array} tools 建立tool所需要多個物件
      */
 
     addTools(tools) {
@@ -1774,9 +2093,18 @@ class Group extends ModuleBase {
             for (let tool of tools) {
                 this.addTool(tool)
             }
-        } else {
-            this.$systemError('addTools', 'Tools not a array.', tools)
+            return true
         }
+        if (typeof tools === 'object') {
+            for (let key in tools) {
+                this.addTool({
+                    name: key,
+                    ...tools[key]
+                })
+            }
+            return true
+        }
+        this.$systemError('addTools', 'Tools not a array or object.', tools)
     }
 
     /**

@@ -13,9 +13,9 @@ class Mold extends ModuleBase {
         super('Mold')
         this.case = new Case()
         this.data = this.$verify(options, {
-            name: [true, ''],
-            check: [false, function() { return true }],
-            casting: [false, function (param) { return param }]
+            name: [true, ['string']],
+            check: [false, ['function'], function() { return true }],
+            casting: [false, ['function'], function (param) { return param }]
         })
     }
 
@@ -24,13 +24,13 @@ class Mold extends ModuleBase {
     }
 
     /**
-     * @function check(param)
+     * @function check(param,system)
      * @private
      * @desc 驗證參數
      */
 
-    check(param) {
-        return this.data.check.call(this.case, param)
+    check(param, system) {
+        return this.data.check.call(this.case, param, system)
     }
 
     /**

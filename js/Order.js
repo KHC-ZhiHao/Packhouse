@@ -9,7 +9,7 @@ class Order extends ModuleBase {
         super('Order')
         this.init()
         this.options = this.$verify(options, {
-            max: [false, 1000]
+            max: [false, ['number'], 1000]
         })
     }
 
@@ -108,11 +108,7 @@ class Order extends ModuleBase {
      */
 
     getOrCreate(key) {
-        if (this.has(key)) {
-            return this.get(key)
-        } else {
-            return this.create(key)
-        }
+        return this.has(key) ? this.get(key) : this.create(key)
     }
 
 }
@@ -185,8 +181,6 @@ class OrderCache extends ModuleBase {
         if (this.isReady() === false) {
             this.ready = true
             callback(this.setError.bind(this), this.setSuccess.bind(this))
-        } else {
-            this.$systemError('onReady', 'This cache is ready, use order.clear() reset cache.')
         }
     }
 

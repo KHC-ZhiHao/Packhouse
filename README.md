@@ -1,6 +1,15 @@
-# Packhouse
+<p align="center"><img src="https://khc-zhihao.github.io/MyBook/Packhouse/images/logo.png"></p>
 
-[![NPM Version][npm-image]][npm-url]
+<p align="center" style="font-size:2em">藝術般的函數式設計Library</p>
+<p align="center">
+    <a href="https://www.npmjs.com/package/packhouse"><img src="https://img.shields.io/npm/v/packhouse.svg"></a>
+    <a href="https://github.com/KHC-ZhiHao/Packhouse"><img src="https://img.shields.io/github/stars/KHC-ZhiHao/Packhouse.svg?style=social"></a>
+    <br><br>
+    <a href="">Document</a><br>
+    <a href="">Version Log</a>
+</p>
+
+---
 
 ## 簡介
 
@@ -354,7 +363,9 @@ group.addMolds([
 
 #### public mold(v1.0.1)
 
-全域宣告的mold，可以定義一些通用的mold，需要注意的是，public mold是可以**複寫**的。
+全域宣告的mold，可以定義一些通用的mold。
+
+> 在1.0.9版本後為了維持模組化的穩定，public mold是不允許被複寫的。
 
 >當group中有同名優先宣告的mold，則group優先
 
@@ -472,7 +483,7 @@ group.addLine({
     output: function({ include }, error, success) {
     	success(this.number)
     },
-    // 當執行鍊中觸發error就會觸發fail，err:{ stack, message} 的物件
+    // 當執行鍊中觸發error就會觸發fail，err:{ stack, message } 的物件
     fail: function(err, report) {
     	report(err)
     },
@@ -579,11 +590,6 @@ Packhouse.asyncLoop(arr, (target, index, onload) => {
 })
 
 ```
-
-## 其他
-[版本LOG](https://github.com/KHC-ZhiHao/Packhouse/blob/master/document/version.md)
-
-[開發者文件](https://khc-zhihao.github.io/Packhouse/document/document.html)
 
 [npm-image]: https://img.shields.io/npm/v/packhouse.svg
 [npm-url]: https://npmjs.org/package/packhouse

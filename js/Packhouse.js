@@ -27,7 +27,11 @@ class Packhouse extends ModuleBase {
 
     static createPublicMold(options) {
         let mold = new Mold(options)
-        PublicMolds[mold.name] = mold
+        if (PublicMolds[mold.name]) {
+            throw new Error(`(☉д⊙)!! PackHouse::createPublicMold -> Public mold name(${mold.name}) already exists.`)
+        } else {
+            PublicMolds[mold.name] = mold
+        }
     }
 
     /**
