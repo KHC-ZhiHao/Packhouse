@@ -5,6 +5,7 @@ let url = 'https://khc-zhihao.github.io/Packhouse/document/document.html'
 factory.setBridge((factory, groupName, toolName) => {
 	if (factory.hasGroup(groupName) === false) {
         let group = require(`./${groupName}`)
+        console.log(group.getProfile())
         if (Packhouse.isGroup(group)) {
             factory.addGroup(groupName, require(`./${groupName}`))
         } else {

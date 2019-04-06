@@ -24,6 +24,17 @@ class Mold extends ModuleBase {
     }
 
     /**
+     * @function getProfile()
+     * @desc 獲取mold的資料
+     */
+
+    getProfile() {
+        return {
+            name: this.data.name
+        }
+    }
+
+    /**
      * @function check(param,system)
      * @private
      * @desc 驗證參數

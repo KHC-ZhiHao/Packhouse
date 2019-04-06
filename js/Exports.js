@@ -27,6 +27,8 @@ class GroupExports {
         this.addTools = group.addTools.bind(group)
         this.callTool = group.callTool.bind(group)
         this.callLine = group.callLine.bind(group)
+        this.isModule = group.isModule.bind(group)
+        this.getProfile = group.getProfile.bind(group)
     }
 
 }

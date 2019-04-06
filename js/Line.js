@@ -31,6 +31,19 @@ class Line extends ModuleBase {
     get name() { return this.data.name }
 
     /**
+     * @function getProfile()
+     * @desc 獲取line的資料
+     */
+
+    getProfile() {
+        return {
+            name: this.data.name,
+            inlet: this.data.inlet,
+            layouts: Object.keys(this.data.layout)
+        }
+    }
+
+    /**
      * @function checkPrivateKey
      * @private
      * @desc action, promise, setRule是不允許被放在layout的

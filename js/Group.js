@@ -4,6 +4,8 @@
  * @argument options 實例化時可以接收以下參數
  * @param {string} alias Group別名
  * @param {object} merger 引用的外部Group
+ * @param {boolean} module 使否為模組
+ * @param {boolean} secure 是否使用安全模式
  * @param {function} create 首次使用該Group時呼叫
  */
 
@@ -14,19 +16,54 @@ class Group extends ModuleBase {
         this.case = new Case()
         this.data = this.$verify(options, {
             alias: [false, ['string'], 'no_alias_group'],
+            module: [false, ['boolean'], false],
             secure: [false, ['boolean'], false],
             merger: [false, ['object'], {}],
             create: [false, ['function'], function(){}]
         })
-        this.linebox = {}
-        this.moldbox = {}
         this.toolbox = {}
+        this.moldbox = {}
+        this.linebox = {}
         this.initStatus()
         this.initMerger()
     }
 
     static isGroup(group) {
         return group instanceof Group || group instanceof GroupExports
+    }
+
+    /**
+     * @function getProfile()
+     * @desc 獲取group的資料
+     */
+
+    getProfile() {
+        let profile = {
+            line: {},
+            mold: {},
+            tool: {},
+            alias: this.data.alias
+        }
+        for (let key in this.toolbox) {
+            profile.tool[key] = this.toolbox[key].getProfile()
+        }
+        for (let key in this.moldbox) {
+            profile.mold[key] = this.moldbox[key].getProfile()
+        }
+        for (let key in this.linebox) {
+            profile.line[key] = this.linebox[key].getProfile()
+        }
+        return profile
+    }
+
+    /**
+     * @function isModule()
+     * @private
+     * @desc 使否為模組狀態
+     */
+
+    isModule() {
+        return this.data.module
     }
 
     /**
@@ -77,6 +114,9 @@ class Group extends ModuleBase {
      */
 
     create(options) {
+        if (options && this.isModule()) {
+            this.$systemError('create', `Module mode can't use options`)
+        }
         if (this.status.created === false) {
             this.data.create.bind(this.case)(options)
             this.status.created = true

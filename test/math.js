@@ -2,6 +2,7 @@ let Packhouse = require('../dist/Packhouse')
 
 let group = Packhouse.createGroup({
     secure: true,
+    module: false,
     create() {
         this.testSecure = true
     }

@@ -76,6 +76,19 @@ class Tool extends ModuleBase {
     }
 
     /**
+     * @function getProfile()
+     * @desc 獲取tool的資料
+     */
+
+    getProfile() {
+        return {
+            name: this.data.name,
+            molds: this.data.molds,
+            allowDirect: this.data.allowDirect
+        }
+    }
+
+    /**
      * @function checkUpdate
      * @private
      * @desc 判定是否要update

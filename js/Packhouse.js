@@ -170,6 +170,10 @@ class Packhouse extends ModuleBase {
             this.$systemError('addGroup', 'Must group.', group)
             return
         }
+        if (group.isModule()) {
+            this.$systemError('addGroup', 'Group id module, only use alone or in the merger.', group)
+            return
+        }
         group.create(options)
         this.groups[name] = group
     }

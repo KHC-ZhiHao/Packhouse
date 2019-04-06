@@ -120,7 +120,7 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 * Tool => weld: 將結果引入外部tool並共享ng
 * Tool => rule : 一同宣告ng和sop
 * Tool => clear: 清空所有狀態
-* Mold => extras : 能用|分割參數
+* Mold => extras : 能用\|分割參數
 * Mold => 取得index與call name
 * Group => secure : 保護數值不被更動
 
@@ -129,3 +129,10 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 * copy support機制 : 現在重複用tool更安全了
 * Public mold : 不可被取代。
 * order : onReady重複宣告時不會做動也不會報錯
+
+## 1.1.0
+
+## NEW
+
+* Group => Module mold : 針對引用混亂的狀態做的修補行為
+* Group => Get Profile : 獲取Group的詳細資料，該版本仍為實驗功能
