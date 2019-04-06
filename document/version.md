@@ -132,7 +132,13 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 
 ## 1.1.0
 
-## NEW
+### NEW
 
 * Group => Module mold : 針對引用混亂的狀態做的修補行為
 * Group => Get Profile : 獲取Group的詳細資料，該版本仍為實驗功能
+
+## 1.1.1
+
+### FIX
+
+* 修正文本錯誤

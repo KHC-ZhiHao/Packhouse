@@ -47,7 +47,7 @@ let factory = Packhouse.createFactory()
 
 ## 開始 (How to use?)
 
-[教學文件 (base gitbook)](https://khc-zhihao.github.io/MyBook/Nucleoid/static/)
+[教學文件 (base gitbook)](https://khc-zhihao.github.io/MyBook/Packhouse/static/)
 
 ## 文件
 
