@@ -142,3 +142,9 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 ### FIX
 
 * 修正文本錯誤
+
+## 1.1.2
+
+### FIX
+
+* Public mold : 修復System未被引入的錯誤

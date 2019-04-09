@@ -1831,7 +1831,7 @@ let PublicMolds = {
 
     int: new Mold({
         name: 'int',
-        check(param) {
+        check(param, system) {
             if (param == null && system.extras[0] === 'abe') { return true }
             return typeof param === 'number' ? true : `Param ${system.index} not a number(${param}).`
         },
@@ -1842,7 +1842,7 @@ let PublicMolds = {
 
     string: new Mold({
         name: 'string',
-        check(param) {
+        check(param, system) {
             if (param == null && system.extras[0] === 'abe') { return true }
             return typeof param === 'string' ? true : `Param ${system.index} not a string(${param}).`
         }
@@ -1850,7 +1850,7 @@ let PublicMolds = {
 
     array: new Mold({
         name: 'array',
-        check(param) {
+        check(param, system) {
             if (param == null && system.extras[0] === 'abe') { return true }
             return Array.isArray(param) ? true : `Param ${system.index} not a array(${param}).`
         }
@@ -1858,7 +1858,7 @@ let PublicMolds = {
 
     object: new Mold({
         name: 'object',
-        check(param) {
+        check(param, system) {
             if (param == null && system.extras[0] === 'abe') { return true }
             return typeof param === 'object' ? true : `Param ${system.index} not a object(${param}).`
         }
@@ -1866,7 +1866,7 @@ let PublicMolds = {
 
     function: new Mold({
         name: 'function',
-        check(param) {
+        check(param, system) {
             if (param == null && system.extras[0] === 'abe') { return true }
             return typeof param === 'function' ? true : `Param ${system.index} not a function(${param}).`
         }
