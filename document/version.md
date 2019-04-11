@@ -148,3 +148,13 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 ### FIX
 
 * Public mold : 修復System未被引入的錯誤
+
+## 1.1.3
+
+### NEW
+
+* Pump : 優質的計數器，讚讚
+* Tool => description : 工具敘述，浪費記憶體但我覺得很值得
+* Tool => replace : 複寫名子以外的功能
+* Group => merger : 支援使用function回傳group來建立懶加載的系統，太棒惹
+* Public mold => required : 要求不能為空

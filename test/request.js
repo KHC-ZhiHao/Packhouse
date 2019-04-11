@@ -1,6 +1,10 @@
 let Packhouse = require('../dist/Packhouse')
 
 let group = Packhouse.createGroup({
+    merger: {
+        math: require('./math'),
+        math2: () => require('./math')
+    },
     create() {
         console.log('request start')
     }
@@ -13,6 +17,9 @@ group.addTools([
         paramLength: 2,
         allowDirect: false,
         create: function(store, system) {
+            this.math = system.coop('math')
+            this.math2 = system.coop('math2')
+            this.math2.tool('sum').sop(m => {console.log('math2 success')}).direct(10, 20)
             this.request = require('request')
         },
         action: function(method, params, system, error, success) {

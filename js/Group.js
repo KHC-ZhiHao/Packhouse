@@ -57,6 +57,16 @@ class Group extends ModuleBase {
     }
 
     /**
+     * @function replace(name,optnios)
+     * @desc 使否為模組狀態
+     */
+
+    replaceTool(name, optnios) {
+        let tool = this.getTool(name)
+        tool.replace(optnios)
+    }
+
+    /**
      * @function isModule()
      * @private
      * @desc 使否為模組狀態
@@ -88,8 +98,8 @@ class Group extends ModuleBase {
     initMerger() {
         for (let key in this.data.merger) {
             let group = this.data.merger[key]
-            if (Group.isGroup(group) === false) {
-                this.$systemError('initMerger', `The '${key}' not a group.`)
+            if (Group.isGroup(group) === false && typeof group !== 'function') {
+                this.$systemError('initMerger', `The '${key}' not a group or function.`)
             }
         }
     }
@@ -174,6 +184,13 @@ class Group extends ModuleBase {
 
     getMerger(name) {
         if (this.data.merger[name]) {
+            if (typeof this.data.merger[name] === 'function') {
+                let group = this.data.merger[name]()
+                if (Group.isGroup(group) === false) {
+                    this.$systemError('getMerger', `The '${name}' not a group.`)
+                }
+                this.data.merger[name] = group
+            }
             return this.data.merger[name].alone()
         } else {
             this.$systemError('getMerger', `Merger(${name}) not found.`)

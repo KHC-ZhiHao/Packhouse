@@ -14,6 +14,26 @@ factory.setBridge((factory, groupName, toolName) => {
     }
 })
 
+let pump = Packhouse.createPump(3, () => { console.log('pump success') })
+
+try{
+    pump.add('5')
+} catch(e) {
+    console.log('pump error success')
+}
+
+try{
+    pump.add(-5)
+} catch(e) {
+    console.log('pump error success')
+}
+
+pump.add(2)
+pump.each((press, index) => {
+    console.log('ouo')
+    press()
+})
+
 console.log(factory.tool('math', 'double').direct())
 
 factory.tool('math', 'max100').ng(console.log).action(80, console.log)
@@ -30,6 +50,15 @@ factory.tool('math', 'sum').ng(console.log).sop((context) => {
         throw new Error('test fail')
     }
 }).action(90, '87', console.log)
+
+factory.tool('math', 'required').sop(console.log).direct('87')
+factory.tool('math', 'required').ng(console.log).direct(null)
+
+factory.tool('math', 'required').replace({
+    molds: [null]
+})
+
+factory.tool('math', 'required').ng(e => console.log('replace error')).sop(m => console.log('replace success')).direct(null)
 
 factory.tool('math', 'sum').promise(100, 200).then(console.log).catch(console.log)
 factory.tool('math', 'sum').promise(100, '200').then(console.log).catch(console.log)
@@ -48,6 +77,7 @@ factory
     .tool('math', 'sum')
     .packing(10, 10)
     .rule(console.log, (context) => {
+        console.log('AAAA', context.result)
         if (context.success === false || context.result !== 160) {
             throw new Error('test fail')
         }

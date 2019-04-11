@@ -39,6 +39,8 @@
 </a></p>
 <p><a href="#remd-me-support">Support
 </a></p>
+<p><a href="#remd-me-pump">Pump
+</a></p>
 <p><a href="#remd-me-tool">Tool
 </a></p>
 <p><a href="#remd-me-line">Line
@@ -118,6 +120,10 @@
 <h4 id="remd-me-asyncloop-target-action-callback-">asyncLoop(target,action,callback)</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:#687489; color:#FFF; padding:2px 6px; text-align:center">static</span></p>
 <p><span style="width:100%; display:inline-block;">非同步迴圈
+</span></p>
+<h4 id="remd-me-createpump-total-callback-">createPump(total,callback)</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:#687489; color:#FFF; padding:2px 6px; text-align:center">static</span></p>
+<p><span style="width:100%; display:inline-block;">建立計數幫浦
 </span></p>
 <h4 id="remd-me-getgroup-name-">getGroup(name)</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
@@ -329,6 +335,20 @@
 <h4 id="remd-me-clear">clear</h4>
 <p><span style="width:100%; display:inline-block;">移除所有參數
 </span></p>
+<h2 id="remd-me-pump">Pump</h2>
+<p><span style="width:100%; display:inline-block;">方便計算函數的物件
+</span></p>
+<hr>
+<h3 id="remd-me-function">Function</h3>
+<h4 id="remd-me-press">press</h4>
+<p><span style="width:100%; display:inline-block;">加一點數
+</span></p>
+<h4 id="remd-me-add">add</h4>
+<p><span style="width:100%; display:inline-block;">增加一點總和
+</span></p>
+<h4 id="remd-me-each">each</h4>
+<p><span style="width:100%; display:inline-block;">瀝遍所有點數
+</span></p>
 <h2 id="remd-me-tool">Tool</h2>
 <p><span style="width:100%; display:inline-block;">Assembly的最小單位，負責執行指定邏輯
 </span></p>
@@ -353,7 +373,7 @@
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">當模具被第一次使用時呼叫
 </span></p>
-<h4 id="remd-me-initcatchdata-">initCatchData()</h4>
+<h4 id="remd-me-initcatchdata">initCatchData</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">快取一些資源協助優化
 </span></p>
@@ -361,8 +381,11 @@
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">初始化create
 </span></p>
-<h4 id="remd-me-getprofile-">getProfile()</h4>
+<h4 id="remd-me-getprofile">getProfile</h4>
 <p><span style="width:100%; display:inline-block;">獲取tool的資料
+</span></p>
+<h4 id="remd-me-replace">replace</h4>
+<p><span style="width:100%; display:inline-block;">取代自定義項目
 </span></p>
 <h4 id="remd-me-checkupdate">checkUpdate</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
@@ -568,6 +591,9 @@
 <h3 id="remd-me-function">Function</h3>
 <h4 id="remd-me-getprofile-">getProfile()</h4>
 <p><span style="width:100%; display:inline-block;">獲取group的資料
+</span></p>
+<h4 id="remd-me-replace-name-optnios-">replace(name,optnios)</h4>
+<p><span style="width:100%; display:inline-block;">使否為模組狀態
 </span></p>
 <h4 id="remd-me-ismodule-">isModule()</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>

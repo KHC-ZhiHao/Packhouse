@@ -264,6 +264,16 @@ class Packhouse extends ModuleBase {
     }
 
     /**
+     * @function createPump(total,callback)
+     * @static
+     * @desc 建立計數幫浦
+     */
+
+    static createPump(total, callback) {
+        return (new Pump(total, callback)).exports
+    }
+
+    /**
      * @function getGroup(name)
      * @private
      * @desc 獲取一個Group
@@ -1044,6 +1054,74 @@ class Support extends ModuleBase {
 }
 
 /**
+ * @class Pump
+ * @desc 方便計算函數的物件
+ */
+
+class Pump extends ModuleBase {
+
+    constructor(total, callback) {
+        super('Pump')
+        this.count = 0
+        this.options = this.$verify({ total, callback }, {
+            total: [true, ['number']],
+            callback: [true, ['function']]
+        })
+        this.exports = {
+            add: this.add.bind(this),
+            each: this.each.bind(this),
+            press: this.press.bind(this)
+        }
+    }
+
+    /**
+     * @function press
+     * @desc 加一點數
+     */
+
+    press() {
+        this.count += 1
+        if (this.count >= this.options.total) {
+            this.options.callback()
+        }
+        return this.count
+    }
+
+    /**
+     * @function add
+     * @desc 增加一點總和
+     */
+
+    add(count) {
+        let type = typeof count
+        if (count != null && type !== 'number') {
+            this.$systemError('add', 'Count not a number.', number)
+        }
+        if (type === 'number' && count < 0) {
+            this.$systemError('add', 'Count cannot be negative.', number)
+        }
+        this.options.total += count
+        return this.options.total
+    }
+
+    /**
+     * @function each
+     * @desc 瀝遍所有點數
+     */
+
+    each(callback) {
+        if (typeof callback !== 'function') {
+            this.$systemError('each', 'Callback not a function', callback)
+        }
+        let press = this.press.bind(this)
+        for (let i = this.count; i < this.options.total; i++) {
+            callback(press, this.count)
+        }
+    }
+
+}
+
+/**
  * @class Tool
  * @desc Assembly的最小單位，負責執行指定邏輯
  * @argument options 實例化時可以接收以下參數
@@ -1079,6 +1157,7 @@ class Tool extends ModuleBase {
             action: [true, ['function']],
             update: [false, ['function'], function () {}],
             updateTime: [false, ['number'], -1],
+            description: [false, ['string'], ''],
             allowDirect: [false, ['boolean'], true]
         })
     }
@@ -1101,7 +1180,7 @@ class Tool extends ModuleBase {
     }
 
     /**
-     * @function initCatchData()
+     * @function initCatchData
      * @private
      * @desc 快取一些資源協助優化
      */
@@ -1121,7 +1200,7 @@ class Tool extends ModuleBase {
     }
 
     /**
-     * @function getProfile()
+     * @function getProfile
      * @desc 獲取tool的資料
      */
 
@@ -1129,8 +1208,26 @@ class Tool extends ModuleBase {
         return {
             name: this.data.name,
             molds: this.data.molds,
+            description: this.data.description,
             allowDirect: this.data.allowDirect
         }
+    }
+
+    /**
+     * @function replace
+     * @desc 取代自定義項目
+     */
+
+    replace(options) {
+        this.data = this.$verify(options, {
+            molds: [false, ['object'], this.data.molds],
+            create: [false, ['function'], this.data.create],
+            action: [false, ['function'], this.data.action],
+            update: [false, ['function'], this.data.update],
+            updateTime: [false, ['number'], this.data.updateTime],
+            description: [false, ['string'], this.data.description],
+            allowDirect: [false, ['boolean'], this.data.allowDirect]
+        })
     }
 
     /**
@@ -1222,7 +1319,8 @@ class Tool extends ModuleBase {
             store: this.getStore.bind(this),
             direct: this.createLambda(this.direct, 'direct', support),
             action: this.createLambda(this.action, 'action', support),
-            promise: this.createLambda(this.promise, 'promise', support)
+            promise: this.createLambda(this.promise, 'promise', support),
+            replace: this.replace.bind(this)
         }
         return support.createExports(exports)
     }
@@ -1870,6 +1968,13 @@ let PublicMolds = {
             if (param == null && system.extras[0] === 'abe') { return true }
             return typeof param === 'function' ? true : `Param ${system.index} not a function(${param}).`
         }
+    }),
+
+    required: new Mold({
+        name: 'required',
+        check(param, system) {
+            return param != null ? true : `Param ${system.index} required.`
+        }
     })
 
 }
@@ -1933,6 +2038,16 @@ class Group extends ModuleBase {
     }
 
     /**
+     * @function replace(name,optnios)
+     * @desc 使否為模組狀態
+     */
+
+    replaceTool(name, optnios) {
+        let tool = this.getTool(name)
+        tool.replace(optnios)
+    }
+
+    /**
      * @function isModule()
      * @private
      * @desc 使否為模組狀態
@@ -1964,8 +2079,8 @@ class Group extends ModuleBase {
     initMerger() {
         for (let key in this.data.merger) {
             let group = this.data.merger[key]
-            if (Group.isGroup(group) === false) {
-                this.$systemError('initMerger', `The '${key}' not a group.`)
+            if (Group.isGroup(group) === false && typeof group !== 'function') {
+                this.$systemError('initMerger', `The '${key}' not a group or function.`)
             }
         }
     }
@@ -2050,6 +2165,13 @@ class Group extends ModuleBase {
 
     getMerger(name) {
         if (this.data.merger[name]) {
+            if (typeof this.data.merger[name] === 'function') {
+                let group = this.data.merger[name]()
+                if (Group.isGroup(group) === false) {
+                    this.$systemError('getMerger', `The '${name}' not a group.`)
+                }
+                this.data.merger[name] = group
+            }
             return this.data.merger[name].alone()
         } else {
             this.$systemError('getMerger', `Merger(${name}) not found.`)

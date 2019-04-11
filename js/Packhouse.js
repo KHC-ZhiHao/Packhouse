@@ -122,6 +122,16 @@ class Packhouse extends ModuleBase {
     }
 
     /**
+     * @function createPump(total,callback)
+     * @static
+     * @desc 建立計數幫浦
+     */
+
+    static createPump(total, callback) {
+        return (new Pump(total, callback)).exports
+    }
+
+    /**
      * @function getGroup(name)
      * @private
      * @desc 獲取一個Group

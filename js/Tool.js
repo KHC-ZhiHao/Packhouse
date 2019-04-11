@@ -34,6 +34,7 @@ class Tool extends ModuleBase {
             action: [true, ['function']],
             update: [false, ['function'], function () {}],
             updateTime: [false, ['number'], -1],
+            description: [false, ['string'], ''],
             allowDirect: [false, ['boolean'], true]
         })
     }
@@ -56,7 +57,7 @@ class Tool extends ModuleBase {
     }
 
     /**
-     * @function initCatchData()
+     * @function initCatchData
      * @private
      * @desc 快取一些資源協助優化
      */
@@ -76,7 +77,7 @@ class Tool extends ModuleBase {
     }
 
     /**
-     * @function getProfile()
+     * @function getProfile
      * @desc 獲取tool的資料
      */
 
@@ -84,8 +85,26 @@ class Tool extends ModuleBase {
         return {
             name: this.data.name,
             molds: this.data.molds,
+            description: this.data.description,
             allowDirect: this.data.allowDirect
         }
+    }
+
+    /**
+     * @function replace
+     * @desc 取代自定義項目
+     */
+
+    replace(options) {
+        this.data = this.$verify(options, {
+            molds: [false, ['object'], this.data.molds],
+            create: [false, ['function'], this.data.create],
+            action: [false, ['function'], this.data.action],
+            update: [false, ['function'], this.data.update],
+            updateTime: [false, ['number'], this.data.updateTime],
+            description: [false, ['string'], this.data.description],
+            allowDirect: [false, ['boolean'], this.data.allowDirect]
+        })
     }
 
     /**
@@ -177,7 +196,8 @@ class Tool extends ModuleBase {
             store: this.getStore.bind(this),
             direct: this.createLambda(this.direct, 'direct', support),
             action: this.createLambda(this.action, 'action', support),
-            promise: this.createLambda(this.promise, 'promise', support)
+            promise: this.createLambda(this.promise, 'promise', support),
+            replace: this.replace.bind(this)
         }
         return support.createExports(exports)
     }

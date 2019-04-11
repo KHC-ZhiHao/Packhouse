@@ -20,10 +20,19 @@ group.addMold({
 })
 
 group.addTool({
+    name: 'required',
+    molds: ['required'],
+    action(param, system, error, success) {
+        success(param)
+    }
+})
+
+group.addTool({
     name: 'sum',
     keep: 64000,
     molds: [null, 'number'],
     paramLength: 2,
+    description: '兩數相加',
     allowDirect: true,
     create: function(store, system) {
         store.testSecure = false

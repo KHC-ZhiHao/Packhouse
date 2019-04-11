@@ -49,6 +49,13 @@ let PublicMolds = {
             if (param == null && system.extras[0] === 'abe') { return true }
             return typeof param === 'function' ? true : `Param ${system.index} not a function(${param}).`
         }
+    }),
+
+    required: new Mold({
+        name: 'required',
+        check(param, system) {
+            return param != null ? true : `Param ${system.index} required.`
+        }
     })
 
 }
