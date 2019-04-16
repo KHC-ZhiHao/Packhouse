@@ -304,7 +304,7 @@ class Tool extends ModuleBase {
         let index = 0
         let extras = split
         let caller = this.name
-        this.parseMold(call, data, callback, { type, index, extras, caller })
+        return this.parseMold(call, data, callback, { type, index, extras, caller })
     }
 
     /**

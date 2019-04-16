@@ -177,3 +177,9 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 
 * Group => addMolds : 實例化錯誤修正
 * Line => NG : NG指向錯誤修正
+
+## 1.1.5
+
+### FIX
+
+* Mold => casting : 無效化修正

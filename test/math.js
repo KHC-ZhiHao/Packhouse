@@ -19,6 +19,13 @@ group.addMold({
     }
 })
 
+group.addMold({
+    name: 'double',
+    casting(param) {
+        return Number(param) * 2
+    }
+})
+
 group.addTool({
     name: 'required',
     molds: ['required'],
@@ -61,6 +68,12 @@ group.addTool('double', () => {
             this.coefficient = 2
         },
         action: function(number, system, error, success) {
+            if (typeof number === 'number') {
+                let b = system.casting('double', number)
+                if (b !== number * 2) {
+                    throw new Error('Casting error')
+                }
+            }
             success((number || 10) * this.coefficient)
         }
     }
