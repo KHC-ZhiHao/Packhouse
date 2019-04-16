@@ -45,15 +45,27 @@ class Group extends ModuleBase {
             alias: this.data.alias
         }
         for (let key in this.toolbox) {
-            profile.tool[key] = this.toolbox[key].getProfile()
+            profile.tool[key] = this.getTool(key).getProfile()
         }
         for (let key in this.moldbox) {
-            profile.mold[key] = this.moldbox[key].getProfile()
+            profile.mold[key] = this.getMold(key).getProfile()
         }
         for (let key in this.linebox) {
-            profile.line[key] = this.linebox[key].getProfile()
+            profile.line[key] = this.getLine(key).getProfile()
         }
         return profile
+    }
+
+    /**
+     * @function compileLazy
+     * @desc 由此實現懶加載的驗證
+     */
+
+    compileLazy(name, target, module) {
+        if (typeof target[name] === 'function') {
+            target[name] = new module({ name, ...target[name]() }, this)
+        }
+        return target[name]
     }
 
     /**
@@ -141,7 +153,7 @@ class Group extends ModuleBase {
 
     getTool(name) {
         if (this.toolbox[name]) {
-            return this.toolbox[name]
+            return this.compileLazy(name, this.toolbox, Tool)
         } else {
             this.$systemError('getTool', `Tool(${name}) not found.`)
         }
@@ -155,7 +167,7 @@ class Group extends ModuleBase {
 
     getLine(name) {
         if (this.linebox[name]) {
-            return this.linebox[name]
+            return this.compileLazy(name, this.linebox, Line)
         } else {
             this.$systemError('getLine', `Line(${name}) not found.`)
         }
@@ -243,10 +255,7 @@ class Group extends ModuleBase {
         }
         if (typeof molds === 'object') {
             for (let key in molds) {
-                this.addTool({
-                    name: key,
-                    ...molds[key]
-                })
+                this.addMold({ name: key, ...molds[key] })
             }
             return true
         }
@@ -259,10 +268,30 @@ class Group extends ModuleBase {
      * @param {object} options 建立line所需要的物件
      */
 
-    addLine(options){
-        let line = new Line(options, this)
-        if (this.$noKey('addLine', this.linebox, line.name)) {
-            this.linebox[line.name] = line
+    addLine(...options){
+        if (typeof options[0] === 'string') {
+            this.addLineLazy(options[0], options[1])
+        } else {
+            let line = new Line(options[0], this)
+            if (this.$noKey('addLine', this.linebox, line.name)) {
+                this.linebox[line.name] = line
+            }
+        }
+    }
+
+    /**
+     * @function addLineLazy
+     * @private
+     * @desc 用懶加載模式加入一個產線
+     */
+
+    addLineLazy(name, callback) {
+        if (typeof callback === 'function') {
+            if (this.$noKey('addLineLazy', this.linebox, name)) {
+                this.linebox[name] = callback
+            }
+        } else {
+            this.$systemError('addLineLazy', 'Callback not a function.')
         }
     }
 
@@ -281,10 +310,11 @@ class Group extends ModuleBase {
         }
         if (typeof lines === 'object') {
             for (let key in lines) {
-                this.addLine({
-                    name: key,
-                    ...lines[key]
-                })
+                if (typeof lines[key] === 'function') {
+                    this.addLineLazy(name, lines[key])
+                } else {
+                    this.addLine({ name: key, ...lines[key] })
+                }
             }
             return true
         }
@@ -297,10 +327,30 @@ class Group extends ModuleBase {
      * @param {object} options 建立tool所需要的物件
      */
 
-    addTool(options) {
-        let tool = new Tool(options, this)
-        if( this.$noKey('addTool', this.toolbox, tool.name ) ){
-            this.toolbox[tool.name] = tool
+    addTool(...options) {
+        if (typeof options[0] === 'string') {
+            this.addToolLazy(options[0], options[1])
+        } else {
+            let tool = new Tool(options[0], this)
+            if (this.$noKey('addTool', this.toolbox, tool.name)) {
+                this.toolbox[tool.name] = tool
+            }
+        }
+    }
+
+    /**
+     * @function addToolLazy
+     * @private
+     * @desc 用懶加載模式加入一個工具
+     */
+
+    addToolLazy(name, callback) {
+        if (typeof callback === 'function') {
+            if (this.$noKey('addToolLazy', this.toolbox, name)) {
+                this.toolbox[name] = callback
+            }
+        } else {
+            this.$systemError('addToolLazy', 'Callback not a function.')
         }
     }
 
@@ -319,10 +369,11 @@ class Group extends ModuleBase {
         }
         if (typeof tools === 'object') {
             for (let key in tools) {
-                this.addTool({
-                    name: key,
-                    ...tools[key]
-                })
+                if (typeof tools[key] === 'function') {
+                    this.addToolLazy(name, tools[key])
+                } else {
+                    this.addTool({ name: key, ...tools[key] })
+                }
             }
             return true
         }

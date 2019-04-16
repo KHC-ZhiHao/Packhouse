@@ -158,3 +158,22 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 * Tool => replace : 複寫名子以外的功能
 * Group => merger : 支援使用function回傳group來建立懶加載的系統，太棒惹
 * Public mold => required : 要求不能為空
+
+## 1.1.4
+
+### INFO
+
+回頭發現PK已經不是個簡單的專案了T_T
+
+### NEW
+
+* Mold => description : mold也可以有敘述惹
+* Factory => removeGroup : 移除指定的Group
+* Group => addToolLazy, addLineLazy : 懶加載Tool和Line的模式
+* Tool => recursive: 全新的宣告模式(實驗)
+* Support => rePacking: unPacking後Packing
+
+### FIX
+
+* Group => addMolds : 實例化錯誤修正
+* Line => NG : NG指向錯誤修正

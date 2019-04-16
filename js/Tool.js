@@ -194,10 +194,11 @@ class Tool extends ModuleBase {
         let support = new Support()
         let exports = {
             store: this.getStore.bind(this),
+            replace: this.replace.bind(this),
             direct: this.createLambda(this.direct, 'direct', support),
             action: this.createLambda(this.action, 'action', support),
             promise: this.createLambda(this.promise, 'promise', support),
-            replace: this.replace.bind(this)
+            recursive: this.createLambda(this.recursive, 'recursive', support)
         }
         return support.createExports(exports)
     }
@@ -225,18 +226,29 @@ class Tool extends ModuleBase {
         let tool = {
             [name]: (...options) => {
                 let supports = support.copy()
-                let args = new Array(this.argumentLength + 3)
-                let length = this.argumentLength
                 let callback = actionCallback(options)
-                let packages = supports.package
-                let packagesLength = packages.length
-                for (let i = length; i--;) {
-                    args[i] = i >= packagesLength ? options[i - packagesLength] : packages[i]
-                }
+                let args = this.createArgs(options, supports)
                 return call(args, callback, supports)
             }
         }
         return tool[name]
+    }
+
+    /**
+     * @function createArgs
+     * @private
+     * @desc 將參數轉換成PK可用參數
+     */
+
+    createArgs(options, supports) {
+        let args = new Array(this.argumentLength + 3)
+        let length = this.argumentLength
+        let packages = supports.package
+        let packagesLength = packages.length
+        for (let i = length; i--;) {
+            args[i] = i >= packagesLength ? options[i - packagesLength] : packages[i]
+        }
+        return args
     }
 
     /**
@@ -246,7 +258,7 @@ class Tool extends ModuleBase {
      */
 
     getActionCallback(type) {
-        if (type === 'action') {
+        if (type === 'action' || type === 'recursive') {
             return (params) => {
                 let callback = params.pop()
                 if (typeof callback !== 'function') {
@@ -388,6 +400,20 @@ class Tool extends ModuleBase {
     action(params, callback, supports) {
         let response = (new ResponseAction(this.group, supports, callback)).exports
         this.call(params, response.error, response.success)
+    }
+
+
+    /**
+     * @function recursive
+     * @private
+     * @desc 基於action的遞迴函數
+     */
+
+    recursive(params, callback, supports, count = -1) {
+        count += 1
+        let stack = (...params) => { this.recursive(this.createArgs(params, supports), callback, supports, count) }
+        let response = (new ResponseRecursive(this.group, supports, callback)).exports
+        this.call(params, response.error, result => response.success(result, { count, stack }))
     }
 
     /**

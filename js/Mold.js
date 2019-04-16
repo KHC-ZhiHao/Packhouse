@@ -15,7 +15,8 @@ class Mold extends ModuleBase {
         this.data = this.$verify(options, {
             name: [true, ['string']],
             check: [false, ['function'], function() { return true }],
-            casting: [false, ['function'], function (param) { return param }]
+            casting: [false, ['function'], function (param) { return param }],
+            description: [false, ['string'], '']
         })
     }
 
@@ -30,7 +31,8 @@ class Mold extends ModuleBase {
 
     getProfile() {
         return {
-            name: this.data.name
+            name: this.data.name,
+            description: this.data.description
         }
     }
 

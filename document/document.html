@@ -35,6 +35,8 @@
 </a></p>
 <p><a href="#remd-me-responseaction">ResponseAction
 </a></p>
+<p><a href="#remd-me-responserecursive">ResponseRecursive
+</a></p>
 <p><a href="#remd-me-responsepromise">ResponsePromise
 </a></p>
 <p><a href="#remd-me-support">Support
@@ -141,6 +143,9 @@
 <p><span style="width:100%; display:inline-block;">加入一個Group
 </span></p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">object</span> <font color="#e30090">options</font> group被初始化時能夠接收到的外部物件</p>
+<h4 id="remd-me-removegroup-name-">removeGroup(name)</h4>
+<p><span style="width:100%; display:inline-block;">移除一個Group
+</span></p>
 <h4 id="remd-me-hasgroup-name-">hasGroup(name)</h4>
 <p><span style="width:100%; display:inline-block;">加入一個Group
 </span></p>
@@ -279,6 +284,15 @@
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">專屬的成功執行殼層
 </span></p>
+<h2 id="remd-me-responserecursive">ResponseRecursive</h2>
+<p><span style="width:100%; display:inline-block;">Recursive的Response模型
+</span></p>
+<hr>
+<h3 id="remd-me-function">Function</h3>
+<h4 id="remd-me-successbase">successBase</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">專屬的成功執行殼層
+</span></p>
 <h2 id="remd-me-responsepromise">ResponsePromise</h2>
 <p><span style="width:100%; display:inline-block;">Promise的Response模型
 </span></p>
@@ -328,6 +342,9 @@
 </span></p>
 <h4 id="remd-me-addpacking">addPacking</h4>
 <p><span style="width:100%; display:inline-block;">加入一則預參數
+</span></p>
+<h4 id="remd-me-repacking">rePacking</h4>
+<p><span style="width:100%; display:inline-block;">unPacking後再Packing的綜合體
 </span></p>
 <h4 id="remd-me-unpacking">unPacking</h4>
 <p><span style="width:100%; display:inline-block;">移除所有預參數
@@ -419,6 +436,10 @@
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">封裝function，神奇的地方，同時也是可怕的效能吞噬者
 </span></p>
+<h4 id="remd-me-createargs">createArgs</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">將參數轉換成PK可用參數
+</span></p>
 <h4 id="remd-me-getactioncallback">getActionCallback</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">解讀action的callback
@@ -454,6 +475,10 @@
 <h4 id="remd-me-action">action</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
 <span style="width:100%; display:inline-block;">宣告一個具有callback的function
+</span></p>
+<h4 id="remd-me-recursive">recursive</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">基於action的遞迴函數
 </span></p>
 <h4 id="remd-me-promise">promise</h4>
 <p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
@@ -592,6 +617,9 @@
 <h4 id="remd-me-getprofile-">getProfile()</h4>
 <p><span style="width:100%; display:inline-block;">獲取group的資料
 </span></p>
+<h4 id="remd-me-compilelazy">compileLazy</h4>
+<p><span style="width:100%; display:inline-block;">由此實現懶加載的驗證
+</span></p>
 <h4 id="remd-me-replace-name-optnios-">replace(name,optnios)</h4>
 <p><span style="width:100%; display:inline-block;">使否為模組狀態
 </span></p>
@@ -642,6 +670,10 @@
 <p><span style="width:100%; display:inline-block;">加入一個產線
 </span></p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">object</span> <font color="#e30090">options</font> 建立line所需要的物件</p>
+<h4 id="remd-me-addlinelazy">addLineLazy</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">用懶加載模式加入一個產線
+</span></p>
 <h4 id="remd-me-addlines">addLines</h4>
 <p><span style="width:100%; display:inline-block;">加入多個產線
 </span></p>
@@ -650,6 +682,10 @@
 <p><span style="width:100%; display:inline-block;">加入一個工具
 </span></p>
 <p><span style="color:lightblue">@param</span> : <span style="padding:3px 6px; display:inline-block; color:#8c83af">object</span> <font color="#e30090">options</font> 建立tool所需要的物件</p>
+<h4 id="remd-me-addtoollazy">addToolLazy</h4>
+<p><span style="border-radius:3px; display:inline-block; margin-bottom:12px ; background-color:red; color:#FFF; padding:3px 6px; text-align:center">private</span><br>
+<span style="width:100%; display:inline-block;">用懶加載模式加入一個工具
+</span></p>
 <h4 id="remd-me-addtools">addTools</h4>
 <p><span style="width:100%; display:inline-block;">加入多個工具
 </span></p>

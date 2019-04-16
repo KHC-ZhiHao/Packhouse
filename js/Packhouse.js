@@ -189,6 +189,19 @@ class Packhouse extends ModuleBase {
     }
 
     /**
+     * @function removeGroup(name)
+     * @desc 移除一個Group
+     */
+
+    removeGroup(name) {
+        if (this.groups[name]) {
+            this.groups[name] = null
+        } else {
+            this.$systemError('removeGroup', `Group(${name}) not found.`)
+        }
+    }
+
+    /**
      * @function hasGroup(name)
      * @desc 加入一個Group
      */

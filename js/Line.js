@@ -243,7 +243,7 @@ class Process extends ModuleBase {
         this.error = error
         this.success = success
         this.stack.push('input')
-        this.input.ng(this.fail).action(...this.params, this.next.bind(this))
+        this.input.ng(e => this.fail(e)).action(...this.params, this.next.bind(this))
     }
 
     /**
@@ -254,7 +254,7 @@ class Process extends ModuleBase {
 
     finish() {
         this.stack.push('output')
-        this.output.ng(this.fail).action(this.success)
+        this.output.ng(e => this.fail(e)).action(this.success)
     }
 
     /**
@@ -294,7 +294,7 @@ class Process extends ModuleBase {
         let flow = this.flow[this.index]
         if (flow) {
             this.stack.push(flow.name)
-            flow.method.ng(this.fail).action(...flow.params, () => {
+            flow.method.ng(e => this.fail(e)).action(...flow.params, () => {
                 this.index += 1
                 this.next()
             })

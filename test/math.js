@@ -52,16 +52,17 @@ group.addTool({
     }
 })
 
-group.addTool({
-    name: 'double',
-    molds: ['number|abe'],
-    paramLength: 1,
-    allowDirect: true,
-    create: function(store, { include, group }) {
-        this.coefficient = 2
-    },
-    action: function(number, system, error, success) {
-        success((number || 10) * this.coefficient)
+group.addTool('double', () => {
+    return {
+        molds: ['number|abe'],
+        paramLength: 1,
+        allowDirect: true,
+        create: function(store, { include, group }) {
+            this.coefficient = 2
+        },
+        action: function(number, system, error, success) {
+            success((number || 10) * this.coefficient)
+        }
     }
 })
 
@@ -90,6 +91,34 @@ group.addLine({
         double: function({ include }, error, next) {
             this.number = include('double').ng(error).direct(this.number)
             next()
+        }
+    }
+})
+
+group.addLine('lineLazy', () => {
+    return {
+        inlet: null,
+        fail: function(err, report) { report(err) },
+        input: {
+            action: function(number, { include }, error, start) {
+                this.number = number
+                start()
+            }
+        },
+        output: function({ include }, error, success) {
+            success(this.number)
+        },
+        layout: {
+            add: {
+                action: function(number, { include }, error, next) {
+                    this.number = include('sum').ng(error).direct(this.number, number)
+                    next()
+                }
+            },
+            double: function({ include }, error, next) {
+                this.number = include('double').ng(error).direct(this.number)
+                next()
+            }
         }
     }
 })

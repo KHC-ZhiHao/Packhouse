@@ -8,6 +8,7 @@ class FactoryExports {
         this.addGroup = factory.addGroup.bind(factory)
         this.hasGroup = factory.hasGroup.bind(factory)
         this.setBridge = factory.setBridge.bind(factory)
+        this.removeGroup = factory.removeGroup.bind(factory)
     }
 
 }

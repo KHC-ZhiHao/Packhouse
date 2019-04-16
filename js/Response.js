@@ -15,7 +15,7 @@ class Response {
             success: this.success.bind(this)
         }
         if (supports.welds.length > 0) {
-            this.welds = supports.welds
+            this.welds = supports.welds.slice()
         }
         if (supports.noGood) {
             this.noGood = supports.noGood.action
@@ -51,11 +51,11 @@ class Response {
      * @desc 宣告成功狀態
      */
 
-    success(result) {
+    success(result, context) {
         if (this.over === false) {
             this.over = true
             this.runWeld(result, (result) => {
-                this.successBase(result)
+                this.successBase(result, context)
                 this.callSop({ result, success: true })
             })
         }
@@ -175,6 +175,29 @@ class ResponseAction extends Response {
             this.callback(result)
         } else {
             this.callback(null, result)
+        }
+    }
+
+}
+
+/**
+ * @class ResponseRecursive
+ * @desc Recursive的Response模型
+ */
+
+class ResponseRecursive extends ResponseAction {
+
+    /**
+     * @function successBase
+     * @private
+     * @desc 專屬的成功執行殼層
+     */
+
+    successBase(result, context) {
+        if (this.noGood) {
+            this.callback(result, context)
+        } else {
+            this.callback(null, result, context)
         }
     }
 

@@ -331,6 +331,19 @@ class Packhouse extends ModuleBase {
     }
 
     /**
+     * @function removeGroup(name)
+     * @desc 移除一個Group
+     */
+
+    removeGroup(name) {
+        if (this.groups[name]) {
+            this.groups[name] = null
+        } else {
+            this.$systemError('removeGroup', `Group(${name}) not found.`)
+        }
+    }
+
+    /**
      * @function hasGroup(name)
      * @desc 加入一個Group
      */
@@ -671,7 +684,7 @@ class Response {
             success: this.success.bind(this)
         }
         if (supports.welds.length > 0) {
-            this.welds = supports.welds
+            this.welds = supports.welds.slice()
         }
         if (supports.noGood) {
             this.noGood = supports.noGood.action
@@ -707,11 +720,11 @@ class Response {
      * @desc 宣告成功狀態
      */
 
-    success(result) {
+    success(result, context) {
         if (this.over === false) {
             this.over = true
             this.runWeld(result, (result) => {
-                this.successBase(result)
+                this.successBase(result, context)
                 this.callSop({ result, success: true })
             })
         }
@@ -837,6 +850,29 @@ class ResponseAction extends Response {
 }
 
 /**
+ * @class ResponseRecursive
+ * @desc Recursive的Response模型
+ */
+
+class ResponseRecursive extends ResponseAction {
+
+    /**
+     * @function successBase
+     * @private
+     * @desc 專屬的成功執行殼層
+     */
+
+    successBase(result, context) {
+        if (this.noGood) {
+            this.callback(result, context)
+        } else {
+            this.callback(null, result, context)
+        }
+    }
+
+}
+
+/**
  * @class ResponsePromise
  * @desc Promise的Response模型
  */
@@ -912,6 +948,7 @@ class Support extends ModuleBase {
             clear: this.clear.bind(this),
             unWeld: this.unWeld.bind(this),
             packing: this.addPacking.bind(this),
+            rePacking: this.rePacking.bind(this),
             unPacking: this.unPacking.bind(this)
         }
         return this.exports
@@ -1025,6 +1062,16 @@ class Support extends ModuleBase {
 
     addPacking() {
         this.package = this.package.concat([...arguments])
+        return this.exports
+    }
+
+    /**
+     * @function rePacking
+     * @desc unPacking後再Packing的綜合體
+     */
+ 
+    rePacking() {
+        this.package = [...arguments]
         return this.exports
     }
 
@@ -1317,10 +1364,11 @@ class Tool extends ModuleBase {
         let support = new Support()
         let exports = {
             store: this.getStore.bind(this),
+            replace: this.replace.bind(this),
             direct: this.createLambda(this.direct, 'direct', support),
             action: this.createLambda(this.action, 'action', support),
             promise: this.createLambda(this.promise, 'promise', support),
-            replace: this.replace.bind(this)
+            recursive: this.createLambda(this.recursive, 'recursive', support)
         }
         return support.createExports(exports)
     }
@@ -1348,18 +1396,29 @@ class Tool extends ModuleBase {
         let tool = {
             [name]: (...options) => {
                 let supports = support.copy()
-                let args = new Array(this.argumentLength + 3)
-                let length = this.argumentLength
                 let callback = actionCallback(options)
-                let packages = supports.package
-                let packagesLength = packages.length
-                for (let i = length; i--;) {
-                    args[i] = i >= packagesLength ? options[i - packagesLength] : packages[i]
-                }
+                let args = this.createArgs(options, supports)
                 return call(args, callback, supports)
             }
         }
         return tool[name]
+    }
+
+    /**
+     * @function createArgs
+     * @private
+     * @desc 將參數轉換成PK可用參數
+     */
+
+    createArgs(options, supports) {
+        let args = new Array(this.argumentLength + 3)
+        let length = this.argumentLength
+        let packages = supports.package
+        let packagesLength = packages.length
+        for (let i = length; i--;) {
+            args[i] = i >= packagesLength ? options[i - packagesLength] : packages[i]
+        }
+        return args
     }
 
     /**
@@ -1369,7 +1428,7 @@ class Tool extends ModuleBase {
      */
 
     getActionCallback(type) {
-        if (type === 'action') {
+        if (type === 'action' || type === 'recursive') {
             return (params) => {
                 let callback = params.pop()
                 if (typeof callback !== 'function') {
@@ -1511,6 +1570,20 @@ class Tool extends ModuleBase {
     action(params, callback, supports) {
         let response = (new ResponseAction(this.group, supports, callback)).exports
         this.call(params, response.error, response.success)
+    }
+
+
+    /**
+     * @function recursive
+     * @private
+     * @desc 基於action的遞迴函數
+     */
+
+    recursive(params, callback, supports, count = -1) {
+        count += 1
+        let stack = (...params) => { this.recursive(this.createArgs(params, supports), callback, supports, count) }
+        let response = (new ResponseRecursive(this.group, supports, callback)).exports
+        this.call(params, response.error, result => response.success(result, { count, stack }))
     }
 
     /**
@@ -1798,7 +1871,7 @@ class Process extends ModuleBase {
         this.error = error
         this.success = success
         this.stack.push('input')
-        this.input.ng(this.fail).action(...this.params, this.next.bind(this))
+        this.input.ng(e => this.fail(e)).action(...this.params, this.next.bind(this))
     }
 
     /**
@@ -1809,7 +1882,7 @@ class Process extends ModuleBase {
 
     finish() {
         this.stack.push('output')
-        this.output.ng(this.fail).action(this.success)
+        this.output.ng(e => this.fail(e)).action(this.success)
     }
 
     /**
@@ -1849,7 +1922,7 @@ class Process extends ModuleBase {
         let flow = this.flow[this.index]
         if (flow) {
             this.stack.push(flow.name)
-            flow.method.ng(this.fail).action(...flow.params, () => {
+            flow.method.ng(e => this.fail(e)).action(...flow.params, () => {
                 this.index += 1
                 this.next()
             })
@@ -1876,7 +1949,8 @@ class Mold extends ModuleBase {
         this.data = this.$verify(options, {
             name: [true, ['string']],
             check: [false, ['function'], function() { return true }],
-            casting: [false, ['function'], function (param) { return param }]
+            casting: [false, ['function'], function (param) { return param }],
+            description: [false, ['string'], '']
         })
     }
 
@@ -1891,7 +1965,8 @@ class Mold extends ModuleBase {
 
     getProfile() {
         return {
-            name: this.data.name
+            name: this.data.name,
+            description: this.data.description
         }
     }
 
@@ -2026,15 +2101,27 @@ class Group extends ModuleBase {
             alias: this.data.alias
         }
         for (let key in this.toolbox) {
-            profile.tool[key] = this.toolbox[key].getProfile()
+            profile.tool[key] = this.getTool(key).getProfile()
         }
         for (let key in this.moldbox) {
-            profile.mold[key] = this.moldbox[key].getProfile()
+            profile.mold[key] = this.getMold(key).getProfile()
         }
         for (let key in this.linebox) {
-            profile.line[key] = this.linebox[key].getProfile()
+            profile.line[key] = this.getLine(key).getProfile()
         }
         return profile
+    }
+
+    /**
+     * @function compileLazy
+     * @desc 由此實現懶加載的驗證
+     */
+
+    compileLazy(name, target, module) {
+        if (typeof target[name] === 'function') {
+            target[name] = new module({ name, ...target[name]() }, this)
+        }
+        return target[name]
     }
 
     /**
@@ -2122,7 +2209,7 @@ class Group extends ModuleBase {
 
     getTool(name) {
         if (this.toolbox[name]) {
-            return this.toolbox[name]
+            return this.compileLazy(name, this.toolbox, Tool)
         } else {
             this.$systemError('getTool', `Tool(${name}) not found.`)
         }
@@ -2136,7 +2223,7 @@ class Group extends ModuleBase {
 
     getLine(name) {
         if (this.linebox[name]) {
-            return this.linebox[name]
+            return this.compileLazy(name, this.linebox, Line)
         } else {
             this.$systemError('getLine', `Line(${name}) not found.`)
         }
@@ -2224,10 +2311,7 @@ class Group extends ModuleBase {
         }
         if (typeof molds === 'object') {
             for (let key in molds) {
-                this.addTool({
-                    name: key,
-                    ...molds[key]
-                })
+                this.addMold({ name: key, ...molds[key] })
             }
             return true
         }
@@ -2240,10 +2324,30 @@ class Group extends ModuleBase {
      * @param {object} options 建立line所需要的物件
      */
 
-    addLine(options){
-        let line = new Line(options, this)
-        if (this.$noKey('addLine', this.linebox, line.name)) {
-            this.linebox[line.name] = line
+    addLine(...options){
+        if (typeof options[0] === 'string') {
+            this.addLineLazy(options[0], options[1])
+        } else {
+            let line = new Line(options[0], this)
+            if (this.$noKey('addLine', this.linebox, line.name)) {
+                this.linebox[line.name] = line
+            }
+        }
+    }
+
+    /**
+     * @function addLineLazy
+     * @private
+     * @desc 用懶加載模式加入一個產線
+     */
+
+    addLineLazy(name, callback) {
+        if (typeof callback === 'function') {
+            if (this.$noKey('addLineLazy', this.linebox, name)) {
+                this.linebox[name] = callback
+            }
+        } else {
+            this.$systemError('addLineLazy', 'Callback not a function.')
         }
     }
 
@@ -2262,10 +2366,11 @@ class Group extends ModuleBase {
         }
         if (typeof lines === 'object') {
             for (let key in lines) {
-                this.addLine({
-                    name: key,
-                    ...lines[key]
-                })
+                if (typeof lines[key] === 'function') {
+                    this.addLineLazy(name, lines[key])
+                } else {
+                    this.addLine({ name: key, ...lines[key] })
+                }
             }
             return true
         }
@@ -2278,10 +2383,30 @@ class Group extends ModuleBase {
      * @param {object} options 建立tool所需要的物件
      */
 
-    addTool(options) {
-        let tool = new Tool(options, this)
-        if( this.$noKey('addTool', this.toolbox, tool.name ) ){
-            this.toolbox[tool.name] = tool
+    addTool(...options) {
+        if (typeof options[0] === 'string') {
+            this.addToolLazy(options[0], options[1])
+        } else {
+            let tool = new Tool(options[0], this)
+            if (this.$noKey('addTool', this.toolbox, tool.name)) {
+                this.toolbox[tool.name] = tool
+            }
+        }
+    }
+
+    /**
+     * @function addToolLazy
+     * @private
+     * @desc 用懶加載模式加入一個工具
+     */
+
+    addToolLazy(name, callback) {
+        if (typeof callback === 'function') {
+            if (this.$noKey('addToolLazy', this.toolbox, name)) {
+                this.toolbox[name] = callback
+            }
+        } else {
+            this.$systemError('addToolLazy', 'Callback not a function.')
         }
     }
 
@@ -2300,10 +2425,11 @@ class Group extends ModuleBase {
         }
         if (typeof tools === 'object') {
             for (let key in tools) {
-                this.addTool({
-                    name: key,
-                    ...tools[key]
-                })
+                if (typeof tools[key] === 'function') {
+                    this.addToolLazy(name, tools[key])
+                } else {
+                    this.addTool({ name: key, ...tools[key] })
+                }
             }
             return true
         }
@@ -2361,6 +2487,7 @@ class FactoryExports {
         this.addGroup = factory.addGroup.bind(factory)
         this.hasGroup = factory.hasGroup.bind(factory)
         this.setBridge = factory.setBridge.bind(factory)
+        this.removeGroup = factory.removeGroup.bind(factory)
     }
 
 }

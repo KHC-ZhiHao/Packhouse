@@ -32,6 +32,7 @@ class Support extends ModuleBase {
             clear: this.clear.bind(this),
             unWeld: this.unWeld.bind(this),
             packing: this.addPacking.bind(this),
+            rePacking: this.rePacking.bind(this),
             unPacking: this.unPacking.bind(this)
         }
         return this.exports
@@ -145,6 +146,16 @@ class Support extends ModuleBase {
 
     addPacking() {
         this.package = this.package.concat([...arguments])
+        return this.exports
+    }
+
+    /**
+     * @function rePacking
+     * @desc unPacking後再Packing的綜合體
+     */
+ 
+    rePacking() {
+        this.package = [...arguments]
         return this.exports
     }
 
