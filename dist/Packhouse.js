@@ -59,6 +59,16 @@ class Functions {
         return commaCount + 1
     }
 
+    /**
+     * @function isAsyncFunction(target)
+     * @static
+     * @desc 驗證是否為Async function
+     */
+
+    static isAsyncFunction(target) {
+        return Object.prototype.toString.call(target) === '[object AsyncFunction]'
+    }
+
 }
 /**
  * @class ModuleBase
@@ -153,12 +163,22 @@ class Packhouse extends ModuleBase {
      */
 
     constructor(options = {}) {
-        super("Packhouse")
+        super("Factory")
         this.groups = {}
         this.bridge = null
         if (options.bridge) {
             this.setBridge(options.bridge)
         }
+    }
+
+    /**
+     * @function registerModuleMerger(name,action)
+     * @static
+     * @desc 建立module merger
+     */
+
+    static registerModuleMerger(name, action) {
+        ModuleMergers.register(name, action)
     }
 
     /**
@@ -315,16 +335,14 @@ class Packhouse extends ModuleBase {
 
     addGroup(name, group, options) {
         if (this.groups[name] != null){
-            this.$systemError('addGroup', `Name(${name}) already exists.`)
-            return
+            return this.$systemError('addGroup', `Name(${name}) already exists.`)
+            
         }
         if (Group.isGroup(group) === false) {
-            this.$systemError('addGroup', 'Must group.', group)
-            return
+            return this.$systemError('addGroup', 'Must group.', group)
         }
         if (group.isModule()) {
-            this.$systemError('addGroup', 'Group id module, only use alone or in the merger.', group)
-            return
+            return this.$systemError('addGroup', 'Group id module, only use alone or in the merger.', group)
         }
         group.create(options)
         this.groups[name] = group
@@ -741,11 +759,16 @@ class Response {
             callback(result)
             return null
         }
-        let weld = this.welds.pop()
+        let weld = this.welds.shift()
+        let tool = null
+        let noGood = (e) => {
+            this.noGood(e)
+            this.callSop({ result, success: false })
+        }
         if (weld) {
-            let tool = this.group.callTool(weld.tool)
+            tool = this.group.callTool(weld.tool)
             weld.packing(result, tool.packing)
-            tool.ng(this.noGood, this.noGoodOptions)
+            tool.ng(noGood, this.noGoodOptions)
                 .action((result) => {
                     this.runWeld(result, callback)
                 })
@@ -957,7 +980,7 @@ class Support extends ModuleBase {
     /**
      * @function copy
      * @private
-     * @desc 當lambda被執行後要拷貝狀態
+     * @desc 當lambda被執行後要拷貝狀態，並清空歷史資料
      */
 
     copy() {
@@ -1221,19 +1244,8 @@ class Tool extends ModuleBase {
         this.initSystem()
         this.initArgLength()
         this.initCreate()
-        this.initCatchData()
         this.updateStamp = Date.now()
         this.install = null
-    }
-
-    /**
-     * @function initCatchData
-     * @private
-     * @desc 快取一些資源協助優化
-     */
-
-    initCatchData() {
-        this.moldLength = this.data.molds.length
     }
 
     /**
@@ -1519,11 +1531,9 @@ class Tool extends ModuleBase {
             this.checkUpdate()
         }
         // 驗證參數是否使用mold
-        let moldLength = this.moldLength
+        let moldLength = this.data.molds.length
         for (let i = 0; i < moldLength; i++) {
-            if (this.data.molds[i] == null) {
-                continue
-            }
+            if (this.data.molds[i] == null) continue
             let split = this.data.molds[i].split('|')
             let name = split.shift()
             if (name) {
@@ -1992,6 +2002,66 @@ class Mold extends ModuleBase {
 
 }
 
+
+/**
+ * @class ModuleMergersBase
+ * @desc ModuleMergers的Prototype
+ */
+
+class ModuleMergersBase extends ModuleBase {
+
+    constructor() {
+        super('PublicMergers')
+        this.mergers = {}
+        this.created = {}
+    }
+
+    /**
+     * @function add
+     * @desc 加入一個module group
+     */
+
+    register(name, action) {
+        if (this.mergers[name]) {
+            this.$systemError('add', `Public merger name(${name}) already exists.`)
+        }
+        if (typeof action !== 'function') {
+            this.$systemError('add', `Public merger action not a function.`)
+        }
+        this.mergers[name] = action
+    }
+
+    /**
+     * @function get
+     * @desc 獲取一個module group
+     */
+
+    get(name) {
+        if (this.mergers[name] == null) {
+            return this.$systemError('get', `Public merger ${name} not found.`)
+        }
+        if (this.created[name] == null) {
+            this.created[name] = this.$verify(this.mergers[name](), {
+                group: [true, ['object']],
+                options: [false, ['object'], {}]
+            })
+            let merger = this.created[name]
+            if (Group.isGroup(merger.group) === false) {
+                return this.$systemError('get', `The '${name}' not a group.`)
+            }
+            if (merger.group.isModule() === false) {
+                return this.$systemError('get', `The group(${name}) not module mode.`)
+            }
+            merger.options.__module_group__ = true
+            merger.group.create(merger.options)
+        }
+        return this.created[name].group
+    }
+
+}
+
+let ModuleMergers = new ModuleMergersBase()
+
 let PublicMolds = {
 
     number: new Mold({
@@ -2141,7 +2211,7 @@ class Group extends ModuleBase {
      */
 
     isModule() {
-        return this.data.module
+        return !!this.data.module
     }
 
     /**
@@ -2153,6 +2223,7 @@ class Group extends ModuleBase {
     initStatus() {
         this.exportCase = this.data.secure ? this.$protection(this.case) : this.case
         this.status = {
+            alone: false,
             created: false
         }
     }
@@ -2166,7 +2237,8 @@ class Group extends ModuleBase {
     initMerger() {
         for (let key in this.data.merger) {
             let group = this.data.merger[key]
-            if (Group.isGroup(group) === false && typeof group !== 'function') {
+            let type = typeof group
+            if (Group.isGroup(group) === false && !(type === 'function' || type === 'string')) {
                 this.$systemError('initMerger', `The '${key}' not a group or function.`)
             }
         }
@@ -2178,6 +2250,7 @@ class Group extends ModuleBase {
      */
 
     alone(options) {
+        this.status.alone = true
         this.create(options)
         return {
             tool: this.callTool.bind(this),
@@ -2192,13 +2265,21 @@ class Group extends ModuleBase {
      */
 
     create(options) {
-        if (options && this.isModule()) {
-            this.$systemError('create', `Module mode can't use options`)
+        let check = options && this.isModule()
+        if (check && options.__module_group__ !== true) {
+            return this.$systemError('create', `Module mode group can't use options`)
         }
-        if (this.status.created === false) {
-            this.data.create.bind(this.case)(options)
-            this.status.created = true
+        if (check && options.__module_group__ === true && this.status.alone) {
+            return this.$systemError('create', `Module already use, can't be announced as module merger.`)
         }
+        if (check && options.__module_group__ === true) {
+            delete options.__module_group__
+        }
+        if (this.status.created === true) {
+            return null
+        }
+        this.data.create.bind(this.case)(options)
+        this.status.created = true
     }
 
     /**
@@ -2252,6 +2333,11 @@ class Group extends ModuleBase {
 
     getMerger(name) {
         if (this.data.merger[name]) {
+            // Public Mergers
+            if (typeof this.data.merger[name] === 'string') {
+                this.data.merger[name] = ModuleMergers.get(this.data.merger[name])
+            }
+            // Lazy Merger
             if (typeof this.data.merger[name] === 'function') {
                 let group = this.data.merger[name]()
                 if (Group.isGroup(group) === false) {

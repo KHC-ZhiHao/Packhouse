@@ -3,6 +3,10 @@ let Packhouse = require('../dist/Packhouse')
 let group = Packhouse.createGroup({
     secure: true,
     module: false,
+    merger: {
+        mod: 'module',
+        modd: 'module'
+    },
     create() {
         this.testSecure = true
     }
@@ -23,6 +27,13 @@ group.addMold({
     name: 'double',
     casting(param) {
         return Number(param) * 2
+    }
+})
+
+group.addTool({
+    name: 'showModuleOptions',
+    action(system, error, success) {
+        success(system.coop('mod').tool('getOptions').direct())
     }
 })
 

@@ -51,19 +51,8 @@ class Tool extends ModuleBase {
         this.initSystem()
         this.initArgLength()
         this.initCreate()
-        this.initCatchData()
         this.updateStamp = Date.now()
         this.install = null
-    }
-
-    /**
-     * @function initCatchData
-     * @private
-     * @desc 快取一些資源協助優化
-     */
-
-    initCatchData() {
-        this.moldLength = this.data.molds.length
     }
 
     /**
@@ -349,11 +338,9 @@ class Tool extends ModuleBase {
             this.checkUpdate()
         }
         // 驗證參數是否使用mold
-        let moldLength = this.moldLength
+        let moldLength = this.data.molds.length
         for (let i = 0; i < moldLength; i++) {
-            if (this.data.molds[i] == null) {
-                continue
-            }
+            if (this.data.molds[i] == null) continue
             let split = this.data.molds[i].split('|')
             let name = split.shift()
             if (name) {

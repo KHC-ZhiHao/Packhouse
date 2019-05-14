@@ -85,7 +85,7 @@ class Group extends ModuleBase {
      */
 
     isModule() {
-        return this.data.module
+        return !!this.data.module
     }
 
     /**
@@ -97,6 +97,7 @@ class Group extends ModuleBase {
     initStatus() {
         this.exportCase = this.data.secure ? this.$protection(this.case) : this.case
         this.status = {
+            alone: false,
             created: false
         }
     }
@@ -110,7 +111,8 @@ class Group extends ModuleBase {
     initMerger() {
         for (let key in this.data.merger) {
             let group = this.data.merger[key]
-            if (Group.isGroup(group) === false && typeof group !== 'function') {
+            let type = typeof group
+            if (Group.isGroup(group) === false && !(type === 'function' || type === 'string')) {
                 this.$systemError('initMerger', `The '${key}' not a group or function.`)
             }
         }
@@ -122,6 +124,7 @@ class Group extends ModuleBase {
      */
 
     alone(options) {
+        this.status.alone = true
         this.create(options)
         return {
             tool: this.callTool.bind(this),
@@ -136,13 +139,21 @@ class Group extends ModuleBase {
      */
 
     create(options) {
-        if (options && this.isModule()) {
-            this.$systemError('create', `Module mode can't use options`)
+        let check = options && this.isModule()
+        if (check && options.__module_group__ !== true) {
+            return this.$systemError('create', `Module mode group can't use options`)
         }
-        if (this.status.created === false) {
-            this.data.create.bind(this.case)(options)
-            this.status.created = true
+        if (check && options.__module_group__ === true && this.status.alone) {
+            return this.$systemError('create', `Module already use, can't be announced as module merger.`)
         }
+        if (check && options.__module_group__ === true) {
+            delete options.__module_group__
+        }
+        if (this.status.created === true) {
+            return null
+        }
+        this.data.create.bind(this.case)(options)
+        this.status.created = true
     }
 
     /**
@@ -196,6 +207,11 @@ class Group extends ModuleBase {
 
     getMerger(name) {
         if (this.data.merger[name]) {
+            // Public Mergers
+            if (typeof this.data.merger[name] === 'string') {
+                this.data.merger[name] = ModuleMergers.get(this.data.merger[name])
+            }
+            // Lazy Merger
             if (typeof this.data.merger[name] === 'function') {
                 let group = this.data.merger[name]()
                 if (Group.isGroup(group) === false) {

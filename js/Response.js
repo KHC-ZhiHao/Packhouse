@@ -72,11 +72,16 @@ class Response {
             callback(result)
             return null
         }
-        let weld = this.welds.pop()
+        let weld = this.welds.shift()
+        let tool = null
+        let noGood = (e) => {
+            this.noGood(e)
+            this.callSop({ result, success: false })
+        }
         if (weld) {
-            let tool = this.group.callTool(weld.tool)
+            tool = this.group.callTool(weld.tool)
             weld.packing(result, tool.packing)
-            tool.ng(this.noGood, this.noGoodOptions)
+            tool.ng(noGood, this.noGoodOptions)
                 .action((result) => {
                     this.runWeld(result, callback)
                 })

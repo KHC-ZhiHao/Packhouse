@@ -11,12 +11,22 @@ class Packhouse extends ModuleBase {
      */
 
     constructor(options = {}) {
-        super("Packhouse")
+        super("Factory")
         this.groups = {}
         this.bridge = null
         if (options.bridge) {
             this.setBridge(options.bridge)
         }
+    }
+
+    /**
+     * @function registerModuleMerger(name,action)
+     * @static
+     * @desc 建立module merger
+     */
+
+    static registerModuleMerger(name, action) {
+        ModuleMergers.register(name, action)
     }
 
     /**
@@ -173,16 +183,14 @@ class Packhouse extends ModuleBase {
 
     addGroup(name, group, options) {
         if (this.groups[name] != null){
-            this.$systemError('addGroup', `Name(${name}) already exists.`)
-            return
+            return this.$systemError('addGroup', `Name(${name}) already exists.`)
+            
         }
         if (Group.isGroup(group) === false) {
-            this.$systemError('addGroup', 'Must group.', group)
-            return
+            return this.$systemError('addGroup', 'Must group.', group)
         }
         if (group.isModule()) {
-            this.$systemError('addGroup', 'Group id module, only use alone or in the merger.', group)
-            return
+            return this.$systemError('addGroup', 'Group id module, only use alone or in the merger.', group)
         }
         group.create(options)
         this.groups[name] = group

@@ -183,3 +183,14 @@ Order可以算是Packhouse的終極應用了，一個可以複數緩衝與快取
 ### FIX
 
 * Mold => casting : 無效化修正
+
+## 1.1.6
+
+### NEW
+
+* PublicMergers => 對於module模塊的綁定機制
+
+### FIX
+
+* Tool => Weld : 發現Weld是先進後出，這對我來說是個BUG，應該是先進先出才對。
+* Tool => Weld : 修正觸發error時不會觸發sop

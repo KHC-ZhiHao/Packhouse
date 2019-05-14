@@ -41,7 +41,7 @@ class Support extends ModuleBase {
     /**
      * @function copy
      * @private
-     * @desc 當lambda被執行後要拷貝狀態
+     * @desc 當lambda被執行後要拷貝狀態，並清空歷史資料
      */
 
     copy() {

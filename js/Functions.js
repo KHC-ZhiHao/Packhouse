@@ -42,4 +42,14 @@ class Functions {
         return commaCount + 1
     }
 
+    /**
+     * @function isAsyncFunction(target)
+     * @static
+     * @desc 驗證是否為Async function
+     */
+
+    static isAsyncFunction(target) {
+        return Object.prototype.toString.call(target) === '[object AsyncFunction]'
+    }
+
 }

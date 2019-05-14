@@ -1,18 +1,30 @@
 let Packhouse = require('../dist/Packhouse')
-let factory = Packhouse.createFactory()
 let url = 'https://khc-zhihao.github.io/Packhouse/document/document.html'
 
-factory.setBridge((factory, groupName, toolName) => {
-	if (factory.hasGroup(groupName) === false) {
-        let group = require(`./${groupName}`)
-        console.log(group.getProfile())
-        if (Packhouse.isGroup(group)) {
-            factory.addGroup(groupName, require(`./${groupName}`))
-        } else {
-            console.log('Not a group', groupName)
+let factory = Packhouse.createFactory({
+    bridge(factory, groupName, toolName) {
+        if (factory.hasGroup(groupName) === false) {
+            let group = require(`./${groupName}`)
+            console.log(group.getProfile())
+            if (Packhouse.isGroup(group)) {
+                factory.addGroup(groupName, require(`./${groupName}`))
+            } else {
+                console.log('Not a group', groupName)
+            }
         }
     }
 })
+
+Packhouse.registerModuleMerger('module', () => {
+    return {
+        group: require('./module'),
+        options: {
+            'mode': 'module'
+        }
+    }
+})
+
+factory.tool('math', 'showModuleOptions').action(console.log)
 
 let pump = Packhouse.createPump(3, () => { console.log('pump success') })
 
