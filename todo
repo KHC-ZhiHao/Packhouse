@@ -1,0 +1,40 @@
+feature:
+    ☐ 判定create 與 install 不能是 async function
+    ☐ 加入event hook
+    ☐ order標準套路用一個接口呈現
+    ☐ order有個過期時間可以設定
+    ☐ 可以在group宣告tools和molds
+    ☐ 統一控管外部套件
+    Helper:
+        ☐ verfiy
+        ☐ getType
+        ☐ asyncLoop
+
+basic:
+    ☐ 加入單元測試
+    ☐ 加入jsdoc
+    ☐ 加入webpack
+
+refactoring :
+    ✔ 移除description @done(19-06-25 18:04)
+    ✔ 移除bridge @done(19-06-25 13:57)
+    ✔ 移除secure @done(19-06-25 18:04)
+    ✔ 移除paramLength @done(19-06-25 18:04)
+    ✔ 移除store，這玩意兒反設計 @done(19-06-25 18:04)
+    ✔ 移除update，這玩意兒也反設計 @done(19-06-25 18:04)
+    ✔ 移除updateTime，失智了才搞這個 @done(19-06-25 18:04)
+    ✔ 移除register module merger @done(19-06-25 15:05)
+    ✔ 移除getProfile @done(19-06-25 18:04)
+    ✔ 移除module屬性 @done(19-06-25 18:04)
+    ✔ 移除public mold @done(19-06-25 18:04)
+    ✔ 移除direct @done(19-06-25 17:46)
+    ✔ 移除replace @done(19-06-25 16:31)
+    ✔ 移除alone，因為event，現在必須圍繞著factory建構事件了 @done(19-06-25 18:04)
+    ✔ 移除async loop @done(19-06-25 13:58)
+    ✔ factory: 移除removeGroup @done(19-06-25 14:00)
+    ✔ factory: 加入公有mold @done(19-06-25 18:04)
+    ✔ group: 移除mergers @done(19-06-25 18:04)
+    ✔ group: create -> install @done(19-06-25 18:05)
+    ✔ 把system, error, success移至this @done(19-06-25 18:05)
+    ✔ 優化export @done(19-06-25 18:05)
+    ✔ 移除name屬性 @done(19-06-25 18:08)

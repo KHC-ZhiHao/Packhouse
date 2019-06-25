@@ -1,0 +1,473 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>模組:Mold · PackHouse</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../style/main.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="tool.html" />
+    
+    
+    <link rel="prev" href="group.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Packhouse
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="divider"></li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="main.html">
+            
+                <a href="main.html">
+            
+                    
+                    介紹
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="factory.html">
+            
+                <a href="factory.html">
+            
+                    
+                    工廠:Factory
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="group.html">
+            
+                <a href="group.html">
+            
+                    
+                    集合:Group
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.4" data-path="mold.html">
+            
+                <a href="mold.html">
+            
+                    
+                    模組:Mold
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="tool.html">
+            
+                <a href="tool.html">
+            
+                    
+                    呼叫:Tool
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.6" data-path="line.html">
+            
+                <a href="line.html">
+            
+                    
+                    柯里化:Line
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="order.html">
+            
+                <a href="order.html">
+            
+                    
+                    訂閱:Order
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="pump.html">
+            
+                <a href="pump.html">
+            
+                    
+                    流程:Pump
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="divider"></li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" >
+            
+                <a target="_blank" href="https://github.com/KHC-ZhiHao/Packhouse">
+            
+                    
+                    Github
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >模組:Mold</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="mold">Mold</h1>
+<p><code>Mold</code>&#x70BA;&#x5206;&#x914D;&#x53C3;&#x6578;&#x6642;&#x9032;&#x884C;&#x9A57;&#x8B49;&#x8207;&#x8F49;&#x8B6F;&#x7684;&#x7269;&#x4EF6;&#xFF0C;&#x80FD;&#x5920;&#x4FDD;&#x6301;&#x578B;&#x5225;&#x6B63;&#x78BA;&#x8207;&#x7D71;&#x4E00;&#x8CC7;&#x6599;&#x683C;&#x5F0F;&#x3002;</p>
+<blockquote>
+<p>Mold&#x662F;&#x70BA;&#x4E86;&#x7C21;&#x55AE;&#x5FEB;&#x901F;&#x7684;&#x5224;&#x5225;&#x800C;&#x751F;&#x7684;&#xFF0C;&#x5982;&#x679C;&#x5224;&#x5B9A;&#x9700;&#x8981;&#x66F4;&#x8907;&#x96DC;&#xFF0C;&#x5EFA;&#x8B70;&#x4F7F;&#x7528;Tool&#x4F86;&#x505A;&#x70BA;&#x9A57;&#x8B49;&#x8207;&#x8F49;&#x63DB;&#x6A5F;&#x5236;&#x3002;</p>
+</blockquote>
+<pre><code class="lang-js">group.addMold({ 
+    name: <span class="hljs-string">&apos;myFirstMold&apos;</span>,
+    description: <span class="hljs-string">&apos;Mold Description&apos;</span>,
+    check(parma, system) { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> },
+    casting(parma) { <span class="hljs-keyword">return</span> <span class="hljs-string">&apos;hello world.&apos;</span> }
+})
+</code></pre>
+<hr>
+<h2 id="options">Options</h2>
+<h3 id="name">Name</h3>
+<ul>
+<li>string</li>
+<li>require</li>
+</ul>
+<p>Mold&#x7684;&#x540D;&#x7A31;&#xFF0C;&#x4E0D;&#x5141;&#x8A31;&#x91CD;&#x8907;&#x3002;</p>
+<h3 id="description">Description</h3>
+<ul>
+<li>string</li>
+<li>optional</li>
+</ul>
+<p>&#x5C0D;&#x65BC;Mold&#x7684;&#x6558;&#x8FF0;&#xFF0C;&#x4E0D;&#x6703;&#x6709;&#x4EFB;&#x4F55;&#x5F71;&#x97FF;&#xFF0C;&#x4F46;&#x6703;&#x88AB;<code>getProfile</code>&#x8B80;&#x53D6;&#x5230;&#xFF0C;&#x53EF;&#x61C9;&#x7528;&#x65BC;&#x6E2C;&#x8A66;&#x6216;&#x6587;&#x4EF6;&#x3002;</p>
+<h3 id="check">Check</h3>
+<ul>
+<li>function</li>
+<li>optional</li>
+</ul>
+<p>&#x9A57;&#x8B49;&#x53C3;&#x6578;&#x662F;&#x5426;&#x6B63;&#x78BA;&#xFF0C;&#x56DE;&#x50B3;<code>true</code>&#x53CA;&#x6B63;&#x78BA;&#xFF0C;&#x56DE;&#x50B3;&#x5B57;&#x4E32;&#x6703;&#x88AB;&#x7576;&#x4F5C;&#x932F;&#x8AA4;message&#x88AB;&#x64F2;&#x51FA;&#x3002;</p>
+<pre><code class="lang-js">group.addTool({
+    name: <span class="hljs-string">&apos;numberOnly&apos;</span>,
+    molds: [<span class="hljs-string">&apos;number&apos;</span>],
+    action(number, system, error, success) {
+        success(number)
+    }
+})
+group.alone().tool(<span class="hljs-string">&apos;numberOnly&apos;</span>).ng(<span class="hljs-built_in">console</span>.log).action(<span class="hljs-number">100</span>, <span class="hljs-built_in">console</span>.log) <span class="hljs-comment">// 100</span>
+group.alone().tool(<span class="hljs-string">&apos;numberOnly&apos;</span>).ng(<span class="hljs-built_in">console</span>.log).direct(<span class="hljs-string">&apos;100&apos;</span>) <span class="hljs-comment">// Param 0 not a number(100).</span>
+</code></pre>
+<h3 id="casting">Casting</h3>
+<ul>
+<li>function</li>
+<li>optional</li>
+</ul>
+<p>&#x7576;&#x9A57;&#x8B49;&#x6210;&#x529F;&#x5F8C;&#xFF0C;<code>Casting</code>&#x80FD;&#x5354;&#x52A9;&#x8F49;&#x63DB;&#x6210;&#x7D71;&#x4E00;&#x7684;&#x683C;&#x5F0F;&#x3002;</p>
+<pre><code class="lang-js">group.addMold({ 
+    name: <span class="hljs-string">&apos;double&apos;</span>,
+    check(param, system) {
+        <span class="hljs-keyword">return</span> <span class="hljs-keyword">typeof</span> param === <span class="hljs-string">&apos;number&apos;</span> ? <span class="hljs-literal">true</span> : <span class="hljs-string">`Param <span class="hljs-subst">${system.index}</span> not a number(<span class="hljs-subst">${param}</span>).`</span>
+    },
+    casting(parma) {
+        <span class="hljs-keyword">return</span> parma * <span class="hljs-number">2</span> <span class="hljs-comment">//&#x56DE;&#x50B3;&#x53C3;&#x6578; * 2</span>
+    }
+})
+
+group.addTool({
+    name: <span class="hljs-string">&apos;useCastingTest&apos;</span>,
+    molds: [<span class="hljs-string">&apos;double&apos;</span>],
+    action(number, system, error, success) {
+        success(number)
+    }
+})
+
+group.alone().tool(<span class="hljs-string">&apos;useCastingTest&apos;</span>).action(<span class="hljs-number">10</span>, <span class="hljs-built_in">console</span>.log) <span class="hljs-comment">// 20</span>
+</code></pre>
+<hr>
+<h2 id="&#x5982;&#x4F55;&#x4F7F;&#x7528;">&#x5982;&#x4F55;&#x4F7F;&#x7528;</h2>
+<h3 id="&#x5728;action&#x4E2D;&#x4F7F;&#x7528;">&#x5728;action&#x4E2D;&#x4F7F;&#x7528;</h3>
+<blockquote>
+<p>&#x7B2C;&#x4E09;&#x500B;&#x932F;&#x8AA4;&#x70BA;&#x5982;&#x679C;check&#x672A;&#x901A;&#x904E;&#x6642;&#x547C;&#x53EB;&#x4E00;&#x500B;&#x56DE;&#x4E4E;&#x51FD;&#x6578;&#xFF0C;&#x672A;&#x8A2D;&#x5B9A;&#x5728;&#x932F;&#x8AA4;&#x6642;&#x6703;&#x76F4;&#x51FA;throw error&#x3002;</p>
+</blockquote>
+<pre><code class="lang-js">system.casting(moldName, value, error)
+</code></pre>
+<pre><code class="lang-js">group.addTool({
+    name: <span class="hljs-string">&apos;moldTest&apos;</span>,
+    action(value, system, error, success) {
+        success(system.casting(<span class="hljs-string">&apos;myFirstMold&apos;</span>, value)) <span class="hljs-comment">// hello world.</span>
+    }
+})
+</code></pre>
+<h3 id="&#x5F9E;&#x5EFA;&#x7ACB;tool&#x6642;&#x5BA3;&#x544A;molds">&#x5F9E;&#x5EFA;&#x7ACB;tool&#x6642;&#x5BA3;&#x544A;molds</h3>
+<p>&#x50B3;&#x5165;&#x4E00;&#x500B;&#x9663;&#x5217;&#x4F9D;&#x5E8F;&#x5BA3;&#x544A;&#x53C3;&#x6578;&#x7684;Mold&#x5C0D;&#x8C61;&#x3002;</p>
+<blockquote>
+<p>&#x53EF;&#x4EE5;&#x85C9;&#x7531;null&#x6307;&#x5B9A;mold&#x53C3;&#x6578;&#x5C0D;&#x8C61;&#x3002;</p>
+</blockquote>
+<pre><code class="lang-js">group.addTool({
+    name: <span class="hljs-string">&apos;moldTest&apos;</span>,
+    molds: [<span class="hljs-literal">null</span>, <span class="hljs-string">&apos;myFirstMold&apos;</span>],
+    action(value, value2, system, error, success) {
+        success(value2) <span class="hljs-comment">// hello world.</span>
+    }
+})
+</code></pre>
+<hr>
+<h2 id="check-system">Check System</h2>
+<p><code>System</code>&#x53EF;&#x4EE5;&#x7372;&#x53D6;<code>index</code>&#x548C;<code>caller</code>&#x5916;&#xFF0C;&#x9084;&#x53EF;&#x4EE5;&#x7372;&#x53D6;&#x4F7F;&#x7528;<code>|</code>&#x7B26;&#x865F;&#x5EFA;&#x7ACB;&#x984D;&#x5916;&#x53C3;&#x6578;(extras)</p>
+<pre><code class="lang-js">group.addMold({
+    name: <span class="hljs-string">&apos;useSystem&apos;</span>,
+    check(param, system) {
+        cosnole.log(system.index)  <span class="hljs-comment">// 0</span>
+        cosnole.log(system.caller) <span class="hljs-comment">// &apos;useSystemTest&apos;</span>
+        cosnole.log(system.extras) <span class="hljs-comment">// [&apos;extrasValue&apos;, &apos;value2&apos;]</span>
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+    }
+})
+
+group.addTool({
+    name: <span class="hljs-string">&apos;useSystemTest&apos;</span>,
+    molds: [<span class="hljs-string">&apos;useSystem|extrasValue|value2&apos;</span>],
+    action(number, system, error, success) {
+        success(number)
+    }
+})
+</code></pre>
+<hr>
+<h2 id="public">Public</h2>
+<p><code>Public Mold</code>&#x662F;&#x500B;&#x5168;&#x5C40;<code>Mold</code>&#xFF0C;&#x5B83;&#x53EF;&#x4EE5;&#x88AB;&#x6240;&#x6709;<code>Tool</code>&#x5F15;&#x7528;&#xFF0C;&#x4F46;&#x5982;&#x679C;&#x8207;<code>Group</code>&#x5167;&#x7684;<code>Mold</code>&#x540C;&#x540D;&#xFF0C;&#x5247;&#x4EE5;<code>Group</code>&#x7684;<code>Mold</code>&#x512A;&#x5148;&#x3002;</p>
+<blockquote>
+<p>Public Mold&#x4E5F;&#x662F;&#x4E0D;&#x5141;&#x8A31;&#x88AB;&#x8907;&#x5BEB;&#x7684;&#x3002;</p>
+</blockquote>
+<pre><code class="lang-js"><span class="hljs-keyword">let</span> Packhouse = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;packhouse&apos;</span>)
+
+Packhouse.createPublicMold({
+    name: <span class="hljs-string">&apos;firstPublicMold&apos;</span>,
+    check() { <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span> }
+})
+
+anyGroup.addTool({
+    name: <span class="hljs-string">&apos;use public mold&apos;</span>,
+    molds: [<span class="hljs-string">&apos;firstPublicMold&apos;</span>],
+    action(number, system, error, success) {
+        success(number)
+    }
+})
+</code></pre>
+<h3 id="&#x9810;&#x8A2D;&#x7684;public-mold">&#x9810;&#x8A2D;&#x7684;Public Mold</h3>
+<p>&#x9810;&#x8A2D;&#x7684;Public Mold&#x6709;&#x4EE5;&#x4E0B;&#x7D93;&#x5E38;&#x88AB;&#x4F7F;&#x7528;&#x7684;&#xFF1A;</p>
+<ul>
+<li>number: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x6578;&#x5B57;</li>
+<li>int: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x6578;&#x5B57;&#x4E26;&#x8F49;&#x6210;&#x6574;&#x6578;</li>
+<li>string: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x5B57;&#x4E32;</li>
+<li>array: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x9663;&#x5217;</li>
+<li>object: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x7269;&#x4EF6;</li>
+<li>function: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x51FD;&#x6578;</li>
+<li>required: &#x9A57;&#x8B49;&#x53C3;&#x6578;&#x4E0D;&#x80FD;&#x70BA;&#x7A7A;</li>
+</ul>
+<blockquote>
+<p>&#x4EE5;&#x4E0A;&#x7684;Public Mold&#x90FD;&#x80FD;&#x63A5;&#x6536;&#x4E00;&#x9805;abe(Allowed be empty)&#x7684;&#x53C3;&#x6578;&#xFF0C;&#x5141;&#x8A31;&#x53C3;&#x6578;&#x70BA;&#x7A7A;&#x3002;</p>
+</blockquote>
+<pre><code class="lang-js">group.addTool({
+    name: <span class="hljs-string">&apos;numberOrNull&apos;</span>,
+    molds: [<span class="hljs-string">&apos;number|abe&apos;</span>],
+    action(number, system, error, success) {
+        success(number)
+    }
+})
+</code></pre>
+
+                                
+                                </section>
+                            
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="group.html" class="navigation navigation-prev " aria-label="Previous page: 集合:Group">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="tool.html" class="navigation navigation-next " aria-label="Next page: 呼叫:Tool">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"模組:Mold","level":"2.4","depth":1,"next":{"title":"呼叫:Tool","level":"2.5","depth":1,"path":"pages/tool.md","ref":"./pages/tool.md","articles":[]},"previous":{"title":"集合:Group","level":"2.3","depth":1,"path":"pages/group.md","ref":"./pages/group.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-search","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/mold.md","mtime":"2019-06-18T02:27:29.577Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-06-25T04:17:47.301Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    </body>
+</html>
+

@@ -1,0 +1,422 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>柯里化:Line · PackHouse</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../style/main.css">
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="order.html" />
+    
+    
+    <link rel="prev" href="tool.html" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Packhouse
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="divider"></li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="main.html">
+            
+                <a href="main.html">
+            
+                    
+                    介紹
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="factory.html">
+            
+                <a href="factory.html">
+            
+                    
+                    工廠:Factory
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="group.html">
+            
+                <a href="group.html">
+            
+                    
+                    集合:Group
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.4" data-path="mold.html">
+            
+                <a href="mold.html">
+            
+                    
+                    模組:Mold
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.5" data-path="tool.html">
+            
+                <a href="tool.html">
+            
+                    
+                    呼叫:Tool
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="2.6" data-path="line.html">
+            
+                <a href="line.html">
+            
+                    
+                    柯里化:Line
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.7" data-path="order.html">
+            
+                <a href="order.html">
+            
+                    
+                    訂閱:Order
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.8" data-path="pump.html">
+            
+                <a href="pump.html">
+            
+                    
+                    流程:Pump
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="divider"></li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" >
+            
+                <a target="_blank" href="https://github.com/KHC-ZhiHao/Packhouse">
+            
+                    
+                    Github
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >柯里化:Line</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="line">Line</h1>
+<p>&#x67EF;&#x91CC;&#x5316;(Currying)&#x662F;&#x51FD;&#x6578;&#x5F0F;&#x8A2D;&#x8A08;&#x7684;&#x4E00;&#x9805;&#x6307;&#x6A19;&#xFF0C;&#x5728;<code>Packhouse</code>&#x4E5F;&#x4E0D;&#x4F8B;&#x5916;&#xFF0C;&#x6211;&#x5011;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;Line&#x5EFA;&#x7ACB;&#x67EF;&#x7406;&#x5316;&#x51FD;&#x5F0F;&#x3002;</p>
+<pre><code class="lang-js">group.addLine({
+    name: <span class="hljs-string">&apos;string&apos;</span>,
+    fail: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{},
+    inlte: [<span class="hljs-string">&apos;string&apos;</span>, <span class="hljs-string">&apos;string&apos;</span>, ...],
+    input: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{},
+    output: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{},
+    layout: {}
+})
+</code></pre>
+<hr>
+<h2 id="options">Options</h2>
+<h3 id="input">Input</h3>
+<ul>
+<li>function</li>
+<li>require</li>
+</ul>
+<p>&#x70BA;&#x57F7;&#x884C;&#x7684;&#x5165;&#x53E3;&#x3002;</p>
+<blockquote>
+<p><code>Line</code>&#x4E26;&#x6C92;&#x6709;&#x9810;&#x8655;&#x7406;&#x7684;&#x529F;&#x80FD;&#xFF0C;&#x6BCF;&#x6B21;&#x57F7;&#x884C;<code>Line</code>&#x90FD;&#x662F;&#x65B0;&#x7684;&#x5EFA;&#x7F6E;&#xFF0C;&#x5305;&#x62EC;<code>this</code>&#x90FD;&#x6703;&#x5237;&#x65B0;&#x3002;</p>
+</blockquote>
+<pre><code class="lang-js"><span class="hljs-keyword">let</span> input = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">number, system, error, next</span>) </span>{
+    <span class="hljs-keyword">this</span>.number = number
+    next()
+}
+</code></pre>
+<h3 id="output">Output</h3>
+<ul>
+<li>function</li>
+<li>require</li>
+</ul>
+<p>&#x8F38;&#x51FA;&#x8CC7;&#x6599;&#x7684;&#x51FA;&#x53E3;&#xFF0C;&#x7121;&#x6CD5;&#x63A5;&#x53D7;&#x4EFB;&#x4F55;&#x53C3;&#x6578;&#x3002;</p>
+<pre><code class="lang-js"><span class="hljs-keyword">let</span> output = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">system, error, success</span>) </span>{
+    success(<span class="hljs-keyword">this</span>.number)
+}
+</code></pre>
+<h3 id="fail">Fail</h3>
+<ul>
+<li>function</li>
+<li>require</li>
+</ul>
+<p>&#x7576;&#x57F7;&#x884C;<code>error</code>&#x90FD;&#x6703;&#x9032;&#x5165;<code>fail</code>&#x4E26;<code>report</code>&#x51FA;&#x5931;&#x6557;&#xFF0C;&#x800C;<code>error</code>&#x6709;<code>message</code>&#x548C;<code>stack</code>&#x5169;&#x7A2E;&#x5C6C;&#x6027;&#x3002;</p>
+<pre><code class="lang-js"><span class="hljs-keyword">let</span> fail = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">error, report</span>) </span>{
+    report(error.message)
+}
+</code></pre>
+<h3 id="layout">Layout</h3>
+<ul>
+<li>object</li>
+<li>require</li>
+</ul>
+<p>&#x53EF;&#x4EE5;&#x547C;&#x53EB;&#x7684;&#x51FD;&#x6578;&#x5217;&#x3002;</p>
+<blockquote>
+<p>&#x5207;&#x8A18;this&#x662F;line&#x5BA3;&#x544A;&#x5F8C;&#x5171;&#x4EAB;&#x7684;&#xFF0C;&#x907F;&#x514D;&#x4F7F;&#x7528;&#x7BAD;&#x982D;&#x51FD;&#x6578;&#x3002;</p>
+</blockquote>
+<pre><code class="lang-js"><span class="hljs-keyword">let</span> layout = {
+    <span class="hljs-comment">// &#x9019;&#x662F;&#x53EF;&#x4EE5;&#x5B9A;&#x7FA9;&#x7D30;&#x7BC0;&#x7684;&#x5BA3;&#x544A;&#x6A21;&#x5F0F;&#xFF0C;input&#x4E5F;&#x652F;&#x63F4;&#x6B64;&#x65B9;&#x6CD5;</span>
+    add: {
+        molds: [<span class="hljs-string">&apos;number&apos;</span>],
+        action: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">number, system, error, next</span>) </span>{
+            <span class="hljs-keyword">this</span>.number += number
+            next()
+        }
+    },
+    <span class="hljs-comment">// &#x9019;&#x662F;&#x7C21;&#x6613;&#x7684;&#x5BA3;&#x544A;&#x6A21;&#x5F0F;</span>
+    double: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">system, error, next</span>) </span>{
+        <span class="hljs-keyword">this</span>.number = <span class="hljs-keyword">this</span>.number * <span class="hljs-number">2</span>
+    }
+}
+</code></pre>
+<h4 id="&#x7CFB;&#x7D71;layout">&#x7CFB;&#x7D71;Layout</h4>
+<p>&#x4EE5;&#x4E0B;&#x9019;&#x5E7E;&#x500B;&#x540D;&#x7A31;&#x662F;&#x7CFB;&#x7D71;&#x5C64;&#x6240;&#x9700;&#x8981;&#xFF0C;&#x4E0D;&#x53EF;&#x5BA3;&#x544A;&#x5728;<code>layout</code>&#x5167;&#x3002;</p>
+<blockquote>
+<p>line&#x4E0D;&#x652F;&#x63F4;direct</p>
+</blockquote>
+<ul>
+<li>setRule : &#x540C;tool rule</li>
+<li>action : &#x63A5;&#x53D7;&#x4E00;&#x500B;callback</li>
+<li>promise : &#x56DE;&#x50B3;&#x4E00;&#x500B;promise</li>
+</ul>
+<h5 id="layout&#x4E0D;&#x5B8C;&#x5168;&#x662F;tool">Layout&#x4E0D;&#x5B8C;&#x5168;&#x662F;tool</h5>
+<p>input, layout&#x90FD;&#x662F;tool&#x7684;&#x8B8A;&#x9AD4;&#xFF0C;&#x4E0D;&#x4E00;&#x5B9A;&#x9700;&#x8981;&#x85C9;&#x7531;function&#x53BB;&#x5EFA;&#x7ACB;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x50B3;&#x5165;&#x4E00;&#x4EFD;options&#x4F7F;&#x7528;tool&#x7684;&#x529F;&#x80FD;&#x3002;</p>
+<blockquote>
+<p>&#x76EE;&#x524D;&#x5BE6;&#x8CEA;&#x4E0A;&#x7684;&#x5DEE;&#x7570;&#x4E5F;&#x53EA;&#x6709;success&#x70BA;next&#x548C;&#x4E0D;&#x652F;&#x63F4;name&#x5C6C;&#x6027;&#x3002;</p>
+<p>output&#x548C;fail&#x662F;&#x7368;&#x7ACB;&#x7684;&#x500B;&#x9AD4;&#xFF0C;&#x53EA;&#x652F;&#x63F4;function&#x578B;&#x614B;&#x3002;</p>
+</blockquote>
+<h3 id="inlet">Inlet</h3>
+<ul>
+<li>array</li>
+<li>optional</li>
+</ul>
+<p>&#x56B4;&#x683C;&#x8A2D;&#x5B9A;&#x9032;&#x5165;&#x9EDE;&#xFF0C;&#x9664;&#x4E86;input&#x5916;&#xFF0C;inlet&#x6703;&#x9650;&#x5236;&#x7B2C;&#x4E00;&#x6B21;&#x547C;&#x53EB;layout&#x7684;&#x5C0D;&#x8C61;&#x3002;</p>
+<pre><code class="lang-js"><span class="hljs-keyword">let</span> inlet = [<span class="hljs-string">&apos;add&apos;</span>]
+</code></pre>
+<hr>
+<h2 id="&#x547C;&#x53EB;">&#x547C;&#x53EB;</h2>
+<pre><code class="lang-js">group.addLine({
+    name: <span class="hljs-string">&apos;math&apos;</span>,
+    input,
+    inlet,
+    output,
+    fail,
+    layout
+})
+
+<span class="hljs-keyword">let</span> math = group.alone().line(<span class="hljs-string">&apos;math&apos;</span>)
+math(<span class="hljs-number">5</span>).setRule(<span class="hljs-built_in">console</span>.error).add(<span class="hljs-number">10</span>).double().action(<span class="hljs-built_in">console</span>.log) <span class="hljs-comment">// 30</span>
+</code></pre>
+
+                                
+                                </section>
+                            
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="tool.html" class="navigation navigation-prev " aria-label="Previous page: 呼叫:Tool">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="order.html" class="navigation navigation-next " aria-label="Next page: 訂閱:Order">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"柯里化:Line","level":"2.6","depth":1,"next":{"title":"訂閱:Order","level":"2.7","depth":1,"path":"pages/order.md","ref":"./pages/order.md","articles":[]},"previous":{"title":"呼叫:Tool","level":"2.5","depth":1,"path":"pages/tool.md","ref":"./pages/tool.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-search","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/line.md","mtime":"2019-06-18T02:27:29.576Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-06-25T04:17:47.301Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+
+    </body>
+</html>
+
