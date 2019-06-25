@@ -38,3 +38,6 @@ refactoring :
     ✔ 把system, error, success移至this @done(19-06-25 18:05)
     ✔ 優化export @done(19-06-25 18:05)
     ✔ 移除name屬性 @done(19-06-25 18:08)
+    ✔ line:移除 fail @done(19-06-25 22:53)
+    ✔ line:移除 stack @done(19-06-25 22:53)
+    ☐ order: 移除list

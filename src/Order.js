@@ -1,23 +1,27 @@
-/**
- * @class Order
- * @desc 緩衝與快取物件
- */
+const Base = require('./Base')
 
-class Order extends ModuleBase {
-
+class OrderCore extends Base {
     constructor(options = {}) {
         super('Order')
         this.init()
         this.options = this.$verify(options, {
-            max: [false, ['number'], 1000]
+            max: [false, ['number'], 100]
         })
     }
 
-    /**
-     * @function init()
-     * @private
-     * @desc 初始化數據
-     */
+    has(key) {
+        if (typeof key !== 'string') {
+            this.$systemError('has', 'Key not a string.', key)
+        }
+        return !!this.caches[key]
+    }
+
+    get(key) {
+        if (this.has(key) === false) {
+            this.$system('get', `Key(${key}) not found.`)
+        }
+        return this.caches[key]
+    }
 
     init() {
         this.keys = []
@@ -25,73 +29,19 @@ class Order extends ModuleBase {
         this.length = 0
     }
 
-    /**
-     * @function has(key)
-     * @desc 有無這份cache
-     */
-
-    has(key) {
-        if (typeof key === 'string') {
-            return !!this.caches[key]
-        } else {
-            this.$systemError('has', 'Key not a string.', key)
-        }
-    }
-
-    /**
-     * @function get(key)
-     * @desc 獲取cache
-     */
-
-    get(key) {
-        if (this.has(key)) {
-            return this.caches[key].exports
-        } else {
-            this.$system('get', `Key(${key}) not found.`)
-        }
-    }
-
-    /**
-     * @function list()
-     * @desc 獲取cache map
-     */
-
-    list() {
-        let map = {}
-        for (let key of this.caches) {
-            map[key] = this.caches[key].result
-        }
-        return map
-    }
-
-    /**
-     * @function clear()
-     * @desc 清空cache
-     */
-
     clear() {
         this.init()
     }
 
-    /**
-     * @function create()
-     * @desc 建立一個cache
-     */
-
     create(key) {
-        this.length += 1
         this.keys.push(key)
-        this.caches[key] = new OrderCache()
+        this.length += 1
+        this.caches[key] = new Cache()
         if (this.length > this.options.max) {
             this.remove(this.keys[0])
         }
         return this.get(key)
     }
-
-    /**
-     * @function remove(key)
-     * @desc 指定移除一個快取
-     */
 
     remove(key) {
         if (this.has(key)) {
@@ -102,45 +52,21 @@ class Order extends ModuleBase {
         }
     }
 
-    /**
-     * @function getOrCreate()
-     * @desc 獲取一個快取，如果沒有則建立
-     */
-
     getOrCreate(key) {
         return this.has(key) ? this.get(key) : this.create(key)
     }
-
 }
 
-/**
- * @class OrderCache
- * @desc 快取物件
- */
-
-class OrderCache extends ModuleBase {
-
+class CacheCore extends Base {
     constructor() {
-        super('OrderCache')
+        super('Cache')
         this.mode = null
         this.ready = false
         this.loaded = false
-        this.onloadBuffers = []
         this.result = null
         this.buffers = []
-        this.exports = {
-            post: this.post.bind(this),
-            buffer: this.buffer.bind(this),
-            onload: this.onload.bind(this),
-            isReady: this.isReady.bind(this),
-            onReady: this.onReady.bind(this)
-        }
+        this.onloadBuffers = []
     }
-
-    /**
-     * @function post()
-     * @desc 推播所有buffer
-     */
 
     post() {
         while (this.buffers.length > 0) {
@@ -153,29 +79,13 @@ class OrderCache extends ModuleBase {
         }
     }
 
-    /**
-     * @function buffer(error,success)
-     * @desc 加入一個緩衝
-     */
-
     buffer(error, success) {
         this.buffers.push({ error, success })
-        return this.exports
     }
-
-    /**
-     * @function isReady()
-     * @desc 是否被宣告過載入
-     */
 
     isReady() {
         return !!this.ready
     }
-
-    /**
-     * @function onReady(callback)
-     * @desc 沒有快取，宣告載入
-     */
 
     onReady(callback) {
         if (this.isReady() === false) {
@@ -183,11 +93,6 @@ class OrderCache extends ModuleBase {
             callback(this.setError.bind(this), this.setSuccess.bind(this))
         }
     }
-
-    /**
-     * @function onload(callback)
-     * @desc 監聽是否已經快取，已經快取完畢則執行，否則等待快取完畢後執行
-     */
 
     onload(callback) {
         if (this.loaded) {
@@ -198,24 +103,12 @@ class OrderCache extends ModuleBase {
         return this.exports
     }
 
-    /**
-     * @function postOnload()
-     * @private
-     * @desc 等待快取仔入完畢後，推播所有的onload事件
-     */
-
     postOnload() {
         while (this.onloadBuffers.length > 0) {
             let callback = this.onloadBuffers.pop()
             callback(this.exports)
         }
     }
-
-    /**
-     * @function set(mode,result)
-     * @private
-     * @desc 設定快取資料
-     */
 
     set(mode, result) {
         if (this.loaded === false) {
@@ -226,32 +119,75 @@ class OrderCache extends ModuleBase {
         }
     }
 
-    /**
-     * @function setError(result)
-     * @private
-     * @desc 這次的快取是個錯誤
-     */
-
     setError(result) {
         this.set('error', result)
     }
 
-    /**
-     * @function setSuccess(result)
-     * @private
-     * @desc 這次的快取是成功的
-     */
-
     setSuccess(result) {
         this.set('success', result)
     }
-
 }
 
-// this.has = order.has.bind(order)
-// this.get = order.get.bind(order)
-// this.list = order.list.bind(order)
-// this.clear = order.clear.bind(order)
-// this.create = order.create.bind(order)
-// this.remove = order.remove.bind(order)
-// this.getOrCreate = order.getOrCreate.bind(order)
+class Cache {
+    constructor() {
+        this._core = new CacheCore()
+    }
+
+    post() {
+        return this._core.post()
+    }
+
+    buffer(error, success) {
+        this._core.buffer(error, success)
+        return this
+    }
+
+    onload(callback) {
+        this._core.onload(callback)
+        return this
+    }
+
+    isReady() {
+        return this._core.isReady()
+    }
+
+    onReady(callback) {
+        return this._core.onReady(callback)
+    }
+}
+
+class Order {
+    constructor(options) {
+        this._core = new OrderCore(options)
+    }
+
+    has(key) {
+        return this._core.has(key)
+    }
+
+    get(key) {
+        return this._core.get(key)
+    }
+
+    list() {
+        return this._core.list()
+    }
+
+    clear() {
+        return this._core.clear()
+    }
+
+    create(key) {
+        return this._core.create(key)
+    }
+
+    remove(key) {
+        return this._core.remove(key)
+    }
+
+    getOrCreat(key) {
+        return this._core.getOrCreate(key)
+    }
+}
+
+module.exports = Order

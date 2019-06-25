@@ -37,12 +37,12 @@ class User {
 }
 
 class Tool extends Base {
-    constructor(group, options = {}) {
+    constructor(group, options = {}, store) {
         super('Tool')
         this.group = group
-        this.store = new Store(this)
+        this.store = store || new Store(this)
         this.options = this.$verify(options, {
-            molds: [false, ['object'], []],
+            molds: [false, ['array'], []],
             action: [true, ['function']],
             create: [false, ['function'], () => {}]
         })

@@ -1,5 +1,6 @@
 const Base = require('./Base')
 const Tool = require('./Tool')
+const Line = require('./Line')
 
 class GroupStore {}
 class Group extends Base {

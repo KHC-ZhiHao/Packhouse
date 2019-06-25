@@ -1,4 +1,6 @@
 const Base = require('./Base')
+const Tool = require('./Tool')
+const Support = require('./Support')
 const Response = require('./Response')
 
 class Line extends Base {
@@ -7,13 +9,13 @@ class Line extends Base {
         this.tools = {}
         this.group = group
         this.options = this.$verify(options, {
-            fail: [true, ['function']],
             molds: [false, ['array'], []],
             inlet: [false, ['object'], null],
             input: [true, ['function']],
             output: [true, ['function']],
             layout: [true, ['object']]
         })
+        this.layoutKeys = Object.keys(this.options.layout)
         this.checkPrivateKey()
     }
 
@@ -25,64 +27,40 @@ class Line extends Base {
     }
 
     use() {
-        return (...options) => {
-            return (new Deploy(this, options)).conveyer
+        return (...args) => {
+            return (new Deploy(this, args)).conveyer
         }
     }
 }
 
-/**
- * @class Deploy
- * @desc Deploy是Line作為實際運行的物件
- */
-
 class Deploy extends Base {
-    /**
-     * @member {array} flow 為放置行為的容器
-     * @member {number} index
-     */
-
     constructor(main, params) {
         super('Deploy')
-        this.main = main
         this.flow = []
-        this.layout = main.options.layout
+        this.main = main
         this.params = params
+        this.layout = main.options.layout
         this.supports = new Support()
         this.init()
     }
 
-    /**
-     * @function createTool
-     * @private
-     * @desc 實例化layout
-     */
-
-    createTool(target) {
-        if (typeof target === 'function') {
-            return (new Tool(this.main.group, { action: target })).use()
-        } else {
-            return (new Tool(target, this.main.group)).use()
-        }
-    }
-
-    /**
-     * @function init
-     * @private
-     * @desc 初始化I/O
-     */
-
     init() {
-        this.input = this.createTool('input', this.main.options.input)
-        this.output = this.createTool('output', this.main.options.output)
+        this.input = this.createTool({
+            molds: this.main.options.molds,
+            action: this.main.options.input
+        })
+        this.output = this.createTool(this.main.options.output)
         this.initConveyer()
     }
 
-    /**
-     * @function initConveyer
-     * @private
-     * @desc 初始化輸送帶
-     */
+    createTool(target) {
+        let opts = typeof target === 'function' ? { action: target } : target
+        let tool = new Tool(this.main.group, opts, this.store)
+        if (this.store == null) {
+            this.store = tool.store
+        }
+        return tool.use()
+    }
 
     initConveyer() {
         this.conveyer = {
@@ -98,135 +76,67 @@ class Deploy extends Base {
         }
     }
 
-    /**
-     * @function register
-     * @private
-     * @desc 註冊一個flow
-     */
-
     register(name, params) {
-        let inlet = this.main.data.inlet
-        if (inlet && inlet.length !== 0 && this.flow.length === 0) {
-            if (inlet.includes(name) === false) {
-                this.$systemError('register', `First call method not inside inlet, you use '${name}'.`)
-            }
+        let inlet = this.main.options.inlet
+        if (inlet && inlet.length !== 0 && this.flow.length === 0 && !inlet.includes(name)) {
+            this.$systemError('register', `First call method not inside inlet, you use '${name}'.`)
         }
         this.flow.push({
             name: name,
-            method: this.createTool(name, this.layout[name]),
+            method: this.createTool(this.layout[name]),
             params: params
         })
     }
 
-    /**
-     * @function action
-     * @private
-     * @desc 執行有回乎函數的動作
-     */
-
     action(callback) {
-        let fail = this.main.data.fail
         let supports = this.supports.copy()
         let response = (new Response.Action(this.main.group, supports, callback)).exports
-        this.process(error => fail(error, response.error), response.success)
+        this.process(response.error, response.success)
     }
-
-    /**
-     * @function action
-     * @private
-     * @desc 執行回傳Promise的動作
-     */
 
     promise() {
         return new Promise((resolve, reject) => {
-            let fail = this.main.data.fail
             let supports = this.supports.copy()
             let response = (new Response.Promise(this.main.group, supports, resolve, reject)).exports
-            this.process(error => fail(error, response.error), response.success)
+            this.process(response.error, response.success)
         })
     }
-
-    /**
-     * @function setRule
-     * @private
-     * @desc 效力等同rule(ng, sop, ngOptions)
-     */
 
     setRule(...options) {
         this.supports.setRule(...options)
         return this.conveyer
     }
 
-    /**
-     * @function process
-     * @private
-     * @desc process是一個包裝執行過程的物件
-     */
-
     process(error, success) {
-        (new Process(this.params, this.flow, this.input, this.output)).start(error, success)
+        new Process(this, error, success)
     }
 }
 
-/**
- * @class Process
- * @desc process是一個包裝執行過程的物件
- */
-
 class Process extends Base {
-    constructor(params, flow, input, output) {
+    constructor(deploy, error, success) {
         super('Process')
         this.stop = false
-        this.flow = flow
+        this.flow = deploy.flow
         this.index = 0
-        this.stack = []
-        this.input = input
-        this.params = params
-        this.output = output
-    }
-
-    /**
-     * @function start
-     * @private
-     * @desc 執行Process
-     */
-
-    start(error, success) {
+        this.input = deploy.input
+        this.params = deploy.params
+        this.output = deploy.output
         this.error = error
         this.success = success
-        this.stack.push('input')
-        this.input.ng(e => this.fail(e)).action(...this.params, this.next.bind(this))
+        this.input
+            .ng(e => this.fail(e))
+            .action(...this.params, this.next.bind(this))
     }
-
-    /**
-     * @function finish
-     * @private
-     * @desc 執行output
-     */
 
     finish() {
-        this.stack.push('output')
-        this.output.ng(e => this.fail(e)).action(this.success)
+        this.output
+            .ng(e => this.fail(e))
+            .action(this.success)
     }
-
-    /**
-     * @function createError
-     * @private
-     * @desc 建立錯誤與堆棧
-     */
 
     createError(message) {
-        return {
-            message: message || 'unknown error',
-            stack: this.stack
-        }
+        return message || 'unknown error'
     }
-
-    /**
-     * @function fail
-     * @private
-     * @desc 呼叫失敗
-     */
 
     fail(message) {
         if (this.stop === false) {
@@ -235,21 +145,16 @@ class Process extends Base {
         }
     }
 
-    /**
-     * @function next
-     * @private
-     * @desc 執行下一個flow
-     */
-
     next() {
-        if (this.stop === true) { return }
+        if (this.stop === true) return
         let flow = this.flow[this.index]
         if (flow) {
-            this.stack.push(flow.name)
-            flow.method.ng(e => this.fail(e)).action(...flow.params, () => {
-                this.index += 1
-                this.next()
-            })
+            flow.method
+                .ng(e => this.fail(e))
+                .action(...flow.params, () => {
+                    this.index += 1
+                    this.next()
+                })
         } else {
             this.finish()
         }

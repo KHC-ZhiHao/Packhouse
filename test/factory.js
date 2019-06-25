@@ -18,11 +18,19 @@ describe('#Factory', () => {
         expect(this.factory.hasMold('fail')).to.equal(false)
     })
     it('tool', function() {
-        this.factory.tool('test', 'sum').action(5, 7, (error, result) => {
-            expect(result).to.equal(12)
-        })
+        this.factory
+            .tool('test', 'sum')
+            .action(5, 7, (error, result) => {
+                expect(result).to.equal(12)
+            })
     })
     it('line', function() {
-        expect(0).to.equal('test沒寫')
+        this.factory
+            .line('test', 'compute')()
+            .add(5)
+            .double()
+            .action((error, result) => {
+                expect(result).to.equal(10)
+            })
     })
 })

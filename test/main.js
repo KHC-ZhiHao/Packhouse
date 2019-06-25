@@ -10,7 +10,7 @@ describe('#Main', () => {
         expect(factory instanceof Factory).to.equal(true)
     })
     it('create pump', function() {
-        let pump = Packhouse.createPump()
+        let pump = Packhouse.createPump(10, () => {})
         expect(pump instanceof Pump).to.equal(true)
     })
 })

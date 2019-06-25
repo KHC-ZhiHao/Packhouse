@@ -1,10 +1,10 @@
 const Base = require('./Base')
 
-class Case {}
+class MoldStore {}
 class Mold extends Base {
     constructor(options = {}) {
         super('Mold')
-        this.case = new Case()
+        this.case = new MoldStore()
         this.options = this.$verify(options, {
             check: [false, ['function'], function() { return true }],
             casting: [false, ['function'], function(param) { return param }]

@@ -42,8 +42,8 @@ class PumpCore extends Base {
 }
 
 class Pump {
-    constructor() {
-        this._core = new PumpCore()
+    constructor(total, callback) {
+        this._core = new PumpCore(total, callback)
     }
 
     add(count) {
