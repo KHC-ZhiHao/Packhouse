@@ -27,7 +27,7 @@ class FactoryCore extends Base {
         return this.moldbox[name]
     }
 
-    getCoop(groupName) {
+    getMerger(groupName) {
         return {
             tool: (name) => { this.callTool(groupName, name) },
             line: (name) => { this.callLine(groupName, name) }

@@ -1,5 +1,10 @@
+let Packhouse = require('../../src/Main')
+
 module.exports = {
     alias: 'fake',
+    mergers: {
+        self: 'test'
+    },
     install(store, options) {
         store.test = options.test
     },
@@ -12,8 +17,15 @@ module.exports = {
     },
     tools: {
         sum: {
+            create(store) {
+                store.order = Packhouse.createOrder()
+            },
             action(a, b) {
-                this.success(a + b)
+                this.store
+                    .order
+                    .use(`${a}+${b}`, this.error, this.success, (error, success) => {
+                        success(a + b)
+                    })
             }
         },
         double: {

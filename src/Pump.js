@@ -46,12 +46,28 @@ class Pump {
         this._core = new PumpCore(total, callback)
     }
 
+    /**
+     * 
+     * @param {*} count 
+     */
+
     add(count) {
         return this._core.add(count)
     }
+
+    /**
+     * 
+     * @param {*} callback 
+     */
+
     each(callback) {
         return this._core.each(callback)
     }
+
+    /**
+     * 
+     */
+
     press() {
         return this._core.press()
     }

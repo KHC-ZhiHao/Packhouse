@@ -15,6 +15,7 @@ class Group extends Base {
             alias: [false, ['string'], 'no_alias_group'],
             tools: [false, ['object'], {}],
             lines: [false, ['object'], {}],
+            mergers: [false, ['object'], {}],
             install: [false, ['function'], () => {}]
         })
         this.options.install(this.store, options)
@@ -63,7 +64,7 @@ class Group extends Base {
     }
 
     getMerger(name) {
-        return this.factory.getMerger(name)
+        return this.factory.getMerger(this.options.mergers[name] || name)
     }
 
     callTool(name) {

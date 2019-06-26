@@ -7,12 +7,12 @@ class Main {
         return new Factory()
     }
 
-    static createOrder(options) {
-        return new Order(options)
-    }
-
     static createPump(total, callback) {
         return new Pump(total, callback)
+    }
+
+    static createOrder(options) {
+        return new Order(options)
     }
 }
 
