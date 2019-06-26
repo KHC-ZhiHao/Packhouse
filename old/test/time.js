@@ -1,4 +1,4 @@
-let Packhouse = require('../dist/Packhouse')
+let Packhouse = require('./core')
 
 let group = Packhouse.createGroup()
 
@@ -14,7 +14,6 @@ let action = group.alone().tool('double').direct
 function double(number) {
     return number * 2
 }
-
 
 console.time('normal')
 for (let i = 0; i < 5000000; i++) {

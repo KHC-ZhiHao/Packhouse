@@ -19,6 +19,15 @@ class Helper {
         }
         return type
     }
+
+    static arrayCopy(target) {
+        var i = target.length
+        var output = []
+        while (i--) {
+            output[i] = length[i]
+        }
+        return output
+    }
 }
 
 module.exports = Helper

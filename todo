@@ -1,19 +1,16 @@
 feature:
-    ☐ 判定create 與 install 不能是 async function
     ☐ 加入event hook
     ☐ order標準套路用一個接口呈現
     ☐ order有個過期時間可以設定
-    ☐ 可以在group宣告tools和molds
-    ☐ 統一控管外部套件
+    ✔ 可以在group宣告tools和molds @done(19-06-26 15:12)
     Helper:
-        ☐ verfiy
-        ☐ getType
-        ☐ asyncLoop
+        ✔ getType @done(19-06-26 15:12)
+        ✔ arrayCopy @done(19-06-26 15:12)
 
 basic:
     ☐ 加入單元測試
     ☐ 加入jsdoc
-    ☐ 加入webpack
+    ✔ 加入webpack @done(19-06-26 15:11)
 
 refactoring :
     ✔ 移除description @done(19-06-25 18:04)
@@ -40,4 +37,4 @@ refactoring :
     ✔ 移除name屬性 @done(19-06-25 18:08)
     ✔ line:移除 fail @done(19-06-25 22:53)
     ✔ line:移除 stack @done(19-06-25 22:53)
-    ☐ order: 移除list
+    ✔ order: 移除list @done(19-06-26 10:45)

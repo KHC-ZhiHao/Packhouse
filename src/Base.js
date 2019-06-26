@@ -39,12 +39,6 @@ class Base {
         }
         return newData
     }
-
-    $protection(data) {
-        return new Proxy(data, {
-            set: (target, key) => this.$systemError('$protection', `Key(${key}) is protection`, target)
-        })
-    }
 }
 
 module.exports = Base

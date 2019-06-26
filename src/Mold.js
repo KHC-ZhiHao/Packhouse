@@ -11,12 +11,25 @@ class Mold extends Base {
         })
     }
 
-    check(param, system) {
-        return this.options.check.call(this.case, param, system)
+    check(param, context) {
+        return this.options.check.call(this.case, param, context)
     }
 
     casting(param) {
         return this.options.casting.call(this.case, param)
+    }
+
+    parse(params, error, context) {
+        let check = this.check(params, context)
+        if (check === true) {
+            return this.casting(params)
+        } else {
+            if (typeof error === 'function') {
+                error(check)
+            } else {
+                this.$systemError('parse', check)
+            }
+        }
     }
 }
 

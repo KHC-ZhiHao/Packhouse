@@ -5,6 +5,7 @@ const Response = require('./Response')
 class Store {
     constructor(tool) {
         this._tool = tool
+        this.$group = tool.group.store
     }
 
     $coop(name) {
@@ -19,20 +20,16 @@ class Store {
         return this._tool.useLine(name)
     }
 
-    $group(name) {
-        return this._tool.group.store[name]
-    }
-
     $casting(name, data, callback) {
         return this._tool.casting(name, data, callback)
     }
 }
 
-class User {
+class Caller {
     constructor(store, error, success) {
-        this.$store = store
-        this.$error = error
-        this.$success = success
+        this.store = store
+        this.error = error
+        this.success = success
     }
 }
 
@@ -108,18 +105,8 @@ class Tool extends Base {
         return null
     }
 
-    parseMold(name, params, error, context) {
-        let mold = this.group.getMold(name)
-        let check = mold.check(params, context)
-        if (check === true) {
-            return mold.casting(params)
-        } else {
-            if (typeof error === 'function') {
-                error(check)
-            } else {
-                this.$systemError('parseMold', check)
-            }
-        }
+    parseMold(name, value, error, context) {
+        return this.group.getMold(name).parse(value, error, context)
     }
 
     casting(name, value, callback) {
@@ -143,7 +130,7 @@ class Tool extends Base {
         return this.group.getMerger(name)
     }
 
-    call(params, error, success) {
+    call(params, response, error, success) {
         // mold
         let moldLength = this.molds.length
         for (let i = 0; i < moldLength; i++) {
@@ -156,27 +143,32 @@ class Tool extends Base {
             })
         }
         // action
-        this.options.action.apply(new User(this.store, error, success), params)
+        if (response.isLive()) {
+            this.options.action.apply(new Caller(this.store, error, success), params)
+        }
     }
 
     action(params, callback, supports) {
-        let response = (new Response.Action(this.group, supports, callback)).exports
-        this.call(params, response.error, response.success)
+        let response = new Response.Action(this.group, supports, callback)
+        let exports = response.exports
+        this.call(params, response, exports.error, exports.success)
     }
 
     recursive(params, callback, supports, count = -1) {
         count += 1
-        let response = (new Response.Recursive(this.group, supports, callback)).exports
+        let response = new Response.Recursive(this.group, supports, callback)
         let stack = (...params) => {
-            this.recursive(this.createArgs(params, supports), callback, supports, count)
+            this.bindArgs(params, supports)
+            this.recursive(params, callback, supports, count)
         }
-        this.call(params, response.error, result => response.success(result, { count, stack }))
+        this.call(params, response, response.error, result => response.success(result, { count, stack }))
     }
 
     promise(params, callback, supports) {
         return new Promise((resolve, reject) => {
-            let response = (new Response.Promise(this.group, supports, resolve, reject)).exports
-            this.call(params, response.error, response.success)
+            let response = new Response.Promise(this.group, supports, resolve, reject)
+            let exports = response.exports
+            this.call(params, response, exports.error, exports.success)
         })
     }
 

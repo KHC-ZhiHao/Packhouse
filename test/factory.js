@@ -33,4 +33,5 @@ describe('#Factory', () => {
                 expect(result).to.equal(10)
             })
     })
+    it('event', function() {})
 })

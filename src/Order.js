@@ -169,8 +169,14 @@ class Order {
         return this._core.get(key)
     }
 
-    list() {
-        return this._core.list()
+    use(key, error, success, callback) {
+        this.getOrCreate(key)
+            .buffer(error, success)
+            .onload(cache => {
+                cache.post()
+                this.clear()
+            })
+            .onReady(callback)
     }
 
     clear() {

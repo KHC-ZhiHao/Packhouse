@@ -1,3 +1,5 @@
+const Helper = require('./Helper')
+
 class Response {
     constructor(group, supports) {
         this.sop = supports.sop
@@ -9,12 +11,16 @@ class Response {
             success: this.success.bind(this)
         }
         if (supports.welds.length > 0) {
-            this.welds = supports.welds.slice()
+            this.welds = Helper.arrayCopy(supports.welds)
         }
         if (supports.noGood) {
             this.noGood = supports.noGood.action
             this.noGoodOptions = supports.noGood.options
         }
+    }
+
+    isLive() {
+        return !this.over
     }
 
     getError(message) {

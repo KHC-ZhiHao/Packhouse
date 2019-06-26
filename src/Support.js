@@ -1,4 +1,5 @@
 const Base = require('./Base')
+const Helper = require('./Helper')
 
 class Support extends Base {
     constructor() {
@@ -7,44 +8,27 @@ class Support extends Base {
         this.welds = []
         this.noGood = null
         this.package = []
-        this.exports = null
     }
 
     createExports(lambdas) {
-        this.exports = {
-            ...lambdas,
-            ng: this.setNoGood.bind(this),
-            unNg: this.unNoGood.bind(this),
-            sop: this.setSop.bind(this),
-            rule: this.setRule.bind(this),
-            unSop: this.unSop.bind(this),
-            weld: this.addWeld.bind(this),
-            clear: this.clear.bind(this),
-            unWeld: this.unWeld.bind(this),
-            packing: this.addPacking.bind(this),
-            rePacking: this.rePacking.bind(this),
-            unPacking: this.unPacking.bind(this)
-        }
-        return this.exports
+        return new SupportExport(this, lambdas)
     }
 
     copy() {
         return {
             sop: this.sop,
-            welds: this.welds.slice(),
+            welds: Helper.arrayCopy(this.welds),
             noGood: this.noGood,
-            package: this.package.slice()
+            package: Helper.arrayCopy(this.package)
         }
     }
 
     addWeld(tool, packing) {
         this.welds.push({ tool, packing })
-        return this.exports
     }
 
     unWeld() {
         this.welds = []
-        return this.exports
     }
 
     setRule(noGood, sop, options) {
@@ -54,7 +38,6 @@ class Support extends Base {
         if (sop) {
             this.setSop(sop)
         }
-        return this.exports
     }
 
     setNoGood(action, options = {}) {
@@ -65,42 +48,37 @@ class Support extends Base {
                     resolve: [false, ['boolean'], false]
                 })
             }
-            return this.exports
+        } else {
+            this.$systemError('setNG', 'NG param not a function.', action)
         }
-        this.$systemError('setNG', 'NG param not a function.', action)
     }
 
     unNoGood() {
         this.noGood = null
-        return this.exports
     }
 
     setSop(action) {
         if (typeof action === 'function') {
             this.sop = action
-            return this.exports
+        } else {
+            this.$systemError('setSOP', 'SOP param not a function.', action)
         }
-        this.$systemError('setSOP', 'SOP param not a function.', action)
     }
 
     unSop() {
         this.sop = null
-        return this.exports
     }
 
-    addPacking() {
-        this.package = this.package.concat([...arguments])
-        return this.exports
+    addPacking(args) {
+        this.package = this.package.concat(args)
     }
 
-    rePacking() {
-        this.package = [...arguments]
-        return this.exports
+    rePacking(args) {
+        this.package = args
     }
 
     unPacking() {
         this.package = []
-        return this.exports
     }
 
     clear() {
@@ -108,7 +86,70 @@ class Support extends Base {
         this.unSop()
         this.unWeld()
         this.unPacking()
-        return this.exports
+    }
+}
+
+class SupportExport {
+    constructor(core, lambdas) {
+        this._core = core
+        this.action = lambdas.action
+        this.promise = lambdas.promise
+        this.recursive = lambdas.recursive
+    }
+
+    ng(action, options) {
+        this._core.setNoGood(action, options)
+        return this
+    }
+
+    unNg() {
+        this._core.unNoGood()
+        return this
+    }
+
+    sop(action) {
+        this._core.setSop(action)
+        return this
+    }
+
+    unSop() {
+        this._core.unSop()
+        return this
+    }
+
+    rule(noGood, sop, options) {
+        this._core.setRule(noGood, sop, options)
+        return this
+    }
+
+    weld(tool, packing) {
+        this._core.addWeld(tool, packing)
+        return this
+    }
+
+    clear() {
+        this._core.clear()
+        return this
+    }
+
+    unWeld() {
+        this._core.unWeld()
+        return this
+    }
+
+    packing(...args) {
+        this._core.addPacking(args)
+        return this
+    }
+
+    rePacking(...args) {
+        this._core.rePacking(args)
+        return this
+    }
+
+    unPacking() {
+        this._core.unPacking()
+        return this
     }
 }
 
