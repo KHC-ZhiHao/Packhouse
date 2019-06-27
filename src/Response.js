@@ -24,7 +24,10 @@ class Response {
     }
 
     getError(message) {
-        return message || 'unknown error'
+        return {
+            alias: this.group.options.alias,
+            message: message || 'unknown error'
+        }
     }
 
     error(result) {

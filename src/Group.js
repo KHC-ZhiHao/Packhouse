@@ -1,10 +1,11 @@
 const Base = require('./Base')
 const Tool = require('./Tool')
 const Line = require('./Line')
+const Mold = require('./Mold')
 
 class GroupStore {}
 class Group extends Base {
-    constructor(factory, data = {}, options) {
+    constructor(factory, data = {}, configs) {
         super('Group')
         this.store = new GroupStore()
         this.factory = factory
@@ -15,16 +16,18 @@ class Group extends Base {
             alias: [false, ['string'], 'no_alias_group'],
             tools: [false, ['object'], {}],
             lines: [false, ['object'], {}],
+            molds: [false, ['object'], {}],
             mergers: [false, ['object'], {}],
             install: [false, ['function'], () => {}]
         })
-        this.options.install(this.store, options)
         this.init()
+        this.options.install(this.store, configs)
     }
 
     init() {
         this.initTools()
         this.initLines()
+        this.initMolds()
         this.options.tools = null
     }
 
@@ -39,6 +42,13 @@ class Group extends Base {
         let lines = this.options.lines
         for (let name in lines) {
             this.addLine(name, lines[name])
+        }
+    }
+
+    initMolds() {
+        let molds = this.options.molds
+        for (let name in molds) {
+            this.addMold(name, molds[name])
         }
     }
 

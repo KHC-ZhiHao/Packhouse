@@ -13,6 +13,15 @@ module.exports = {
             check(value) {
                 return value === 10 ? true : `Number not 10`
             }
+        },
+        is: {
+            check(value, context) {
+                // eslint-disable-next-line valid-typeof
+                return typeof value === context.extras[0]
+            },
+            casting() {
+                return 10
+            }
         }
     },
     tools: {
@@ -31,6 +40,24 @@ module.exports = {
         double: {
             action(a) {
                 this.success(a * 2)
+            }
+        },
+        isTen: {
+            molds: ['isTen'],
+            action() {
+                this.success(true)
+            }
+        },
+        isStringAndToTen: {
+            molds: ['is|string'],
+            action(value) {
+                this.success(value)
+            }
+        },
+        isboolean: {
+            molds: ['boolean'],
+            action() {
+                this.success(true)
             }
         }
     },
@@ -55,6 +82,9 @@ module.exports = {
                 double() {
                     this.store.target *= 2
                     this.success()
+                },
+                error() {
+                    this.error('test')
                 }
             }
         }

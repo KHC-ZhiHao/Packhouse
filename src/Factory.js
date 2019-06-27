@@ -42,11 +42,11 @@ class FactoryCore extends Base {
         return this.getGroup(groupName).callLine(name)
     }
 
-    addGroup(name, groupOptions, options) {
+    addGroup(name, groupOptions) {
         if (this.groupbox[name] != null) {
             this.$systemError('addGroup', `Name(${name}) already exists.`)
         }
-        this.groupbox[name] = new Group(this, groupOptions, options)
+        this.groupbox[name] = new Group(this, groupOptions)
     }
 
     addMold(name, options) {

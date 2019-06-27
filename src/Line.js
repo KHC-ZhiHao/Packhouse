@@ -134,14 +134,10 @@ class Process extends Base {
             .action(this.success)
     }
 
-    createError(message) {
-        return message || 'unknown error'
-    }
-
-    fail(message) {
+    fail(error) {
         if (this.stop === false) {
             this.stop = true
-            this.error(this.createError(message))
+            this.error(error.message)
         }
     }
 

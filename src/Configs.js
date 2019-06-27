@@ -1,5 +1,11 @@
 module.exports = {
     defaultMolds: {
+        boolean: {
+            check(param, system) {
+                if (param == null && system.extras[0] === 'abe') { return true }
+                return typeof param === 'boolean' ? true : `Param ${system.index} not a boolean(${param}).`
+            }
+        },
         number: {
             check(param, system) {
                 if (param == null && system.extras[0] === 'abe') { return true }

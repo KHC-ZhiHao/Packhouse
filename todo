@@ -1,5 +1,6 @@
 feature:
     ☐ 加入event hook
+    ☐ factory concat
     ✔ order標準套路用一個接口呈現 @done(19-06-27 00:45)
     ☐ order有個過期時間可以設定
     ✔ 可以在group宣告tools和molds @done(19-06-26 15:12)
@@ -9,15 +10,23 @@ feature:
 
 basic:
     ✔ 加入單元測試 @done(19-06-26 21:07)
-    ☐ 加入jsdoc
     ✔ 加入webpack @done(19-06-26 15:11)
 
-test:
-    ✔ pump @done(19-06-26 21:24)
-    ✔ order @done(19-06-27 00:45)
+jsdoc:
+    ☐ main
+    ☐ pump
+    ☐ order
     ☐ tool
     ☐ line
     ☐ mold
+
+test:
+    ✔ main @done(19-06-27 10:20)
+    ✔ pump @done(19-06-26 21:24)
+    ✔ order @done(19-06-27 00:45)
+    ☐ tool
+    ✔ line @done(19-06-27 14:06)
+    ✔ mold @done(19-06-27 14:24)
 
 refactoring :
     ✔ 移除description @done(19-06-25 18:04)
@@ -46,3 +55,4 @@ refactoring :
     ✔ line:移除 stack @done(19-06-25 22:53)
     ✔ order: 移除list @done(19-06-26 10:45)
     ✔ order: 移除onReady and isReady @done(19-06-27 00:45)
+    ☐ error 回傳具為一個含object的物件
