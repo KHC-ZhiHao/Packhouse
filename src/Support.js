@@ -69,11 +69,11 @@ class Support extends Base {
         this.sop = null
     }
 
-    addPacking(args) {
+    pack(args) {
         this.package = this.package.concat(args)
     }
 
-    rePacking(args) {
+    rePack(args) {
         this.package = args
     }
 
@@ -138,12 +138,12 @@ class SupportExport {
     }
 
     packing(...args) {
-        this._core.addPacking(args)
+        this._core.pack(args)
         return this
     }
 
     rePacking(...args) {
-        this._core.rePacking(args)
+        this._core.rePack(args)
         return this
     }
 

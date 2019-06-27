@@ -5,8 +5,9 @@ const Mold = require('./Mold')
 
 class GroupStore {}
 class Group extends Base {
-    constructor(factory, data = {}, configs) {
+    constructor(factory, data = {}, configs = {}, namespace) {
         super('Group')
+        this.namespace = namespace ? namespace + '@' : ''
         this.store = new GroupStore()
         this.factory = factory
         this.toolbox = {}
@@ -17,7 +18,6 @@ class Group extends Base {
             tools: [false, ['object'], {}],
             lines: [false, ['object'], {}],
             molds: [false, ['object'], {}],
-            mergers: [false, ['object'], {}],
             install: [false, ['function'], () => {}]
         })
         this.init()
@@ -70,11 +70,11 @@ class Group extends Base {
         if (this.hasMold(name) === false) {
             this.$systemError('getMold', `Mold(${name}) not found.`)
         }
-        return this.moldbox[name] || this.factory.getMold(name)
+        return this.moldbox[name] || this.factory.getMold(this.namespace + name)
     }
 
-    getMerger(name) {
-        return this.factory.getMerger(this.options.mergers[name] || name)
+    getCoop(name) {
+        return this.factory.getCoop(this.namespace + name)
     }
 
     callTool(name) {
@@ -115,7 +115,7 @@ class Group extends Base {
     }
 
     hasMold(name) {
-        return !!(this.moldbox[name] || this.factory.hasMold(name))
+        return !!(this.moldbox[name] || this.factory.hasMold(this.namespace + name))
     }
 }
 

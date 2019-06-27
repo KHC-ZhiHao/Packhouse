@@ -80,18 +80,20 @@ class Tool extends Base {
         return (...args) => {
             let supports = support.copy()
             let callback = this.getActionCallback(func, args)
-            this.bindArgs(args, supports)
-            return this[func](args, callback, supports)
+            let params = this.createArgs(args, supports)
+            return this[func](params, callback, supports)
         }
     }
 
-    bindArgs(args, supports) {
-        let length = args.length
+    createArgs(target, supports) {
+        let args = new Array(target.length)
         let packages = supports.package
-        let packagesLength = packages.length
-        for (let i = length; i--;) {
-            args[i] = i >= packagesLength ? args[i - packagesLength] : packages[i]
+        let length = packages.length + target.length
+        let packageLength = supports.package.length
+        for (let i = 0; i < length; i++) {
+            args[i] = i >= packageLength ? target[i] : packages[i]
         }
+        return args
     }
 
     getActionCallback(type, args) {
@@ -127,7 +129,7 @@ class Tool extends Base {
     }
 
     coop(name) {
-        return this.group.getMerger(name)
+        return this.group.getCoop(name)
     }
 
     call(params, response, error, success) {
@@ -158,7 +160,7 @@ class Tool extends Base {
         count += 1
         let response = new Response.Recursive(this.group, supports, callback)
         let stack = (...params) => {
-            this.bindArgs(params, supports)
+            params = this.createArgs(params, supports)
             this.recursive(params, callback, supports, count)
         }
         this.call(params, response, response.error, result => response.success(result, { count, stack }))

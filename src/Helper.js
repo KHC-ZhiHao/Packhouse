@@ -24,7 +24,7 @@ class Helper {
         var i = target.length
         var output = []
         while (i--) {
-            output[i] = length[i]
+            output[i] = target[i]
         }
         return output
     }

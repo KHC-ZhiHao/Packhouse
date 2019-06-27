@@ -2,9 +2,6 @@ let Packhouse = require('../../src/Main')
 
 module.exports = {
     alias: 'fake',
-    mergers: {
-        self: 'test'
-    },
     install(store, options) {
         store.test = options.test
     },
@@ -42,6 +39,22 @@ module.exports = {
                 this.success(a * 2)
             }
         },
+        less: {
+            create(store) {
+                store.less = store.$coop('coop').tool('less')
+            },
+            action(a, b) {
+                this.store
+                    .less
+                    .ng(this.error)
+                    .action(a, b, this.success)
+            }
+        },
+        toInt: {
+            action(a) {
+                this.success(this.store.$casting('int', a))
+            }
+        },
         isTen: {
             molds: ['isTen'],
             action() {
@@ -58,6 +71,11 @@ module.exports = {
             molds: ['boolean'],
             action() {
                 this.success(true)
+            }
+        },
+        error: {
+            action() {
+                this.error('test')
             }
         }
     },

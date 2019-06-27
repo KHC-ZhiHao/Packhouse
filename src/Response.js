@@ -61,7 +61,7 @@ class Response {
         }
         if (weld) {
             tool = this.group.callTool(weld.tool)
-            weld.packing(result, tool.packing)
+            weld.packing(result, tool.packing.bind(tool))
             tool.ng(noGood, this.noGoodOptions)
                 .action((result) => {
                     this.runWeld(result, callback)

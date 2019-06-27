@@ -7,7 +7,7 @@ describe('#Factory', () => {
         this.factory = Packhouse.createFactory()
     })
     it('add and has group', function() {
-        this.factory.addGroup('test', Group, {})
+        this.factory.addGroup('test', Group)
         expect(this.factory.hasGroup('test')).to.equal(true)
         expect(this.factory.hasGroup('fail')).to.equal(false)
     })
@@ -34,4 +34,6 @@ describe('#Factory', () => {
             })
     })
     it('event', function() {})
+    it('merger', function() {})
+    it('merger and call self', function() {})
 })

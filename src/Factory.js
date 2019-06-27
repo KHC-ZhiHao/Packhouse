@@ -6,11 +6,30 @@ const Configs = require('./Configs')
 class FactoryCore extends Base {
     constructor() {
         super('Factory')
+        this.modules = {}
         this.moldbox = {}
         this.groupbox = {}
         for (let key in Configs.defaultMolds) {
             this.addMold(key, Configs.defaultMolds[key])
         }
+    }
+
+    merger(name, data, configs) {
+        if (this.modules[name]) {
+            this.$systemError('join', `Name(${name}) already exists.`)
+        }
+        let namespace = name + '@'
+        let options = this.$verify(data, {
+            molds: [false, ['object'], {}],
+            groups: [false, ['object'], {}]
+        })
+        for (let key in options.molds) {
+            this.addMold(namespace + key, options.molds[key])
+        }
+        for (let key in options.groups) {
+            this.addGroup(namespace + key, options.groups[key], configs, namespace + key)
+        }
+        this.modules[name] = true
     }
 
     getGroup(name) {
@@ -27,10 +46,10 @@ class FactoryCore extends Base {
         return this.moldbox[name]
     }
 
-    getMerger(groupName) {
+    getCoop(groupName) {
         return {
-            tool: (name) => { this.callTool(groupName, name) },
-            line: (name) => { this.callLine(groupName, name) }
+            tool: (name) => { return this.callTool(groupName, name) },
+            line: (name) => { return this.callLine(groupName, name) }
         }
     }
 
@@ -42,11 +61,11 @@ class FactoryCore extends Base {
         return this.getGroup(groupName).callLine(name)
     }
 
-    addGroup(name, groupOptions) {
+    addGroup(name, groupOptions, configs, namespace) {
         if (this.groupbox[name] != null) {
             this.$systemError('addGroup', `Name(${name}) already exists.`)
         }
-        this.groupbox[name] = new Group(this, groupOptions)
+        this.groupbox[name] = new Group(this, groupOptions, configs, namespace)
     }
 
     addMold(name, options) {
@@ -78,6 +97,10 @@ class Factory {
         return this._core.callLine(groupName, name)
     }
 
+    merger(name, options, configs) {
+        return this._core.merger(name, options, configs)
+    }
+
     /**
      * 加入一則mold
      * @param {string} name mold name
@@ -96,11 +119,11 @@ class Factory {
      * @param {object} groupOptions group options
      * @param {string} groupOptions.alias group的別名，用於訊息輸出
      * @param {function} groupOptions.install 初始化方法
-     * @param {object} [options] 外部傳遞參數
+     * @param {object} [configs] 外部傳遞參數
      */
 
-    addGroup(name, groupOptions, options) {
-        return this._core.addGroup(name, groupOptions, options)
+    addGroup(name, groupOptions, configs) {
+        return this._core.addGroup(name, groupOptions, configs)
     }
 
     /**

@@ -20,7 +20,6 @@ describe('#Line', () => {
     it('set rule', function() {
         let sop = (context) => { expect(context.success).to.equal(false) }
         let error = (err) => {
-            console.log(err)
             expect(err.message).to.equal('test')
         }
         this.factory
