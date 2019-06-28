@@ -90,15 +90,15 @@ class Deploy extends Base {
 
     action(callback) {
         let supports = this.supports.copy()
-        let response = (new Response.Action(this.main.group, supports, callback)).exports
-        this.process(response.error, response.success)
+        let response = new Response.Action(this.main.group, supports, callback)
+        this.process(response)
     }
 
     promise() {
         return new Promise((resolve, reject) => {
             let supports = this.supports.copy()
-            let response = (new Response.Promise(this.main.group, supports, resolve, reject)).exports
-            this.process(response.error, response.success)
+            let response = new Response.Promise(this.main.group, supports, resolve, reject)
+            this.process(response)
         })
     }
 
@@ -107,13 +107,13 @@ class Deploy extends Base {
         return this.conveyer
     }
 
-    process(error, success) {
-        new Process(this, error, success)
+    process(response) {
+        new Process(this, response)
     }
 }
 
 class Process extends Base {
-    constructor(deploy, error, success) {
+    constructor(deploy, response) {
         super('Process')
         this.stop = false
         this.flow = deploy.flow
@@ -121,8 +121,8 @@ class Process extends Base {
         this.input = deploy.input
         this.params = deploy.params
         this.output = deploy.output
-        this.error = error
-        this.success = success
+        this.error = response.exports.error
+        this.success = response.exports.success
         this.input
             .ng(e => this.fail(e))
             .action(...this.params, this.next.bind(this))

@@ -28,6 +28,17 @@ class Helper {
         }
         return output
     }
+
+    static createArgs(target, supports) {
+        let args = new Array(target.length)
+        let packages = supports.package
+        let length = packages.length + target.length
+        let packageLength = supports.package.length
+        for (let i = 0; i < length; i++) {
+            args[i] = i >= packageLength ? target[i - packageLength] : packages[i]
+        }
+        return args
+    }
 }
 
 module.exports = Helper

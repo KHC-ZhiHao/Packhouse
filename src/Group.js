@@ -7,7 +7,7 @@ class GroupStore {}
 class Group extends Base {
     constructor(factory, data = {}, configs = {}, namespace) {
         super('Group')
-        this.namespace = namespace ? namespace + '@' : ''
+        this.namespace = namespace || ''
         this.store = new GroupStore()
         this.factory = factory
         this.toolbox = {}

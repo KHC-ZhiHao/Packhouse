@@ -1,4 +1,5 @@
 const Base = require('./Base')
+const Helper = require('./Helper')
 const Support = require('./Support')
 const Response = require('./Response')
 
@@ -26,10 +27,10 @@ class Store {
 }
 
 class Caller {
-    constructor(store, error, success) {
+    constructor(store, { exports }) {
         this.store = store
-        this.error = error
-        this.success = success
+        this.error = exports.error
+        this.success = exports.success
     }
 }
 
@@ -80,20 +81,9 @@ class Tool extends Base {
         return (...args) => {
             let supports = support.copy()
             let callback = this.getActionCallback(func, args)
-            let params = this.createArgs(args, supports)
+            let params = Helper.createArgs(args, supports)
             return this[func](params, callback, supports)
         }
-    }
-
-    createArgs(target, supports) {
-        let args = new Array(target.length)
-        let packages = supports.package
-        let length = packages.length + target.length
-        let packageLength = supports.package.length
-        for (let i = 0; i < length; i++) {
-            args[i] = i >= packageLength ? target[i] : packages[i]
-        }
-        return args
     }
 
     getActionCallback(type, args) {
@@ -132,13 +122,13 @@ class Tool extends Base {
         return this.group.getCoop(name)
     }
 
-    call(params, response, error, success) {
+    call(params, response) {
         // mold
         let moldLength = this.molds.length
         for (let i = 0; i < moldLength; i++) {
             let mold = this.molds[i]
             if (mold == null) continue
-            params[i] = this.parseMold(mold.name, params[i], error, {
+            params[i] = this.parseMold(mold.name, params[i], response.exports.error, {
                 type: 'call',
                 index: i,
                 extras: mold.extras
@@ -146,31 +136,24 @@ class Tool extends Base {
         }
         // action
         if (response.isLive()) {
-            this.options.action.apply(new Caller(this.store, error, success), params)
+            this.options.action.apply(new Caller(this.store, response), params)
         }
     }
 
     action(params, callback, supports) {
         let response = new Response.Action(this.group, supports, callback)
-        let exports = response.exports
-        this.call(params, response, exports.error, exports.success)
+        this.call(params, response)
     }
 
     recursive(params, callback, supports, count = -1) {
-        count += 1
-        let response = new Response.Recursive(this.group, supports, callback)
-        let stack = (...params) => {
-            params = this.createArgs(params, supports)
-            this.recursive(params, callback, supports, count)
-        }
-        this.call(params, response, response.error, result => response.success(result, { count, stack }))
+        let response = new Response.Recursive(this, this.group, supports, callback, count)
+        this.call(params, response)
     }
 
     promise(params, callback, supports) {
         return new Promise((resolve, reject) => {
             let response = new Response.Promise(this.group, supports, resolve, reject)
-            let exports = response.exports
-            this.call(params, response, exports.error, exports.success)
+            this.call(params, response)
         })
     }
 

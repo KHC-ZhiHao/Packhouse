@@ -27,7 +27,7 @@ class FactoryCore extends Base {
             this.addMold(namespace + key, options.molds[key])
         }
         for (let key in options.groups) {
-            this.addGroup(namespace + key, options.groups[key], configs, namespace + key)
+            this.addGroup(namespace + key, options.groups[key], configs, namespace)
         }
         this.modules[name] = true
     }

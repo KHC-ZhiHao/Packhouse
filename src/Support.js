@@ -23,8 +23,8 @@ class Support extends Base {
         }
     }
 
-    addWeld(tool, packing) {
-        this.welds.push({ tool, packing })
+    addWeld(tool, pack) {
+        this.welds.push({ tool, pack })
     }
 
     unWeld() {
@@ -77,7 +77,7 @@ class Support extends Base {
         this.package = args
     }
 
-    unPacking() {
+    unPack() {
         this.package = []
     }
 
@@ -85,7 +85,7 @@ class Support extends Base {
         this.unNoGood()
         this.unSop()
         this.unWeld()
-        this.unPacking()
+        this.unPack()
     }
 }
 
@@ -122,8 +122,8 @@ class SupportExport {
         return this
     }
 
-    weld(tool, packing) {
-        this._core.addWeld(tool, packing)
+    weld(tool, pack) {
+        this._core.addWeld(tool, pack)
         return this
     }
 
@@ -137,18 +137,18 @@ class SupportExport {
         return this
     }
 
-    packing(...args) {
+    pack(...args) {
         this._core.pack(args)
         return this
     }
 
-    rePacking(...args) {
+    rePack(...args) {
         this._core.rePack(args)
         return this
     }
 
-    unPacking() {
-        this._core.unPacking()
+    unPack() {
+        this._core.unPack()
         return this
     }
 }

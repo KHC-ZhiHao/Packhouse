@@ -8,7 +8,7 @@ class Base {
     }
 
     $systemError(functionName, message, object = 'no_error') {
-        if (object !== '_no_error') {
+        if (object !== 'no_error') {
             console.log('error data => ', object)
         }
         throw new Error(`(☉д⊙)!! PackHouse::${this._base.name} => ${functionName} -> ${message}`)

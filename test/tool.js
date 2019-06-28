@@ -35,6 +35,15 @@ describe('#Tool', () => {
                     expect(reslut).to.equal(60)
                 }
             })
+        this.factory
+            .tool('test', 'sum')
+            .recursive(0, 10, (err, reslut, context) => {
+                if (reslut !== 60) {
+                    context.stack(reslut, 10)
+                } else {
+                    expect(context.count).to.equal(5)
+                }
+            })
     })
     it('coop', function() {
         this.factory
@@ -103,19 +112,46 @@ describe('#Tool', () => {
     it('weld', function() {
         this.factory
             .tool('test', 'sum')
-            .packing(10, 20)
-            .weld('double', (reslut, packing) => { packing(reslut) })
+            .pack(10, 20)
+            .weld('double', (reslut, pack) => { pack(reslut) })
             .action((err, reslut) => {
                 expect(reslut).to.equal(60)
             })
     })
+    it('weld for error', function() {
+        let err = false
+        this.factory
+            .tool('test', 'sum')
+            .pack(10, 20)
+            .ng(() => { err = true })
+            .weld('error', (reslut, pack) => { pack(reslut) })
+            .action(() => {})
+        expect(err).to.equal(true)
+    })
     it('clear', function() {
-
+        this.factory
+            .tool('test', 'sum')
+            .pack(10)
+            .clear()
+            .action(30, 30, (err, reslut) => {
+                expect(reslut).to.equal(60)
+            })
     })
-    it('packing', function() {
-
+    it('pack', function() {
+        this.factory
+            .tool('test', 'sum')
+            .pack(10)
+            .action(30, (err, reslut) => {
+                expect(reslut).to.equal(40)
+            })
     })
-    it('rePacking', function() {
-
+    it('rePack', function() {
+        this.factory
+            .tool('test', 'sum')
+            .pack(10)
+            .rePack(20)
+            .action(30, (err, reslut) => {
+                expect(reslut).to.equal(50)
+            })
     })
 })

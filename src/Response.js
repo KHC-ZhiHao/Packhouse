@@ -38,11 +38,11 @@ class Response {
         }
     }
 
-    success(result, context) {
+    success(result) {
         if (this.over === false) {
             this.over = true
             this.runWeld(result, (result) => {
-                this.successBase(result, context)
+                this.successBase(result)
                 this.callSop({ result, success: true })
             })
         }
@@ -61,7 +61,7 @@ class Response {
         }
         if (weld) {
             tool = this.group.callTool(weld.tool)
-            weld.packing(result, tool.packing.bind(tool))
+            weld.pack(result, tool.pack.bind(tool))
             tool.ng(noGood, this.noGoodOptions)
                 .action((result) => {
                     this.runWeld(result, callback)
@@ -103,11 +103,22 @@ class Action extends Response {
 }
 
 class Recursive extends Action {
-    successBase(result, context) {
+    constructor(tool, group, supports, callback, count) {
+        super(group, supports, callback)
+        this.context = {
+            count: count + 1,
+            stack: (...params) => {
+                params = Helper.createArgs(params, supports)
+                tool.recursive(params, callback, supports, this.context.count)
+            }
+        }
+    }
+
+    successBase(result) {
         if (this.noGood) {
-            this.callback(result, context)
+            this.callback(result, this.context)
         } else {
-            this.callback(null, result, context)
+            this.callback(null, result, this.context)
         }
     }
 }

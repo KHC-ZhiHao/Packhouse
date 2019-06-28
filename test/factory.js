@@ -1,10 +1,12 @@
 const expect = require('chai').expect
 const Packhouse = require('../src/Main')
 const Group = require('./fake/group')
+const Merger = require('./fake/merger')
 
 describe('#Factory', () => {
     before(function() {
         this.factory = Packhouse.createFactory()
+        this.factory.merger('merger', Merger, { test: 'test' })
     })
     it('add and has group', function() {
         this.factory.addGroup('test', Group)
@@ -33,7 +35,18 @@ describe('#Factory', () => {
                 expect(result).to.equal(10)
             })
     })
-    it('event', function() {})
-    it('merger', function() {})
-    it('merger and call self', function() {})
+    it('merger', function() {
+        this.factory
+            .tool('merger@test', 'get')
+            .action((error, result) => {
+                expect(result).to.equal('test')
+            })
+    })
+    it('merger and call self', function() {
+        this.factory
+            .tool('merger@test', 'callSelf')
+            .action(87, (error, result) => {
+                expect(result).to.equal(5)
+            })
+    })
 })

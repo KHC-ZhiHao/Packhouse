@@ -1,6 +1,6 @@
 feature:
     ☐ 加入event hook
-    ☐ factory concat
+    ✔ factory merger @done(19-06-28 14:53)
     ✔ order標準套路用一個接口呈現 @done(19-06-27 00:45)
     ☐ order有個過期時間可以設定
     ✔ 可以在group宣告tools和molds @done(19-06-26 15:12)
@@ -24,7 +24,7 @@ test:
     ✔ main @done(19-06-27 10:20)
     ✔ pump @done(19-06-26 21:24)
     ✔ order @done(19-06-27 00:45)
-    ☐ tool
+    ✔ tool @done(19-06-28 14:53)
     ✔ line @done(19-06-27 14:06)
     ✔ mold @done(19-06-27 14:24)
 
@@ -55,4 +55,4 @@ refactoring :
     ✔ line:移除 stack @done(19-06-25 22:53)
     ✔ order: 移除list @done(19-06-26 10:45)
     ✔ order: 移除onReady and isReady @done(19-06-27 00:45)
-    ☐ error 回傳具為一個含object的物件
+    ✔ error 回傳具為一個含object的物件 @done(19-06-28 14:53)

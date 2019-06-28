@@ -2,8 +2,8 @@ let Packhouse = require('../../src/Main')
 
 module.exports = {
     alias: 'fake',
-    install(store, options) {
-        store.test = options.test
+    install(group, options) {
+        group.test = options.test
     },
     molds: {
         isTen: {
