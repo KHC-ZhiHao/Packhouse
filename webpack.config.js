@@ -4,7 +4,7 @@ module.exports = {
     mode: 'production',
     entry: './src/Main.js',
     output: {
-        library: 'packhouse',
+        library: 'Packhouse',
         libraryTarget: 'umd',
         path: path.resolve(__dirname, './dist'),
         publicPath: '/dist/',
