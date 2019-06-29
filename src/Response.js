@@ -1,5 +1,31 @@
 const Helper = require('./Helper')
 
+/**
+ * @namespace Response
+ * @description 執行tool或line時最後呼叫的模式
+ */
+
+/**
+ * @function Response.Action
+ * @description 使用callback來接收參數
+ * @param {...any} params 該tool需要的參數
+ * @param {function} callback (error, result)
+ */
+
+/**
+ * @function Response.Promise
+ * @description 使用promise接收參數
+ * @param {...any} params 該tool需要的參數
+ * @returns {promise}
+ */
+
+/**
+ * @function Response.Recursive
+ * @description 遞迴這個tool，不支援line
+ * @param {...any} params 該tool需要的參數
+ * @param {function} callback (error, result, { count, stack })
+ */
+
 class Response {
     constructor(group, supports) {
         this.sop = supports.sop
@@ -24,10 +50,7 @@ class Response {
     }
 
     getError(message) {
-        return {
-            alias: this.group.options.alias,
-            message: message || 'unknown error'
-        }
+        return message || 'unknown error'
     }
 
     error(result) {

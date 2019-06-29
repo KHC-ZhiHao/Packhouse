@@ -49,4 +49,34 @@ describe('#Factory', () => {
                 expect(result).to.equal(5)
             })
     })
+    it('event', function() {
+        let count = 0
+        this.factory.on('action-tool-before', (context) => {
+            expect(context.target.type).to.equal('tool')
+        })
+        this.factory.on('action-line-before', (context) => {
+            count += 1
+            expect(context.target.type).to.equal('line')
+        })
+        this.factory.on('action-line-before', (context) => {
+            count += 1
+            expect(context.target.type).to.equal('line')
+        })
+        this.factory.on('use-before', (context) => {
+            expect(context.groupName).to.equal('test')
+        })
+        this.factory
+            .line('test', 'compute')()
+            .add(5)
+            .double()
+            .action((error, result) => {
+                expect(result).to.equal(10)
+            })
+        this.factory
+            .tool('test', 'sum')
+            .action(5, 7, (error, result) => {
+                expect(result).to.equal(12)
+            })
+        expect(count).to.equal(2)
+    })
 })

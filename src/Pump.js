@@ -1,19 +1,19 @@
 const Base = require('./Base')
 
 class PumpCore extends Base {
-    constructor(total, callback) {
+    constructor(total, finish) {
         super('Pump')
         this.count = 0
-        this.options = this.$verify({ total, callback }, {
+        this.options = this.$verify({ total, finish }, {
             total: [true, ['number']],
-            callback: [true, ['function']]
+            finish: [true, ['function']]
         })
     }
 
     press() {
         this.count += 1
         if (this.count >= this.options.total) {
-            this.options.callback()
+            this.options.finish()
         }
         return this.count
     }
@@ -41,14 +41,20 @@ class PumpCore extends Base {
     }
 }
 
+/**
+ * 非同步loop的解決方案
+ * @hideconstructor
+ */
+
 class Pump {
-    constructor(total, callback) {
-        this._core = new PumpCore(total, callback)
+    constructor(total, finish) {
+        this._core = new PumpCore(total, finish)
     }
 
     /**
-     * 
-     * @param {*} count 
+     * 加入指定次數
+     * @param {number} [count=1] 指定次數
+     * @returns {number} 總計數
      */
 
     add(count) {
@@ -56,8 +62,8 @@ class Pump {
     }
 
     /**
-     * 
-     * @param {*} callback 
+     * 根據剩餘次數宣告callback，該方法並不會消耗次數
+     * @param {PumpEachCallback} callback 宣告的方法
      */
 
     each(callback) {
@@ -65,7 +71,8 @@ class Pump {
     }
 
     /**
-     * 
+     * 加一次記數，當計數大於指定次數，呼叫finish
+     * @returns {number} 當下累計計數
      */
 
     press() {
@@ -74,3 +81,9 @@ class Pump {
 }
 
 module.exports = Pump
+
+/**
+ * @callback PumpEachCallback
+ * @param {function} press 同pump press
+ * @param {number} count 當下計次
+ */

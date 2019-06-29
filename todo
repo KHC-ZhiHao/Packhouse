@@ -1,24 +1,29 @@
 feature:
-    ☐ 加入event hook
     ✔ factory merger @done(19-06-28 14:53)
     ✔ order標準套路用一個接口呈現 @done(19-06-27 00:45)
-    ☐ order有個過期時間可以設定
     ✔ 可以在group宣告tools和molds @done(19-06-26 15:12)
     Helper:
         ✔ getType @done(19-06-26 15:12)
         ✔ arrayCopy @done(19-06-26 15:12)
 
+event:
+    ✔ call-tool @done(19-06-29 10:59)
+    ✔ call-group @done(19-06-29 13:11)
+
 basic:
     ✔ 加入單元測試 @done(19-06-26 21:07)
     ✔ 加入webpack @done(19-06-26 15:11)
 
-jsdoc:
-    ☐ main
-    ☐ pump
-    ☐ order
-    ☐ tool
-    ☐ line
-    ☐ mold
+started:
+
+doc:
+    ✔ main @done(19-06-29 18:12)
+    ✔ factory @done(19-06-29 18:12)
+    ✔ pump @done(19-06-29 18:12)
+    ✔ order @done(19-06-29 18:12)
+    ✔ tool @done(19-06-29 18:12)
+    ✔ line @done(19-06-29 18:12)
+    ✔ mold @done(19-06-29 18:12)
 
 test:
     ✔ main @done(19-06-27 10:20)
@@ -48,6 +53,7 @@ refactoring :
     ✔ factory: 加入公有mold @done(19-06-25 18:04)
     ✔ group: 移除mergers @done(19-06-25 18:04)
     ✔ group: create -> install @done(19-06-25 18:05)
+    ✔ group: alias 移除 @done(19-06-29 09:17)
     ✔ 把system, error, success移至this @done(19-06-25 18:05)
     ✔ 優化export @done(19-06-25 18:05)
     ✔ 移除name屬性 @done(19-06-25 18:08)
@@ -55,4 +61,3 @@ refactoring :
     ✔ line:移除 stack @done(19-06-25 22:53)
     ✔ order: 移除list @done(19-06-26 10:45)
     ✔ order: 移除onReady and isReady @done(19-06-27 00:45)
-    ✔ error 回傳具為一個含object的物件 @done(19-06-28 14:53)

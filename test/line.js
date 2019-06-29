@@ -20,7 +20,7 @@ describe('#Line', () => {
     it('set rule', function() {
         let sop = (context) => { expect(context.success).to.equal(false) }
         let error = (err) => {
-            expect(err.message).to.equal('test')
+            expect(err).to.equal('test')
         }
         this.factory
             .line('test', 'compute')(0)
@@ -49,7 +49,7 @@ describe('#Line', () => {
             .error()
             .promise()
             .catch((error) => {
-                expect(error.message).to.equal('test')
+                expect(error).to.equal('test')
                 done()
             })
     })

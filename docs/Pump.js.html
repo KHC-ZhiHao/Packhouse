@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Home - Documentation</title>
+    <title>Pump.js - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -32,68 +32,108 @@
 
 <div id="main">
     
+    <h1 class="page-title">Pump.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const Base = require('./Base')
 
+class PumpCore extends Base {
+    constructor(total, finish) {
+        super('Pump')
+        this.count = 0
+        this.options = this.$verify({ total, finish }, {
+            total: [true, ['number']],
+            finish: [true, ['function']]
+        })
+    }
 
-    <section class="package">
-        <h3> </h3>		
+    press() {
+        this.count += 1
+        if (this.count >= this.options.total) {
+            this.options.finish()
+        }
+        return this.count
+    }
+
+    add(count) {
+        let type = typeof count
+        if (count != null &amp;&amp; type !== 'number') {
+            this.$systemError('add', 'Count not a number.', number)
+        }
+        if (type === 'number' &amp;&amp; count &lt; 0) {
+            this.$systemError('add', 'Count cannot be negative.', number)
+        }
+        this.options.total += count
+        return this.options.total
+    }
+
+    each(callback) {
+        if (typeof callback !== 'function') {
+            this.$systemError('each', 'Callback not a function', callback)
+        }
+        let press = this.press.bind(this)
+        for (let i = this.count; i &lt; this.options.total; i++) {
+            callback(press, this.count)
+        }
+    }
+}
+
+/**
+ * 非同步loop的解決方案
+ * @hideconstructor
+ */
+
+class Pump {
+    constructor(total, finish) {
+        this._core = new PumpCore(total, finish)
+    }
+
+    /**
+     * 加入指定次數
+     * @param {number} [count=1] 指定次數
+     * @returns {number} 總計數
+     */
+
+    add(count) {
+        return this._core.add(count)
+    }
+
+    /**
+     * 根據剩餘次數宣告callback，該方法並不會消耗次數
+     * @param {PumpEachCallback} callback 宣告的方法
+     */
+
+    each(callback) {
+        return this._core.each(callback)
+    }
+
+    /**
+     * 加一次記數，當計數大於指定次數，呼叫finish
+     * @returns {number} 當下累計計數
+     */
+
+    press() {
+        return this._core.press()
+    }
+}
+
+module.exports = Pump
+
+/**
+ * @callback PumpEachCallback
+ * @param {function} press 同pump press
+ * @param {number} count 當下計次
+ */
+</code></pre>
+        </article>
     </section>
-
-
-
-
-
-
-
-
-
-    
-
-
-
-    <section class="readme">
-        <article><p align="center"><img src="https://khc-zhihao.github.io/MyBook/Packhouse/images/logo.png"></p>
-<p align="center" style="font-size:2em">Functional Programming Library</p>
-<p align="center">
-    <a href="https://www.npmjs.com/package/packhouse"><img src="https://img.shields.io/npm/v/packhouse.svg"></a>
-    <a href="https://github.com/KHC-ZhiHao/Packhouse"><img src="https://img.shields.io/github/stars/KHC-ZhiHao/Packhouse.svg?style=social"></a>
-    <br>
-</p>
-<hr>
-<h2>簡介</h2>
-<p>javascript是一個基於非同步驅動，且有數種呼叫function的概念，這點讓js於functional programming設計下險些困難。</p>
-<p>而Packhouse是一個函數包裝器，求助些許物件導向的概念，編寫出來的function可以泛用各種型態，並適應鍊式寫法。</p>
-<h2>安裝</h2>
-<p>npm</p>
-<pre class="prettyprint source lang-bash"><code>npm i packhouse
-</code></pre>
-<p>web</p>
-<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;https://khc-zhihao.github.io/Packhouse/dist/index.js&quot;>&lt;/script>
-&lt;script>
-    let factory = Packhouse.createFactory()
-&lt;/script>
-</code></pre>
-<p>webpack</p>
-<pre class="prettyprint source lang-js"><code>import Packhouse from 'packhouse'
-let factory = Packhouse.createFactory()
-</code></pre>
-<p>nodejs</p>
-<pre class="prettyprint source lang-js"><code>let Packhouse = require('packhouse')
-let factory = Packhouse.createFactory()
-</code></pre>
-<h2>開始 (How to use?)</h2>
-<p><a href="https://khc-zhihao.github.io/MyBook/Packhouse/static/">教學文件 (base gitbook)</a></p>
-<h2>文件</h2>
-<p><a href="https://khc-zhihao.github.io/Packhouse/document/version">版本日誌</a></p>
-<p><a href="https://khc-zhihao.github.io/Packhouse/document/document.html">開發者文件</a></p></article>
-    </section>
-
-
 
 
 

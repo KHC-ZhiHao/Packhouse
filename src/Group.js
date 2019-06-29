@@ -5,16 +5,16 @@ const Mold = require('./Mold')
 
 class GroupStore {}
 class Group extends Base {
-    constructor(factory, data = {}, configs = {}, namespace) {
+    constructor(factory, data = {}, configs = {}, context = {}) {
         super('Group')
-        this.namespace = namespace || ''
+        this.name = context.name
+        this.namespace = context.namespace || ''
         this.store = new GroupStore()
         this.factory = factory
         this.toolbox = {}
         this.linebox = {}
         this.moldbox = {}
         this.options = this.$verify(data, {
-            alias: [false, ['string'], 'no_alias_group'],
             tools: [false, ['object'], {}],
             lines: [false, ['object'], {}],
             molds: [false, ['object'], {}],
@@ -22,6 +22,14 @@ class Group extends Base {
         })
         this.init()
         this.options.install(this.store, configs)
+    }
+
+    emit(name, target) {
+        this.factory.emit(name, {
+            name: this.name,
+            from: 'group',
+            target
+        })
     }
 
     init() {
@@ -89,14 +97,14 @@ class Group extends Base {
         if (this.hasTool(name)) {
             this.$systemError('addTool', `Name(${name}) already exists.`)
         }
-        this.toolbox[name] = new Tool(this, options)
+        this.toolbox[name] = new Tool(this, options, { name })
     }
 
     addLine(name, options) {
         if (this.hasLine(name)) {
             this.$systemError('addLine', `Name(${name}) already exists.`)
         }
-        this.linebox[name] = new Line(this, options)
+        this.linebox[name] = new Line(this, options, { name })
     }
 
     addMold(name, options) {

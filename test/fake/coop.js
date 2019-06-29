@@ -1,5 +1,4 @@
 module.exports = {
-    alias: 'fake_merger',
     install(group, options) {
         group.test = options.test
     },

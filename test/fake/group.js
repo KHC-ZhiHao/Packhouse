@@ -1,7 +1,6 @@
 let Packhouse = require('../../src/Main')
 
 module.exports = {
-    alias: 'fake',
     install(group, options) {
         group.test = options.test
     },

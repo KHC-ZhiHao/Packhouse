@@ -15,7 +15,7 @@ describe('#Mold', () => {
             })
         this.factory
             .tool('test', 'isTen')
-            .ng((err) => { expect(err.message).to.equal('Number not 10') })
+            .ng((err) => { expect(err).to.equal('Number not 10') })
             .action(11, (result) => {
                 expect(result).to.equal(true)
             })
@@ -42,7 +42,7 @@ describe('#Mold', () => {
         this.factory
             .tool('test', 'isStringAndToTen')
             .action(123456, (err, result) => {
-                expect(err.message).to.be.a('string')
+                expect(err).to.be.a('string')
             })
     })
 })

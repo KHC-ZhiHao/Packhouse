@@ -4,8 +4,9 @@ const Support = require('./Support')
 const Response = require('./Response')
 
 class Line extends Base {
-    constructor(group, options) {
+    constructor(group, options, context = {}) {
         super('Line')
+        this.name = context.name || 'no_name_line'
         this.tools = {}
         this.group = group
         this.options = this.$verify(options, {
@@ -24,6 +25,14 @@ class Line extends Base {
         if (layout.action || layout.promise || layout.setRule) {
             this.$systemError('init', 'Layout has private key is action, promise, setRule')
         }
+    }
+
+    emit(name, options) {
+        this.group.emit(name, {
+            type: 'line',
+            from: this.name,
+            ...options
+        })
     }
 
     use() {
@@ -45,17 +54,20 @@ class Deploy extends Base {
     }
 
     init() {
-        this.input = this.createTool({
+        this.input = this.createTool('input', {
             molds: this.main.options.molds,
             action: this.main.options.input
         })
-        this.output = this.createTool(this.main.options.output)
+        this.output = this.createTool('output', this.main.options.output)
         this.initConveyer()
     }
 
-    createTool(target) {
+    createTool(name, target) {
         let opts = typeof target === 'function' ? { action: target } : target
-        let tool = new Tool(this.main.group, opts, this.store)
+        let tool = new Tool(this.main.group, opts, {
+            name: 'line-' + this.main.name + '-' + name,
+            store: this.store
+        })
         if (this.store == null) {
             this.store = tool.store
         }
@@ -83,7 +95,7 @@ class Deploy extends Base {
         }
         this.flow.push({
             name: name,
-            method: this.createTool(this.layout[name]),
+            method: this.createTool(name, this.layout[name]),
             params: params
         })
     }
@@ -108,6 +120,7 @@ class Deploy extends Base {
     }
 
     process(response) {
+        this.main.emit('action-line-before')
         new Process(this, response)
     }
 }
@@ -137,7 +150,7 @@ class Process extends Base {
     fail(error) {
         if (this.stop === false) {
             this.stop = true
-            this.error(error.message)
+            this.error(error)
         }
     }
 

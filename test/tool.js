@@ -63,11 +63,11 @@ describe('#Tool', () => {
         this.factory
             .tool('test', 'error')
             .action((err, reslut) => {
-                expect(err.message).to.equal('test')
+                expect(err).to.equal('test')
             })
         this.factory
             .tool('test', 'error')
-            .ng((err) => { expect(err.message).to.equal('test') })
+            .ng((err) => { expect(err).to.equal('test') })
             .action(() => {
                 expect(true).to.equal(false)
             })
@@ -83,7 +83,7 @@ describe('#Tool', () => {
             })
         this.factory
             .tool('test', 'error')
-            .ng((err) => { expect(err.message).to.equal('test') })
+            .ng((err) => { expect(err).to.equal('test') })
             .sop(() => { errorDoSop = true })
             .action(() => {
                 expect(true).to.equal(false)

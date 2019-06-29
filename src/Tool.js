@@ -35,14 +35,23 @@ class Caller {
 }
 
 class Tool extends Base {
-    constructor(group, options = {}, store) {
+    constructor(group, options = {}, context = {}) {
         super('Tool')
+        this.name = context.name || 'no_name_tool'
         this.group = group
-        this.store = store || new Store(this)
+        this.store = context.store || new Store(this)
         this.options = this.$verify(options, {
             molds: [false, ['array'], []],
             action: [true, ['function']],
             create: [false, ['function'], () => {}]
+        })
+    }
+
+    emit(name, options) {
+        this.group.emit(name, {
+            type: 'tool',
+            from: this.name,
+            ...options
         })
     }
 
@@ -123,13 +132,13 @@ class Tool extends Base {
     }
 
     call(params, response) {
+        this.emit('action-tool-before', { args: params })
         // mold
         let moldLength = this.molds.length
         for (let i = 0; i < moldLength; i++) {
             let mold = this.molds[i]
             if (mold == null) continue
             params[i] = this.parseMold(mold.name, params[i], response.exports.error, {
-                type: 'call',
                 index: i,
                 extras: mold.extras
             })
