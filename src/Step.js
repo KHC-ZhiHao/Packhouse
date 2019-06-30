@@ -41,7 +41,7 @@ class Flow {
         this.case = new Case()
         this.over = false
         this.callback = callback
-        this.templates = step.options.addon(templates)
+        this.templates = step.options.addon.call(this.case, templates)
         this.initContext()
         this.initTimeout()
         this.start(args, options)
