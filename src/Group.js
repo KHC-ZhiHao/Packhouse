@@ -7,7 +7,8 @@ class GroupStore {}
 class Group extends Base {
     constructor(factory, data = {}, configs = {}, context = {}) {
         super('Group')
-        this.name = context.name
+        this.name = context.name.replace(context.namespace || '')
+        this.sign = context.name.split('@')[0]
         this.namespace = context.namespace || ''
         this.store = new GroupStore()
         this.factory = factory
@@ -27,6 +28,7 @@ class Group extends Base {
     emit(name, target) {
         this.factory.emit(name, {
             name: this.name,
+            sign: this.sign,
             from: 'group',
             target
         })

@@ -8,6 +8,10 @@ class FactoryCore extends Base {
     constructor() {
         super('Factory')
         this.event = new Event(this)
+        this.event.addChannel('error')
+        this.event.addChannel('use-before')
+        this.event.addChannel('action-tool-before')
+        this.event.addChannel('action-line-before')
         this.modules = {}
         this.moldbox = {}
         this.groupbox = {}
@@ -108,6 +112,10 @@ class FactoryCore extends Base {
 class Factory {
     constructor() {
         this._core = new FactoryCore()
+    }
+
+    copy() {
+        return new this.constructor()
     }
 
     /**

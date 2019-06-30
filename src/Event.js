@@ -5,10 +5,6 @@ class Event extends Base {
         super('Event')
         this.factory = factory
         this.channels = {}
-        this.addChannel('error')
-        this.addChannel('use-before')
-        this.addChannel('action-tool-before')
-        this.addChannel('action-line-before')
     }
 
     addChannel(name) {

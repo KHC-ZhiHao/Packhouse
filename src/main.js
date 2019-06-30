@@ -28,6 +28,10 @@ class Main {
         return new Pump(total, finish)
     }
 
+    static createStep(optnios) {
+        return new Step(optnios)
+    }
+
     /**
      * 建立一個Order
      * @param {object} [options]
