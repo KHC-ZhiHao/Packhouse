@@ -9,6 +9,7 @@ class FactoryCore extends Base {
         super('Factory')
         this.event = new Event(this)
         this.event.addChannel('error')
+        this.event.addChannel('success')
         this.event.addChannel('use-before')
         this.event.addChannel('action-tool-before')
         this.event.addChannel('action-line-before')
@@ -60,10 +61,10 @@ class FactoryCore extends Base {
         return this.moldbox[name]
     }
 
-    getCoop(groupName) {
+    getCoop(groupName, context) {
         return {
-            tool: (name) => { return this.callTool(groupName, name) },
-            line: (name) => { return this.callLine(groupName, name) }
+            tool: (name) => { return this.callTool(groupName, name, context) },
+            line: (name) => { return this.callLine(groupName, name, context) }
         }
     }
 
@@ -71,14 +72,14 @@ class FactoryCore extends Base {
         this.emit('use-before', { type, ...options })
     }
 
-    callTool(groupName, name) {
-        this.emitCall('tool', { groupName, toolName: name })
-        return this.getGroup(groupName).callTool(name)
+    callTool(groupName, name, context) {
+        this.emitCall('tool', { groupName, toolName: name, context })
+        return this.getGroup(groupName).callTool(name, context)
     }
 
-    callLine(groupName, name) {
-        this.emitCall('line', { groupName, toolName: name })
-        return this.getGroup(groupName).callLine(name)
+    callLine(groupName, name, context) {
+        this.emitCall('line', { groupName, toolName: name, context })
+        return this.getGroup(groupName).callLine(name, context)
     }
 
     addGroup(name, groupOptions, configs, namespace) {

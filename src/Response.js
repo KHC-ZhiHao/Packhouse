@@ -126,11 +126,11 @@ class Action extends Response {
 }
 
 class Recursive extends Action {
-    constructor(tool, group, supports, callback) {
+    constructor(tool, group, supports, context, callback) {
         super(group, supports, callback)
         this.stack = (...params) => {
             params = Helper.createArgs(params, supports)
-            tool.recursive(params, callback, supports)
+            tool.recursive(params, supports, context, callback)
         }
     }
 

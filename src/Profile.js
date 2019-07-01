@@ -1,11 +1,19 @@
-const Helper = require('./Helper')
+class Profile {
+    constructor(target, type) {
+        this.name = target.name
+        this.type = type
+        this.sign = target.group.sign
+        this.group = target.group.name
+    }
 
-class Probe {
-    constructor() {
-        this.id = Helper.createId()
-        this.logs = []
-        this.children = []
+    export() {
+        return {
+            name: this.name,
+            type: this.type,
+            sign: this.sign,
+            group: this.group
+        }
     }
 }
 
-module.exports = Probe
+module.exports = Profile

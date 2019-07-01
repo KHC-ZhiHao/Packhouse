@@ -19,7 +19,7 @@ class Mold extends Base {
         return this.options.casting.call(this.case, param)
     }
 
-    parse(params, error, context) {
+    parse(params, { error }, context) {
         let check = this.check(params, context)
         if (check === true) {
             return this.casting(params)

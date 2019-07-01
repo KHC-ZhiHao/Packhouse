@@ -27,11 +27,18 @@ class Store {
     }
 }
 
-class Caller {
-    constructor(store, { exports }) {
-        this.store = store
-        this.error = exports.error
-        this.success = exports.success
+class User {
+    constructor(tool, response, context) {
+        this.store = tool.store
+        this.context = context
+        this.error = (reslut) => {
+            tool.emit('error', { reslut, context })
+            response.error(reslut)
+        }
+        this.success = (reslut) => {
+            tool.emit('success', { reslut, context })
+            response.success(reslut)
+        }
     }
 }
 
@@ -41,6 +48,7 @@ class Tool extends Base {
         this.name = context.name || 'no_name_tool'
         this.group = group
         this.store = context.store || new Store(this)
+        this.profile = new Profile(this, 'tool')
         this.options = this.$verify(options, {
             molds: [false, ['array'], []],
             action: [true, ['function']],
@@ -77,27 +85,28 @@ class Tool extends Base {
         }
     }
 
-    exports() {
+    exports(context) {
         let support = new Support()
         let exports = {
-            action: this.createLambda('action', support),
-            promise: this.createLambda('promise', support),
-            recursive: this.createLambda('recursive', support)
+            action: this.createLambda('action', support, context),
+            promise: this.createLambda('promise', support, context),
+            recursive: this.createLambda('recursive', support, context)
         }
         return support.createExports(exports)
     }
 
-    createLambda(type, support) {
+    createLambda(mode, support, caller) {
         return (...args) => {
+            let context = { mode, args, caller }
             let supports = support.copy()
-            let callback = this.getActionCallback(func, args)
+            let callback = this.getActionCallback(mode, args)
             let params = Helper.createArgs(args, supports)
-            this[type](params, supports, callback)
+            return this[mode](params, supports, context, callback)
         }
     }
 
-    getActionCallback(type, args) {
-        if (type === 'action' || type === 'recursive') {
+    getActionCallback(mode, args) {
+        if (mode === 'action' || mode === 'recursive') {
             let callback = args.pop()
             if (typeof callback !== 'function') {
                 this.$systemError('getActionCallback', 'Action or recursive must a callback.')
@@ -107,69 +116,70 @@ class Tool extends Base {
         return null
     }
 
-    parseMold(name, value, error, context) {
-        return this.group.getMold(name).parse(value, error, context)
-    }
-
-    casting(name, value, callback) {
-        let data = name.split('|')
-        let call = data.shift()
-        let type = 'system'
-        let index = 0
-        let extras = data
-        return this.parseMold(call, value, callback, { type, index, extras })
-    }
-
-    useTool(name) {
-        return this.group.callTool(name)
-    }
-
-    useLine(name) {
-        return this.group.callLine(name)
-    }
-
-    useCoop(name) {
-        return this.group.callCoop(name)
-    }
-
-    call(params, response) {
-        this.emit('action-tool-before', { args: params })
+    call(params, context, response) {
+        this.emit('action-tool-before', context)
         // mold
+        let user = new User(this, response, context)
         let moldLength = this.molds.length
         for (let i = 0; i < moldLength; i++) {
             let mold = this.molds[i]
             if (mold == null) continue
-            params[i] = this.parseMold(mold.name, params[i], response.exports.error, {
+            params[i] = this.parseMold(mold.name, params[i], user, {
                 index: i,
                 extras: mold.extras
             })
         }
         // action
         if (response.isLive()) {
-            this.options.action.apply(new Caller(this.store, response), params)
+            this.options.action.apply(user, params)
         }
     }
 
-    action(params, supports, callback) {
+    action(params, supports, context, callback) {
         let response = new Response.Action(this.group, supports, callback)
-        this.call(params, response)
+        this.call(params, context, response)
     }
 
-    recursive(params, supports, callback) {
-        let response = new Response.Recursive(this, this.group, supports, callback)
-        this.call(params, response)
+    recursive(params, supports, context, callback) {
+        let response = new Response.Recursive(this, this.group, supports, context, callback)
+        this.call(params, context, response)
     }
 
-    promise(params, supports) {
+    promise(params, supports, context) {
         return new Promise((resolve, reject) => {
             let response = new Response.Promise(this.group, supports, resolve, reject)
-            this.call(params, response)
+            this.call(params, context, response)
         })
     }
 
-    use() {
+    parseMold(name, value, user, context) {
+        return this.group.getMold(name).parse(value, user, context)
+    }
+
+    casting(name, value, error) {
+        let data = name.split('|')
+        let call = data.shift()
+        let type = 'system'
+        let index = 0
+        let extras = data
+        return this.parseMold(call, value, { error }, { type, index, extras })
+    }
+
+    useTool(name) {
+        return this.group.callTool(name, this.profile.export())
+    }
+
+    useLine(name) {
+        return this.group.callLine(name, this.profile.export())
+    }
+
+    useCoop(name) {
+        return this.group.callCoop(name, this.profile.export())
+    }
+
+    use(context) {
         if (this.install) { this.install() }
-        return this.exports()
+        return this.exports(context)
     }
 }
 

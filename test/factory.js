@@ -52,15 +52,15 @@ describe('#Factory', () => {
     it('event', function() {
         let count = 0
         this.factory.on('action-tool-before', (context) => {
-            expect(context.target.type).to.equal('tool')
+            expect(context.caller.type).to.equal('tool')
         })
         this.factory.on('action-line-before', (context) => {
             count += 1
-            expect(context.target.type).to.equal('line')
+            expect(context.caller.type).to.equal('line')
         })
         this.factory.on('action-line-before', (context) => {
             count += 1
-            expect(context.target.type).to.equal('line')
+            expect(context.caller.type).to.equal('line')
         })
         this.factory.on('use-before', (context) => {
             expect(context.groupName).to.equal('test')

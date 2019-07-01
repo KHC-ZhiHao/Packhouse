@@ -26,22 +26,24 @@ describe('#Tool', () => {
             })
     })
     it('recursive', function() {
+        let count = 0
         this.factory
             .tool('test', 'sum')
-            .recursive(10, 20, (err, reslut, context) => {
+            .recursive(10, 20, (err, reslut, stack) => {
                 if (reslut !== 60) {
-                    context.stack(reslut, 10)
+                    stack(reslut, 10)
                 } else {
                     expect(reslut).to.equal(60)
                 }
             })
         this.factory
             .tool('test', 'sum')
-            .recursive(0, 10, (err, reslut, context) => {
-                if (reslut !== 60) {
-                    context.stack(reslut, 10)
+            .recursive(0, 10, (err, reslut, stack) => {
+                count += 1
+                if (reslut !== 50) {
+                    stack(reslut, 10)
                 } else {
-                    expect(context.count).to.equal(5)
+                    expect(count).to.equal(5)
                 }
             })
     })

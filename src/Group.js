@@ -7,8 +7,8 @@ class GroupStore {}
 class Group extends Base {
     constructor(factory, data = {}, configs = {}, context = {}) {
         super('Group')
-        this.name = context.name.replace(context.namespace || '')
-        this.sign = context.name.split('@')[0]
+        this.name = context.name.replace(context.namespace || '', '')
+        this.sign = context.name.match('@') ? context.name.split('@')[0] : ''
         this.namespace = context.namespace || ''
         this.store = new GroupStore()
         this.factory = factory
@@ -25,12 +25,11 @@ class Group extends Base {
         this.options.install(this.store, configs)
     }
 
-    emit(name, target) {
+    emit(name, caller) {
         this.factory.emit(name, {
-            name: this.name,
-            sign: this.sign,
-            from: 'group',
-            target
+            groupName: this.name,
+            groupSign: this.sign,
+            caller
         })
     }
 
@@ -83,16 +82,16 @@ class Group extends Base {
         return this.moldbox[name] || this.factory.getMold(this.namespace + name)
     }
 
-    callCoop(name) {
-        return this.factory.getCoop(this.namespace + name)
+    callCoop(name, context) {
+        return this.factory.getCoop(this.namespace + name, context)
     }
 
-    callTool(name) {
-        return this.getTool(name).use()
+    callTool(name, context) {
+        return this.getTool(name).use(context)
     }
 
-    callLine(name) {
-        return this.getLine(name).use()
+    callLine(name, context) {
+        return this.getLine(name).use(context)
     }
 
     addTool(name, options) {
