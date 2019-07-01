@@ -1,6 +1,10 @@
 const oobe = require('oobe')
 const factory = require('factory')
 
+factory.on('error', ({ getLog }) => {
+    console.log(getLog())
+})
+
 const step = Packhouse.createStep({
     timeout: 25000,
     addon(templates, options) {

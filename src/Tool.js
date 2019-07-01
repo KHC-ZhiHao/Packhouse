@@ -1,5 +1,6 @@
 const Base = require('./Base')
 const Helper = require('./Helper')
+const Profile = require('./Profile')
 const Support = require('./Support')
 const Response = require('./Response')
 
@@ -27,11 +28,10 @@ class Store {
 }
 
 class Caller {
-    constructor(store, { exports }, context) {
+    constructor(store, { exports }) {
         this.store = store
         this.error = exports.error
         this.success = exports.success
-        this.context = context
     }
 }
 
