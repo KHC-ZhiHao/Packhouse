@@ -126,22 +126,19 @@ class Action extends Response {
 }
 
 class Recursive extends Action {
-    constructor(tool, group, supports, callback, count) {
+    constructor(tool, group, supports, callback) {
         super(group, supports, callback)
-        this.context = {
-            count: count + 1,
-            stack: (...params) => {
-                params = Helper.createArgs(params, supports)
-                tool.recursive(params, callback, supports, this.context.count)
-            }
+        this.stack = (...params) => {
+            params = Helper.createArgs(params, supports)
+            tool.recursive(params, callback, supports)
         }
     }
 
     successBase(result) {
         if (this.noGood) {
-            this.callback(result, this.context)
+            this.callback(result, this.stack)
         } else {
-            this.callback(null, result, this.context)
+            this.callback(null, result, this.stack)
         }
     }
 }

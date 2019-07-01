@@ -83,7 +83,7 @@ class Group extends Base {
         return this.moldbox[name] || this.factory.getMold(this.namespace + name)
     }
 
-    getCoop(name) {
+    callCoop(name) {
         return this.factory.getCoop(this.namespace + name)
     }
 

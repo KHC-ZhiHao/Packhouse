@@ -10,7 +10,7 @@ class Store {
     }
 
     $coop(name) {
-        return this._tool.coop(name)
+        return this._tool.useCoop(name)
     }
 
     $tool(name) {
@@ -27,10 +27,11 @@ class Store {
 }
 
 class Caller {
-    constructor(store, { exports }) {
+    constructor(store, { exports }, context) {
         this.store = store
         this.error = exports.error
         this.success = exports.success
+        this.context = context
     }
 }
 
@@ -76,7 +77,7 @@ class Tool extends Base {
         }
     }
 
-    createExports() {
+    exports() {
         let support = new Support()
         let exports = {
             action: this.createLambda('action', support),
@@ -86,12 +87,12 @@ class Tool extends Base {
         return support.createExports(exports)
     }
 
-    createLambda(func, support) {
+    createLambda(type, support) {
         return (...args) => {
             let supports = support.copy()
             let callback = this.getActionCallback(func, args)
             let params = Helper.createArgs(args, supports)
-            return this[func](params, callback, supports)
+            this[type](params, supports, callback)
         }
     }
 
@@ -127,8 +128,8 @@ class Tool extends Base {
         return this.group.callLine(name)
     }
 
-    coop(name) {
-        return this.group.getCoop(name)
+    useCoop(name) {
+        return this.group.callCoop(name)
     }
 
     call(params, response) {
@@ -149,17 +150,17 @@ class Tool extends Base {
         }
     }
 
-    action(params, callback, supports) {
+    action(params, supports, callback) {
         let response = new Response.Action(this.group, supports, callback)
         this.call(params, response)
     }
 
-    recursive(params, callback, supports, count = -1) {
-        let response = new Response.Recursive(this, this.group, supports, callback, count)
+    recursive(params, supports, callback) {
+        let response = new Response.Recursive(this, this.group, supports, callback)
         this.call(params, response)
     }
 
-    promise(params, callback, supports) {
+    promise(params, supports) {
         return new Promise((resolve, reject) => {
             let response = new Response.Promise(this.group, supports, resolve, reject)
             this.call(params, response)
@@ -168,7 +169,7 @@ class Tool extends Base {
 
     use() {
         if (this.install) { this.install() }
-        return this.createExports()
+        return this.exports()
     }
 }
 

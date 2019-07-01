@@ -1,5 +1,6 @@
 const oobe = require('oobe')
 const factory = require('factory')
+
 const step = Packhouse.createStep({
     timeout: 25000,
     addon(templates, options) {
