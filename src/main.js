@@ -1,4 +1,5 @@
 const Pump = require('./Pump')
+const Step = require('./Step')
 const Order = require('./Order')
 const Factory = require('./Factory')
 

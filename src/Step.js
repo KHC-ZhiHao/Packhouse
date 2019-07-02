@@ -41,7 +41,7 @@ class Flow {
         this.case = new Case()
         this.over = false
         this.callback = callback
-        this.templates = step.options.addon.call(this.case, templates)
+        this.templates = step.options.addon.call(this.case, templates, options)
         this.initContext()
         this.initTimeout()
         this.start(args, options)
@@ -64,7 +64,7 @@ class Flow {
         }
         this.timeout = setTimeout(() => {
             this.fail('timeout')
-        }, this.step.options.timeout * 1000)
+        }, this.step.options.timeout)
     }
 
     start(args, options) {
@@ -123,9 +123,13 @@ class Step {
         this._core = new StepCore(options)
     }
 
+    export() {
+        return this.generator.bind(this)
+    }
+
     run(params = {}) {
         let args = params.args
-        params = this.$verify(params, {
+        params = this._core.$verify(params, {
             options: [false, ['object'], {}],
             templates: [true, ['array']]
         })
@@ -133,7 +137,7 @@ class Step {
     }
 
     generator(params) {
-        params = this.$verify(params, {
+        params = this._core.$verify(params, {
             options: [false, ['object'], {}],
             templates: [true, ['array']]
         })
