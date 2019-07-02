@@ -1,11 +1,11 @@
-let Base = require('./Base')
+const Base = require('./Base')
 
 class StepCore extends Base {
     constructor(options) {
         super('Step')
         this.templates = []
         this.options = this.$verify(options, {
-            addon: [false, ['function'], (t) => t],
+            hook: [false, ['function'], (t) => t],
             input: [true, ['function']],
             middle: [true, ['function']],
             output: [true, ['function']],
@@ -35,13 +35,41 @@ class StepCore extends Base {
 }
 
 class Case {}
+
+class History {
+    constructor() {
+        this.list = []
+        this.index = 0
+    }
+
+    exports() {
+        return {
+            templates: this.list
+        }
+    }
+
+    punchOn({ name }) {
+        this.list[this.index] = {
+            name,
+            startTime: Date.now(),
+            finishTime: null
+        }
+    }
+
+    punchOut() {
+        this.list[this.index].finishTime = Date.now()
+        this.index += 1
+    }
+}
+
 class Flow {
     constructor(step, args, { options, templates }, callback) {
         this.step = step
         this.case = new Case()
         this.over = false
+        this.history = new History()
         this.callback = callback
-        this.templates = step.options.addon.call(this.case, templates, options)
+        this.templates = step.options.hook.call(this.case, templates.slice(), options)
         this.initContext()
         this.initTimeout()
         this.start(args, options)
@@ -80,8 +108,10 @@ class Flow {
             }
             let next = () => {
                 next = () => { this.fail('Next has already been declared') }
+                this.history.punchOut()
                 this.next()
             }
+            this.history.punchOn({ name: template.name })
             this.context.lastCall = template.name || 'no name'
             template.call(this.case, next, this.flow)
         }
@@ -105,27 +135,46 @@ class Flow {
     finish(success, message) {
         if (this.over === false) {
             if (this.timeout) { clearTimeout(this.timeout) }
-            let data = this.step.options.output.call(this.case, { success, message })
+            let history = this.history.exports()
+            let data = this.step.options.output.call(this.case, {
+                success,
+                message,
+                history
+            })
             this.over = true
-            this.callback(success, this.getResponse(data))
+            this.callback(success, this.getResponse(data, history))
         }
     }
 
-    getResponse(data) {
+    getResponse(data, history) {
         return {
-            data
+            data,
+            history
         }
     }
 }
+
+/**
+ * 
+ */
 
 class Step {
     constructor(options) {
         this._core = new StepCore(options)
     }
 
+    /**
+     * 
+     */
+
     export() {
         return this.generator.bind(this)
     }
+
+    /**
+     * 
+     * @param {*} params 
+     */
 
     run(params = {}) {
         let args = params.args
@@ -135,6 +184,11 @@ class Step {
         })
         return this._core.start('run', args, params)
     }
+
+    /**
+     * 
+     * @param {*} params 
+     */
 
     generator(params) {
         params = this._core.$verify(params, {

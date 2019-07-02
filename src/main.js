@@ -29,6 +29,11 @@ class Main {
         return new Pump(total, finish)
     }
 
+    /**
+     * 
+     * @param {*} optnios 
+     */
+
     static createStep(optnios) {
         return new Step(optnios)
     }

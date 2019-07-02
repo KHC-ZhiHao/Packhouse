@@ -32,11 +32,14 @@ class User {
         this.store = tool.store
         this.context = context
         this.error = (reslut) => {
-            tool.emit('error', { reslut, context })
+            this.context.finishTime = Date.now()
+            tool.emit('error', { reslut, context: this.context })
             response.error(reslut)
         }
         this.success = (reslut) => {
-            tool.emit('success', { reslut, context })
+            this.context.success = true
+            this.context.finishTime = Date.now()
+            tool.emit('success', { reslut, context: this.context })
             response.success(reslut)
         }
     }
@@ -97,11 +100,22 @@ class Tool extends Base {
 
     createLambda(mode, support, caller) {
         return (...args) => {
-            let context = { mode, args, caller }
+            let context = this.createContext(mode, support, caller)
             let supports = support.copy()
             let callback = this.getActionCallback(mode, args)
             let params = Helper.createArgs(args, supports)
             return this[mode](params, supports, context, callback)
+        }
+    }
+
+    createContext(mode, args, caller) {
+        return {
+            mode,
+            args,
+            caller,
+            success: false,
+            startTime: Date.now(),
+            finishTime: null
         }
     }
 
