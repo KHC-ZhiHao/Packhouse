@@ -62,8 +62,9 @@ class History {
     }
 }
 
-class Flow {
+class Flow extends Base {
     constructor(step, args, { options, templates }, callback) {
+        super('Flow')
         this.step = step
         this.case = new Case()
         this.over = false
@@ -82,7 +83,8 @@ class Flow {
         }
         this.context = {
             ...this.flow,
-            lastCall: ''
+            lastCall: null,
+            nextCall: null
         }
     }
 
@@ -107,12 +109,16 @@ class Flow {
                 return this.flow.exit()
             }
             let next = () => {
-                next = () => { this.fail('Next has already been declared') }
+                if (this.over) {
+                    return this.$systemError('iterator', 'Step is exit or fail.')
+                }
+                next = () => { this.$systemError('iterator', 'Next has already been declared.') }
                 this.history.punchOut()
                 this.next()
             }
             this.history.punchOn({ name: template.name })
-            this.context.lastCall = template.name || 'no name'
+            this.context.nextCall = this.templates[0] ? this.templates[0].name : null
+            this.context.lastCall = template.name || null
             template.call(this.case, next, this.flow)
         }
     }
@@ -155,7 +161,8 @@ class Flow {
 }
 
 /**
- * 
+ * Step function can contorl flow
+ * @hideconstructor
  */
 
 class Step {
@@ -164,7 +171,8 @@ class Step {
     }
 
     /**
-     * 
+     * 擲出generator並綁定step
+     * @returns {function} generator function
      */
 
     export() {
@@ -172,13 +180,17 @@ class Step {
     }
 
     /**
-     * 
-     * @param {*} params 
+     * 直接運行step
+     * @param {object} options 運行參數
+     * @param {array} options.args 參數列
+     * @param {object} options.options step options
+     * @param {array} options.template 運行的functions
+     * @returns {Promise}
      */
 
-    run(params = {}) {
-        let args = params.args
-        params = this._core.$verify(params, {
+    run(options = {}) {
+        let args = options.args
+        let params = this._core.$verify(options, {
             options: [false, ['object'], {}],
             templates: [true, ['array']]
         })
@@ -186,12 +198,15 @@ class Step {
     }
 
     /**
-     * 
-     * @param {*} params 
+     * 建立並返回新的async function
+     * @param {object} options 建立的參數
+     * @param {object} options.options step options
+     * @param {array} options.templates 運行的functions
+     * @returns {function} async function
      */
 
-    generator(params) {
-        params = this._core.$verify(params, {
+    generator(options) {
+        let params = this._core.$verify(options, {
             options: [false, ['object'], {}],
             templates: [true, ['array']]
         })

@@ -115,10 +115,6 @@ class Factory {
         this._core = new FactoryCore()
     }
 
-    copy() {
-        return new this.constructor()
-    }
-
     /**
      * 監聽事件
      * @param {string} name 事件名稱
