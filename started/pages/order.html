@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>訂閱:Order · PackHouse</title>
+        <title>Order · PackHouse</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -45,10 +45,10 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
-    <link rel="next" href="pump.html" />
+    <link rel="next" href="step.html" />
     
     
-    <link rel="prev" href="line.html" />
+    <link rel="prev" href="pump.html" />
     
 
     </head>
@@ -93,12 +93,25 @@
         
         
     
-        <li class="chapter " data-level="2.1" data-path="main.html">
+        <li class="chapter " data-level="2.1" >
             
-                <a href="main.html">
+                <span>
             
                     
-                    介紹
+                    主體
+            
+                </span>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="first_function.html">
+            
+                <a href="first_function.html">
+            
+                    
+                    第一支函式
             
                 </a>
             
@@ -106,25 +119,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.2" data-path="factory.html">
+        <li class="chapter " data-level="2.3" data-path="support.html">
             
-                <a href="factory.html">
-            
-                    
-                    工廠:Factory
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="2.3" data-path="group.html">
-            
-                <a href="group.html">
+                <a href="support.html">
             
                     
-                    集合:Group
+                    預處理
             
                 </a>
             
@@ -137,7 +137,7 @@
                 <a href="mold.html">
             
                     
-                    模組:Mold
+                    Mold
             
                 </a>
             
@@ -145,12 +145,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.5" data-path="tool.html">
+        <li class="chapter " data-level="2.5" data-path="store.html">
             
-                <a href="tool.html">
+                <a href="store.html">
             
                     
-                    呼叫:Tool
+                    Store
             
                 </a>
             
@@ -158,12 +158,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.6" data-path="line.html">
+        <li class="chapter " data-level="2.6" data-path="currying.html">
             
-                <a href="line.html">
+                <a href="currying.html">
             
                     
-                    柯里化:Line
+                    Currying
             
                 </a>
             
@@ -171,12 +171,12 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.7" data-path="order.html">
+        <li class="chapter " data-level="2.7" data-path="event.html">
             
-                <a href="order.html">
+                <a href="event.html">
             
                     
-                    訂閱:Order
+                    Evemt
             
                 </a>
             
@@ -184,12 +184,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.8" data-path="pump.html">
+        <li class="chapter " data-level="2.8" data-path="merger.html">
             
-                <a href="pump.html">
+                <a href="merger.html">
             
                     
-                    流程:Pump
+                    Merger
             
                 </a>
             
@@ -206,12 +206,84 @@
     
         <li class="chapter " data-level="3.1" >
             
+                <span>
+            
+                    
+                    控制
+            
+                </span>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="pump.html">
+            
+                <a href="pump.html">
+            
+                    
+                    Pump
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="3.3" data-path="order.html">
+            
+                <a href="order.html">
+            
+                    
+                    Order
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="step.html">
+            
+                <a href="step.html">
+            
+                    
+                    Step
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="divider"></li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" >
+            
                 <a target="_blank" href="https://github.com/KHC-ZhiHao/Packhouse">
             
                     
                     Github
             
                 </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" >
+            
+                <span>
+            
+                    
+                    API Document
+            
+                </span>
             
 
             
@@ -247,7 +319,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >訂閱:Order</a>
+        <a href=".." >Order</a>
     </h1>
 </div>
 
@@ -260,86 +332,55 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="order">Order</h1>
-<p>&#x4E00;&#x500B;&#x7528;Key&#x9375;&#x5EFA;&#x7ACB;&#x53EF;&#x7DE9;&#x885D;&#x8207;&#x5FEB;&#x53D6;&#x7684;&#x7269;&#x4EF6;&#x3002;</p>
+<p>Order&#x7684;&#x904B;&#x7528;&#x6BD4;&#x8F03;&#x7279;&#x5225;&#xFF0C;&#x57FA;&#x672C;&#x4E0A;&#x662F;&#x61C9;&#x7528;&#x5728;&#x77ED;&#x6642;&#x9593;&#x5167;&#x591A;&#x500B;&#x76F8;&#x540C;&#x7684;&#x8ACB;&#x6C42;&#x6642;&#xFF0C;&#x53EA;&#x5BE6;&#x8CEA;&#x767C;&#x51FA;&#x4E00;&#x500B;&#x8ACB;&#x6C42;&#xFF0C;&#x76F4;&#x5230;&#x8CC7;&#x6599;&#x56DE;&#x4F86;&#x518D;&#x63A8;&#x64AD;&#x7D66;&#x6240;&#x6709;&#x8A02;&#x95B1;&#x8005;&#x3002;</p>
 <pre><code class="lang-js"><span class="hljs-keyword">let</span> order = Packhouse.createOrder({
-    max: <span class="hljs-number">1000</span>
+    <span class="hljs-comment">// cache&#x7684;&#x5BB9;&#x8F09;&#x91CF;(&#x9810;&#x8A2D;&#x70BA;100)&#xFF0C;&#x7576;&#x8D85;&#x904E;&#x5BB9;&#x8F09;&#x91CF;&#x5F8C;&#x6703;&#x79FB;&#x9664;&#x6700;&#x820A;&#x7684;cache&#x5F8C;&#x518D;&#x52A0;&#x5165;&#x6700;&#x65B0;&#x7684;</span>
+    max: <span class="hljs-number">100</span>
 })
 </code></pre>
-<hr>
-<h2 id="options">Options</h2>
-<h3 id="max">Max</h3>
-<ul>
-<li>number</li>
-<li>default: 1000</li>
-<li>optional</li>
-</ul>
-<p>cache&#x7684;&#x5BB9;&#x8F09;&#x91CF;&#xFF0C;&#x7576;&#x8D85;&#x904E;&#x5BB9;&#x8F09;&#x91CF;&#x5F8C;&#x6703;&#x79FB;&#x9664;&#x6700;&#x820A;&#x7684;cache&#x5F8C;&#x518D;&#x52A0;&#x5165;&#x6700;&#x65B0;&#x7684;&#xFF0C;&#x9632;&#x6B62;&#x8A18;&#x61B6;&#x9AD4;&#x70B8;&#x958B;&#x3002;</p>
-<hr>
-<h2 id="get-or-create">Get or Create</h2>
-<p>&#x7372;&#x5F97;&#x4E00;&#x500B;&#x5FEB;&#x53D6;&#x7269;&#x4EF6;&#xFF0C;&#x5982;&#x679C;&#x6C92;&#x6709;&#x5247;&#x5EFA;&#x7ACB;&#x3002;</p>
-<pre><code class="lang-js"><span class="hljs-keyword">let</span> key = <span class="hljs-string">&apos;myFirstCache&apos;</span>
-<span class="hljs-keyword">let</span> cache = order.getOrCreate(key)
-</code></pre>
-<hr>
-<h2 id="clear-and-remove">Clear and Remove</h2>
-<p>&#x6307;&#x5B9A;&#x79FB;&#x9664;&#x67D0;&#x500B;&#x5FEB;&#x53D6;&#x7269;&#x4EF6;</p>
-<pre><code class="lang-js">order.remove(<span class="hljs-string">&apos;myFirstCache&apos;</span>)
-</code></pre>
-<p>&#x6E05;&#x7A7A;&#x5FEB;&#x53D6;&#x7269;&#x4EF6;</p>
-<pre><code class="lang-js">order.clear()
-</code></pre>
-<hr>
-<h2 id="cache">Cache</h2>
-<p>order&#x662F;&#x4E00;&#x500B;&#x5FEB;&#x53D6;&#x7269;&#x4EF6;&#x7684;&#x7BA1;&#x7406;&#x5668;&#xFF0C;cache&#x624D;&#x662F;&#x672C;&#x9AD4;&#x3002;</p>
-<pre><code class="lang-js"><span class="hljs-keyword">let</span> cache = order.getOrCreate(<span class="hljs-string">&apos;newCache&apos;</span>)
-</code></pre>
-<h3 id="onload">Onload</h3>
-<p>&#x7576;&#x8A72;cache&#x88AB;&#x8CE6;&#x4E88;&#x503C;&#x5F8C;&#x6703;&#x547C;&#x53EB;onload&#xFF0C;&#x5982;&#x679C;&#x8A72;chcae&#x5DF2;&#x7D93;&#x88AB;&#x8CE6;&#x503C;&#xFF0C;&#x90A3;&#x6703;&#x76F4;&#x63A5;&#x547C;&#x53EB;callback&#x3002;</p>
-<pre><code class="lang-js">cache.onload((cache) =&gt; {
-    cache.post()
+<h2 id="&#x57FA;&#x790E;&#x904B;&#x7528;">&#x57FA;&#x790E;&#x904B;&#x7528;</h2>
+<p>&#x9019;&#x6A23;&#x7684;Order&#x975E;&#x5E38;&#x4E0D;&#x89AA;&#x6C11;&#xFF0C;&#x6709;&#x9EDE;&#x9055;&#x53CD;&#x6700;&#x5C0F;&#x77E5;&#x8B58;&#x539F;&#x5247;&#xFF0C;&#x5982;&#x679C;&#x8FFD;&#x6C42;&#x5F48;&#x6027;&#x518D;&#x4E00;&#x500B;&#x4E00;&#x500B;&#x8ABF;&#x9069;&#x3002;</p>
+<pre><code class="lang-js">factory.join(<span class="hljs-string">&apos;request&apos;</span>, {
+    tools: {
+        request: {
+            molds: [<span class="hljs-string">&apos;string&apos;</span>],
+            create(store) {
+                store.order = Packhouse.createOrder()
+            },
+            action(query) {
+                <span class="hljs-keyword">this</span>.store.order
+                    <span class="hljs-comment">// &#x7372;&#x53D6;Cache&#x7269;&#x4EF6;</span>
+                    .getOrCreate(key)
+                    <span class="hljs-comment">// &#x8A3B;&#x518A;&#x4E00;&#x5247;&#x6210;&#x529F;&#x6216;&#x5931;&#x6557;&#x7684;callback</span>
+                    .buffer(<span class="hljs-keyword">this</span>.error, <span class="hljs-keyword">this</span>.success)
+                    <span class="hljs-comment">// &#x5982;&#x679C;&#x9019;&#x6B21;&#x63A8;&#x64AD;&#x7D50;&#x675F;&#x5F8C;&#x6E05;&#x7A7A;&#x5FEB;&#x53D6;&#x8CC7;&#x6599;</span>
+                    .finish(cache =&gt; cache.clear())
+                    <span class="hljs-comment">// &#x5982;&#x679C;Cache&#x6C92;&#x6709;&#x8CC7;&#x6599;&#x5247;&#x904B;&#x884C;action</span>
+                    .action((error, success) =&gt; {
+                        setTimeout(() =&gt; {
+                            success(<span class="hljs-string">&apos;543&apos;</span>)
+                        }, <span class="hljs-number">1000</span>)
+                    })
+            }
+        }
+    }
 })
 </code></pre>
-<h3 id="buffer">Buffer</h3>
-<p>&#x52A0;&#x5165;&#x4E00;&#x5247;buffer&#x7B49;&#x5F85;cache&#x88AB;&#x8CE6;&#x503C;&#x3002;</p>
-<pre><code class="lang-js"><span class="hljs-keyword">let</span> error = (m) =&gt; { <span class="hljs-built_in">console</span>.error(m) }
-<span class="hljs-keyword">let</span> success = (m) =&gt; { <span class="hljs-built_in">console</span>.log(m) }
-cache.buffer(error, success)
-</code></pre>
-<h3 id="post">Post</h3>
-<p>&#x63A8;&#x64AD;&#x7D66;&#x6240;&#x6709;&#x7684;buffer&#x7D50;&#x679C;&#x3002;</p>
-<pre><code class="lang-js">cache.post()
-</code></pre>
-<h3 id="is-ready">Is Ready</h3>
-<p>&#x53EF;&#x4EE5;&#x7528;isReady&#x5F97;&#x77E5;&#x662F;&#x5426;&#x6709;&#x8CE6;&#x503C;&#x7684;&#x72C0;&#x614B;&#x3002;</p>
-<pre><code class="lang-js">cache.isReady() <span class="hljs-comment">// true or false</span>
-</code></pre>
-<h3 id="on-ready">On Ready</h3>
-<p>onReady&#x662F;&#x4E00;&#x500B;&#x8CE6;&#x503C;&#x7684;&#x63A5;&#x53E3;&#xFF0C;&#x7576;&#x5BA3;&#x544A;error&#x6216;success&#x4EE3;&#x8868;&#x88AB;&#x8CE6;&#x503C;&#x578B;&#x614B;&#x8207;&#x7D50;&#x679C;&#x3002;</p>
-<pre><code class="lang-js">cache.onReady((error, success) =&gt; {
-    success(<span class="hljs-string">&apos;success&apos;</span>)
-})
-</code></pre>
-<hr>
-<h2 id="&#x57FA;&#x672C;&#x6280;&#x5DE7;">&#x57FA;&#x672C;&#x6280;&#x5DE7;</h2>
-<pre><code class="lang-js">group.addTool({
-    name: <span class="hljs-string">&apos;getVector&apos;</span>
-    create: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
-        <span class="hljs-keyword">this</span>.arc = PI = <span class="hljs-built_in">Math</span>.PI / <span class="hljs-number">180</span>
-        <span class="hljs-keyword">this</span>.order = Packhouse.createOrder()
-    },
-    action: <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">angle, distance, system, error, success</span>) </span>{
-        <span class="hljs-keyword">let</span> key = angle.toString() + distance
-        <span class="hljs-keyword">this</span>.order
-            .getOrCreate(key)
-            .buffer(error, success)
-            .onload(cache =&gt; cache.post())
-            .onReady((error, success) =&gt; {
-                <span class="hljs-keyword">let</span> v = angle * <span class="hljs-keyword">this</span>.arc
-                success({
-                    x : distance * <span class="hljs-built_in">Math</span>.cos(v),
-                    y : distance * <span class="hljs-built_in">Math</span>.sin(v)
+<h2 id="use">Use</h2>
+<p>Use&#x662F;&#x4E00;&#x500B;&#x9AD8;&#x968E;&#x7684;API&#xFF0C;&#x628A;&#x4E0A;&#x9762;&#x7684;&#x4F8B;&#x5B50;&#x505A;&#x4E86;&#x4E00;&#x500B;&#x7C21;&#x55AE;&#x7684;&#x5305;&#x88DD;&#xFF0C;&#x9019;&#x6A23;&#x7684;Code&#x5C31;&#x6E05;&#x723D;&#x591A;&#x4E86;&#x3002;</p>
+<pre><code class="lang-js">factory.join(<span class="hljs-string">&apos;request&apos;</span>, {
+    tools: {
+        request: {
+            molds: [<span class="hljs-string">&apos;string&apos;</span>],
+            create(store) {
+                store.order = Packhouse.createOrder()
+            },
+            action(query) {
+                <span class="hljs-keyword">this</span>.store.order.use(query, <span class="hljs-keyword">this</span>.error, <span class="hljs-keyword">this</span>.success, (error, success) =&gt; {
+                    setTimeout(() =&gt; { success(<span class="hljs-string">&apos;543&apos;</span>) }, <span class="hljs-number">1000</span>)
                 })
-            })
+            }
+        }
     }
 })
 </code></pre>
@@ -354,12 +395,12 @@ cache.buffer(error, success)
 
             
                 
-                <a href="line.html" class="navigation navigation-prev " aria-label="Previous page: 柯里化:Line">
+                <a href="pump.html" class="navigation navigation-prev " aria-label="Previous page: Pump">
                     <i class="fa fa-angle-left"></i>
                 </a>
                 
                 
-                <a href="pump.html" class="navigation navigation-next " aria-label="Next page: 流程:Pump">
+                <a href="step.html" class="navigation navigation-next " aria-label="Next page: Step">
                     <i class="fa fa-angle-right"></i>
                 </a>
                 
@@ -370,7 +411,7 @@ cache.buffer(error, success)
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"訂閱:Order","level":"2.7","depth":1,"next":{"title":"流程:Pump","level":"2.8","depth":1,"path":"pages/pump.md","ref":"./pages/pump.md","articles":[]},"previous":{"title":"柯里化:Line","level":"2.6","depth":1,"path":"pages/line.md","ref":"./pages/line.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-search","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/order.md","mtime":"2019-06-18T02:27:29.577Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-06-25T04:17:47.301Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Order","level":"3.3","depth":1,"next":{"title":"Step","level":"3.4","depth":1,"path":"pages/step.md","ref":"./pages/step.md","articles":[]},"previous":{"title":"Pump","level":"3.2","depth":1,"path":"pages/pump.md","ref":"./pages/pump.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-search","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/order.md","mtime":"2019-07-06T13:07:42.810Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-07-06T14:33:17.804Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

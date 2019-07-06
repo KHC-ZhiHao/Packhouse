@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>src/Tool.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Cache.html">Cache</a><ul class='methods'><li data-type='method'><a href="Cache.html#action">action</a></li><li data-type='method'><a href="Cache.html#buffer">buffer</a></li><li data-type='method'><a href="Cache.html#clear">clear</a></li><li data-type='method'><a href="Cache.html#finish">finish</a></li></ul></li><li><a href="Factory.html">Factory</a><ul class='methods'><li data-type='method'><a href="Factory.html#addGroup">addGroup</a></li><li data-type='method'><a href="Factory.html#addMold">addMold</a></li><li data-type='method'><a href="Factory.html#hasGroup">hasGroup</a></li><li data-type='method'><a href="Factory.html#hasMold">hasMold</a></li><li data-type='method'><a href="Factory.html#line">line</a></li><li data-type='method'><a href="Factory.html#merger">merger</a></li><li data-type='method'><a href="Factory.html#on">on</a></li><li data-type='method'><a href="Factory.html#tool">tool</a></li></ul></li><li><a href="Main.html">Main</a><ul class='methods'><li data-type='method'><a href="Main.html#.createFactory">createFactory</a></li><li data-type='method'><a href="Main.html#.createOrder">createOrder</a></li><li data-type='method'><a href="Main.html#.createPump">createPump</a></li><li data-type='method'><a href="Main.html#.createStep">createStep</a></li></ul></li><li><a href="Order.html">Order</a><ul class='methods'><li data-type='method'><a href="Order.html#clear">clear</a></li><li data-type='method'><a href="Order.html#getOrCreat">getOrCreat</a></li><li data-type='method'><a href="Order.html#has">has</a></li><li data-type='method'><a href="Order.html#remove">remove</a></li><li data-type='method'><a href="Order.html#use">use</a></li></ul></li><li><a href="Pump.html">Pump</a><ul class='methods'><li data-type='method'><a href="Pump.html#add">add</a></li><li data-type='method'><a href="Pump.html#each">each</a></li><li data-type='method'><a href="Pump.html#press">press</a></li></ul></li><li><a href="Step.html">Step</a><ul class='methods'><li data-type='method'><a href="Step.html#export">export</a></li><li data-type='method'><a href="Step.html#generator">generator</a></li><li data-type='method'><a href="Step.html#run">run</a></li></ul></li><li><a href="Store.html">Store</a><ul class='methods'><li data-type='method'><a href="Store.html#$casting">$casting</a></li><li data-type='method'><a href="Store.html#$coop">$coop</a></li><li data-type='method'><a href="Store.html#$line">$line</a></li><li data-type='method'><a href="Store.html#$tool">$tool</a></li></ul></li><li><a href="Support.html">Support</a><ul class='methods'><li data-type='method'><a href="Support.html#clear">clear</a></li><li data-type='method'><a href="Support.html#ng">ng</a></li><li data-type='method'><a href="Support.html#pack">pack</a></li><li data-type='method'><a href="Support.html#rePack">rePack</a></li><li data-type='method'><a href="Support.html#rule">rule</a></li><li data-type='method'><a href="Support.html#sop">sop</a></li><li data-type='method'><a href="Support.html#unNg">unNg</a></li><li data-type='method'><a href="Support.html#unPack">unPack</a></li><li data-type='method'><a href="Support.html#unSop">unSop</a></li><li data-type='method'><a href="Support.html#unWeld">unWeld</a></li><li data-type='method'><a href="Support.html#weld">weld</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="Response.html">Response</a><ul class='methods'><li data-type='method'><a href="Response.html#.Action">Action</a></li><li data-type='method'><a href="Response.html#.Promise">Promise</a></li><li data-type='method'><a href="Response.html#.Recursive">Recursive</a></li></ul></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">src/Tool.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const Base = require('./Base')
+const Helper = require('./Helper')
+const Profile = require('./Profile')
+const Support = require('./Support')
+const Response = require('./Response')
+
+/**
+ * Store
+ * @hideconstructor
+ */
+
+class Store {
+    constructor(tool) {
+        this._tool = tool
+        this.$group = tool.group.store
+    }
+
+    /**
+     * 獲取一個指定group下的tool和line
+     * @param {string} name group name
+     */
+
+    $coop(name) {
+        return this._tool.useCoop(name)
+    }
+
+    /**
+     * 獲取一個同group下的tool
+     * @param {string} name too name
+     */
+
+    $tool(name) {
+        return this._tool.useTool(name)
+    }
+
+    /**
+     * 獲取一個同group下的line
+     * @param {string} name line name
+     */
+
+    $line(name) {
+        return this._tool.useLine(name)
+    }
+
+    /**
+     * 呼叫一個mold
+     * @param {string} name mold name
+     * @param {*} target 驗證與轉換對象
+     * @param {CastingCallback} callback 如果驗證錯誤時執行這個函數
+     */
+
+    $casting(name, target, callback) {
+        return this._tool.casting(name, target, callback)
+    }
+}
+
+class User {
+    constructor(tool, response, context) {
+        this.store = tool.store
+        this.context = context
+        this.error = (reslut) => {
+            this.context.finishTime = Date.now()
+            tool.emit('error', { reslut, context: this.context })
+            response.error(reslut)
+        }
+        this.success = (reslut) => {
+            this.context.success = true
+            this.context.finishTime = Date.now()
+            tool.emit('success', { reslut, context: this.context })
+            response.success(reslut)
+        }
+    }
+}
+
+class Tool extends Base {
+    constructor(group, options = {}, context = {}) {
+        super('Tool')
+        this.name = context.name || 'no_name_tool'
+        this.group = group
+        this.store = context.store || new Store(this)
+        this.profile = new Profile(this, 'tool')
+        this.options = this.$verify(options, {
+            molds: [false, ['array'], []],
+            action: [true, ['function']],
+            create: [false, ['function'], () => {}]
+        })
+    }
+
+    emit(name, options) {
+        this.group.emit(name, {
+            type: 'tool',
+            from: this.name,
+            ...options
+        })
+    }
+
+    install() {
+        this.initMolds()
+        this.options.create(this.store)
+        this.install = null
+    }
+
+    initMolds() {
+        let length = this.options.molds.length
+        this.molds = new Array(length)
+        for (let i = 0; i &lt; length; i++) {
+            let mold = this.options.molds[i]
+            if (mold) {
+                let data = this.options.molds[i].split('|')
+                let name = data.shift()
+                this.molds[i] = { name, extras: data }
+            } else {
+                this.molds[i] = null
+            }
+        }
+    }
+
+    exports(context) {
+        let support = new Support()
+        let exports = {
+            action: this.createLambda('action', support, context),
+            promise: this.createLambda('promise', support, context),
+            recursive: this.createLambda('recursive', support, context)
+        }
+        return support.createExports(exports)
+    }
+
+    createLambda(mode, support, caller) {
+        return (...args) => {
+            let context = this.createContext(mode, support, caller)
+            let supports = support.copy()
+            let callback = this.getActionCallback(mode, args)
+            let params = Helper.createArgs(args, supports)
+            return this[mode](params, supports, context, callback)
+        }
+    }
+
+    createContext(mode, args, caller) {
+        return {
+            mode,
+            args,
+            caller,
+            success: false,
+            startTime: Date.now(),
+            finishTime: null
+        }
+    }
+
+    getActionCallback(mode, args) {
+        if (mode === 'action' || mode === 'recursive') {
+            let callback = args.pop()
+            if (typeof callback !== 'function') {
+                this.$systemError('getActionCallback', 'Action or recursive must a callback.')
+            }
+            return callback
+        }
+        return null
+    }
+
+    call(params, context, response) {
+        this.emit('action-tool-before', context)
+        // mold
+        let user = new User(this, response, context)
+        let moldLength = this.molds.length
+        for (let i = 0; i &lt; moldLength; i++) {
+            let mold = this.molds[i]
+            if (mold == null) continue
+            params[i] = this.parseMold(mold.name, params[i], user, {
+                index: i,
+                extras: mold.extras
+            })
+        }
+        // action
+        if (response.isLive()) {
+            this.options.action.apply(user, params)
+        }
+    }
+
+    action(params, supports, context, callback) {
+        let response = new Response.Action(this.group, supports, callback)
+        this.call(params, context, response)
+    }
+
+    recursive(params, supports, context, callback) {
+        let response = new Response.Recursive(this, this.group, supports, context, callback)
+        this.call(params, context, response)
+    }
+
+    promise(params, supports, context) {
+        return new Promise((resolve, reject) => {
+            let response = new Response.Promise(this.group, supports, resolve, reject)
+            this.call(params, context, response)
+        })
+    }
+
+    parseMold(name, value, user, context) {
+        return this.group.getMold(name).parse(value, user, context)
+    }
+
+    casting(name, value, error) {
+        let data = name.split('|')
+        let call = data.shift()
+        let type = 'system'
+        let index = 0
+        let extras = data
+        return this.parseMold(call, value, { error }, { type, index, extras })
+    }
+
+    useTool(name) {
+        return this.group.callTool(name, this.profile.export())
+    }
+
+    useLine(name) {
+        return this.group.callLine(name, this.profile.export())
+    }
+
+    useCoop(name) {
+        return this.group.callCoop(name, this.profile.export())
+    }
+
+    use(context) {
+        if (this.install) { this.install() }
+        return this.exports(context)
+    }
+}
+
+module.exports = Tool
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Sat Jul 06 2019 22:33:27 GMT+0800 (DST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

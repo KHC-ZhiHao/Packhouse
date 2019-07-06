@@ -81,7 +81,6 @@ module.exports = {
     lines: {
         compute: {
             molds: [],
-            inlet: null,
             input() {
                 this.store.target = 0
                 this.success()

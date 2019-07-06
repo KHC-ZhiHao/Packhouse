@@ -215,21 +215,3 @@ class Support {
 }
 
 module.exports = SupportCore
-
-/**
- * @callback NgCallback
- * @param {*} error 錯誤訊息
- */
-
-/**
- * @callback SopCallback
- * @param {object} context 封裝的訊息
- * @param {boolean} context.success 是否成功
- * @param {*} context.result 該次呼叫的回傳值
- */
-
-/**
- * @callback WeldCallback
- * @param {*} result 上一組呼叫的結果
- * @param {function} pack 該tool執行前的pack
- */

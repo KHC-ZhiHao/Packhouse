@@ -11,7 +11,6 @@ class Line extends Base {
         this.group = group
         this.options = this.$verify(options, {
             molds: [false, ['array'], []],
-            inlet: [false, ['object'], null],
             input: [true, ['function']],
             output: [true, ['function']],
             layout: [true, ['object']]
@@ -22,8 +21,8 @@ class Line extends Base {
 
     checkPrivateKey() {
         let layout = this.options.layout
-        if (layout.action || layout.promise || layout.setRule) {
-            this.$systemError('init', 'Layout has private key is action, promise, setRule')
+        if (layout.action || layout.promise || layout.rule) {
+            this.$systemError('init', 'Layout has private key is action, promise, rule')
         }
     }
 
@@ -89,10 +88,6 @@ class Deploy extends Base {
     }
 
     register(name, params) {
-        let inlet = this.main.options.inlet
-        if (inlet && inlet.length !== 0 && this.flow.length === 0 && !inlet.includes(name)) {
-            this.$systemError('register', `First call method not inside inlet, you use '${name}'.`)
-        }
         this.flow.push({
             name: name,
             method: this.createTool(name, this.layout[name]),

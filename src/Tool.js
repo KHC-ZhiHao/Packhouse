@@ -4,26 +4,53 @@ const Profile = require('./Profile')
 const Support = require('./Support')
 const Response = require('./Response')
 
+/**
+ * Store
+ * @hideconstructor
+ */
+
 class Store {
     constructor(tool) {
         this._tool = tool
         this.$group = tool.group.store
     }
 
+    /**
+     * 獲取一個指定group下的tool和line
+     * @param {string} name group name
+     */
+
     $coop(name) {
         return this._tool.useCoop(name)
     }
+
+    /**
+     * 獲取一個同group下的tool
+     * @param {string} name too name
+     */
 
     $tool(name) {
         return this._tool.useTool(name)
     }
 
+    /**
+     * 獲取一個同group下的line
+     * @param {string} name line name
+     */
+
     $line(name) {
         return this._tool.useLine(name)
     }
 
-    $casting(name, data, callback) {
-        return this._tool.casting(name, data, callback)
+    /**
+     * 呼叫一個mold
+     * @param {string} name mold name
+     * @param {*} target 驗證與轉換對象
+     * @param {CastingCallback} callback 如果驗證錯誤時執行這個函數
+     */
+
+    $casting(name, target, callback) {
+        return this._tool.casting(name, target, callback)
     }
 }
 

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>src/Support.js - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Cache.html">Cache</a><ul class='methods'><li data-type='method'><a href="Cache.html#action">action</a></li><li data-type='method'><a href="Cache.html#buffer">buffer</a></li><li data-type='method'><a href="Cache.html#clear">clear</a></li><li data-type='method'><a href="Cache.html#finish">finish</a></li></ul></li><li><a href="Factory.html">Factory</a><ul class='methods'><li data-type='method'><a href="Factory.html#addGroup">addGroup</a></li><li data-type='method'><a href="Factory.html#addMold">addMold</a></li><li data-type='method'><a href="Factory.html#hasGroup">hasGroup</a></li><li data-type='method'><a href="Factory.html#hasMold">hasMold</a></li><li data-type='method'><a href="Factory.html#line">line</a></li><li data-type='method'><a href="Factory.html#merger">merger</a></li><li data-type='method'><a href="Factory.html#on">on</a></li><li data-type='method'><a href="Factory.html#tool">tool</a></li></ul></li><li><a href="Main.html">Main</a><ul class='methods'><li data-type='method'><a href="Main.html#.createFactory">createFactory</a></li><li data-type='method'><a href="Main.html#.createOrder">createOrder</a></li><li data-type='method'><a href="Main.html#.createPump">createPump</a></li><li data-type='method'><a href="Main.html#.createStep">createStep</a></li></ul></li><li><a href="Order.html">Order</a><ul class='methods'><li data-type='method'><a href="Order.html#clear">clear</a></li><li data-type='method'><a href="Order.html#getOrCreat">getOrCreat</a></li><li data-type='method'><a href="Order.html#has">has</a></li><li data-type='method'><a href="Order.html#remove">remove</a></li><li data-type='method'><a href="Order.html#use">use</a></li></ul></li><li><a href="Pump.html">Pump</a><ul class='methods'><li data-type='method'><a href="Pump.html#add">add</a></li><li data-type='method'><a href="Pump.html#each">each</a></li><li data-type='method'><a href="Pump.html#press">press</a></li></ul></li><li><a href="Step.html">Step</a><ul class='methods'><li data-type='method'><a href="Step.html#export">export</a></li><li data-type='method'><a href="Step.html#generator">generator</a></li><li data-type='method'><a href="Step.html#run">run</a></li></ul></li><li><a href="Store.html">Store</a><ul class='methods'><li data-type='method'><a href="Store.html#$casting">$casting</a></li><li data-type='method'><a href="Store.html#$coop">$coop</a></li><li data-type='method'><a href="Store.html#$line">$line</a></li><li data-type='method'><a href="Store.html#$tool">$tool</a></li></ul></li><li><a href="Support.html">Support</a><ul class='methods'><li data-type='method'><a href="Support.html#clear">clear</a></li><li data-type='method'><a href="Support.html#ng">ng</a></li><li data-type='method'><a href="Support.html#pack">pack</a></li><li data-type='method'><a href="Support.html#rePack">rePack</a></li><li data-type='method'><a href="Support.html#rule">rule</a></li><li data-type='method'><a href="Support.html#sop">sop</a></li><li data-type='method'><a href="Support.html#unNg">unNg</a></li><li data-type='method'><a href="Support.html#unPack">unPack</a></li><li data-type='method'><a href="Support.html#unSop">unSop</a></li><li data-type='method'><a href="Support.html#unWeld">unWeld</a></li><li data-type='method'><a href="Support.html#weld">weld</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="Response.html">Response</a><ul class='methods'><li data-type='method'><a href="Response.html#.Action">Action</a></li><li data-type='method'><a href="Response.html#.Promise">Promise</a></li><li data-type='method'><a href="Response.html#.Recursive">Recursive</a></li></ul></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">src/Support.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const Base = require('./Base')
+const Helper = require('./Helper')
+
+class SupportCore extends Base {
+    constructor() {
+        super('Support')
+        this.sop = null
+        this.welds = []
+        this.noGood = null
+        this.package = []
+    }
+
+    createExports(lambdas) {
+        return new Support(this, lambdas)
+    }
+
+    copy() {
+        return {
+            sop: this.sop,
+            welds: Helper.arrayCopy(this.welds),
+            noGood: this.noGood,
+            package: Helper.arrayCopy(this.package)
+        }
+    }
+
+    addWeld(tool, pack) {
+        this.welds.push({ tool, pack })
+    }
+
+    unWeld() {
+        this.welds = []
+    }
+
+    setRule(noGood, sop, options) {
+        if (noGood) {
+            this.setNoGood(noGood, options)
+        }
+        if (sop) {
+            this.setSop(sop)
+        }
+    }
+
+    setNoGood(action, options = {}) {
+        if (typeof action === 'function') {
+            this.noGood = {
+                action: action,
+                options: this.$verify(options, {
+                    resolve: [false, ['boolean'], false]
+                })
+            }
+        } else {
+            this.$systemError('setNG', 'NG param not a function.', action)
+        }
+    }
+
+    unNoGood() {
+        this.noGood = null
+    }
+
+    setSop(action) {
+        if (typeof action === 'function') {
+            this.sop = action
+        } else {
+            this.$systemError('setSOP', 'SOP param not a function.', action)
+        }
+    }
+
+    unSop() {
+        this.sop = null
+    }
+
+    pack(args) {
+        this.package = this.package.concat(args)
+    }
+
+    rePack(args) {
+        this.package = args
+    }
+
+    unPack() {
+        this.package = []
+    }
+
+    clear() {
+        this.unNoGood()
+        this.unSop()
+        this.unWeld()
+        this.unPack()
+    }
+}
+
+/**
+ * 在宣告tool前的部屬預宣告行為
+ * @hideconstructor
+ */
+
+class Support {
+    constructor(core, lambdas) {
+        this._core = core
+        this.action = lambdas.action
+        this.promise = lambdas.promise
+        this.recursive = lambdas.recursive
+    }
+
+    /**
+     * 錯誤預處裡，宣告後會移除action callback的error參數
+     * @param {NgCallback} callback 錯誤時執行的對象
+     * @param {object} [options] 額外參數
+     * @param {boolean} [options.resolve] 在promise模式時，報錯也回傳resolve
+     */
+
+    ng(callback, options) {
+        this._core.setNoGood(callback, options)
+        return this
+    }
+
+    /**
+     * 移除錯誤預處裡狀態
+     */
+
+    unNg() {
+        this._core.unNoGood()
+        return this
+    }
+
+    /**
+     * 不論錯誤或成功都會宣告註冊的函數
+     * @param {SopCallback} action 執行的對象
+     */
+
+    sop(action) {
+        this._core.setSop(action)
+        return this
+    }
+
+    /**
+     * 移除Sop預處裡狀態
+     */
+
+    unSop() {
+        this._core.unSop()
+        return this
+    }
+
+    /**
+     * 這是一起宣告ng和sop的接口
+     * @param {NgCallback} ng ng callback
+     * @param {SopCallback} sop sop callback
+     * @param {object} [options] 額外參數
+     * @param {boolean} [options.resolve] 在promise模式時，報錯也回傳resolve
+     */
+
+    rule(ng, sop, options) {
+        this._core.setRule(ng, sop, options)
+        return this
+    }
+
+    /**
+     * 連接每個tool的接口，可以共用ng，weld為註冊制，能不斷註冊，只能使用同group的tool
+     * @param {string} tool tool name
+     * @param {WeldCallback} callback 包裝並執行
+     */
+
+    weld(tool, callback) {
+        this._core.addWeld(tool, callback)
+        return this
+    }
+
+    /**
+     * 移除所有註冊的weld
+     */
+
+    unWeld() {
+        this._core.unWeld()
+        return this
+    }
+
+    /**
+     * 清除所有的預處理狀態
+     */
+
+    clear() {
+        this._core.clear()
+        return this
+    }
+
+    /**
+     * 參數可以預先加入，可接連加入
+     * @param  {...any} args 預先加入的參數
+     */
+
+    pack(...args) {
+        this._core.pack(args)
+        return this
+    }
+
+    /**
+     * 重新配置預參數
+     * @param  {...any} args 預先加入的參數
+     */
+
+    rePack(...args) {
+        this._core.rePack(args)
+        return this
+    }
+
+    /**
+     * 移除預參數
+     */
+
+    unPack() {
+        this._core.unPack()
+        return this
+    }
+}
+
+module.exports = SupportCore
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Sat Jul 06 2019 22:33:27 GMT+0800 (DST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

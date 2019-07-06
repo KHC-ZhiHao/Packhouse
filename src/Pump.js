@@ -81,9 +81,3 @@ class Pump {
 }
 
 module.exports = Pump
-
-/**
- * @callback PumpEachCallback
- * @param {function} press 同pump press
- * @param {number} count 當下計次
- */

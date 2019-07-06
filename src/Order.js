@@ -226,19 +226,3 @@ class Order {
 }
 
 module.exports = Order
-
-/**
- * @callback OrderError
- * @param {*} result 錯誤的結果
- */
-
-/**
- * @callback OrderSuccess
- * @param {*} result 成功的結果
- */
-
-/**
- * @callback OrderCallback
- * @param {function} error 失敗時的回呼函數
- * @param {function} success 成功時的回乎函數
- */

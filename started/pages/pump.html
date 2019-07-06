@@ -4,7 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
-        <title>流程:Pump · PackHouse</title>
+        <title>Pump · PackHouse</title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="description" content="">
         <meta name="generator" content="GitBook 3.2.3">
@@ -45,8 +45,8 @@
     <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
 
     
+    <link rel="next" href="order.html" />
     
-    <link rel="prev" href="order.html" />
     
 
     </head>
@@ -91,12 +91,25 @@
         
         
     
-        <li class="chapter " data-level="2.1" data-path="main.html">
+        <li class="chapter " data-level="2.1" >
             
-                <a href="main.html">
+                <span>
             
                     
-                    介紹
+                    主體
+            
+                </span>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="first_function.html">
+            
+                <a href="first_function.html">
+            
+                    
+                    第一支函式
             
                 </a>
             
@@ -104,25 +117,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.2" data-path="factory.html">
+        <li class="chapter " data-level="2.3" data-path="support.html">
             
-                <a href="factory.html">
-            
-                    
-                    工廠:Factory
-            
-                </a>
-            
-
-            
-        </li>
-    
-        <li class="chapter " data-level="2.3" data-path="group.html">
-            
-                <a href="group.html">
+                <a href="support.html">
             
                     
-                    集合:Group
+                    預處理
             
                 </a>
             
@@ -135,7 +135,7 @@
                 <a href="mold.html">
             
                     
-                    模組:Mold
+                    Mold
             
                 </a>
             
@@ -143,12 +143,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.5" data-path="tool.html">
+        <li class="chapter " data-level="2.5" data-path="store.html">
             
-                <a href="tool.html">
+                <a href="store.html">
             
                     
-                    呼叫:Tool
+                    Store
             
                 </a>
             
@@ -156,12 +156,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.6" data-path="line.html">
+        <li class="chapter " data-level="2.6" data-path="currying.html">
             
-                <a href="line.html">
+                <a href="currying.html">
             
                     
-                    柯里化:Line
+                    Currying
             
                 </a>
             
@@ -169,12 +169,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.7" data-path="order.html">
+        <li class="chapter " data-level="2.7" data-path="event.html">
             
-                <a href="order.html">
+                <a href="event.html">
             
                     
-                    訂閱:Order
+                    Evemt
             
                 </a>
             
@@ -182,12 +182,12 @@
             
         </li>
     
-        <li class="chapter active" data-level="2.8" data-path="pump.html">
+        <li class="chapter " data-level="2.8" data-path="merger.html">
             
-                <a href="pump.html">
+                <a href="merger.html">
             
                     
-                    流程:Pump
+                    Merger
             
                 </a>
             
@@ -204,12 +204,84 @@
     
         <li class="chapter " data-level="3.1" >
             
+                <span>
+            
+                    
+                    控制
+            
+                </span>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="3.2" data-path="pump.html">
+            
+                <a href="pump.html">
+            
+                    
+                    Pump
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3" data-path="order.html">
+            
+                <a href="order.html">
+            
+                    
+                    Order
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="step.html">
+            
+                <a href="step.html">
+            
+                    
+                    Step
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="divider"></li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" >
+            
                 <a target="_blank" href="https://github.com/KHC-ZhiHao/Packhouse">
             
                     
                     Github
             
                 </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" >
+            
+                <span>
+            
+                    
+                    API Document
+            
+                </span>
             
 
             
@@ -245,7 +317,7 @@
     <!-- Title -->
     <h1>
         <i class="fa fa-circle-o-notch fa-spin"></i>
-        <a href=".." >流程:Pump</a>
+        <a href=".." >Pump</a>
     </h1>
 </div>
 
@@ -258,7 +330,7 @@
                                 <section class="normal markdown-section">
                                 
                                 <h1 id="pump">Pump</h1>
-<p>&#x4E00;&#x500B;Function&#x56DE;&#x547C;&#x8655;&#x7406;&#x7684;&#x8A08;&#x6578;&#x5668;&#xFF0C;&#x80FD;&#x5920;&#x7F8E;&#x5316;&#x4F60;&#x7684;&#x7A0B;&#x5F0F;&#x8A2D;&#x8A08;&#x3002;</p>
+<p>&#x4E00;&#x500B;&#x8A08;&#x6578;&#x5668;&#xFF0C;&#x70BA;&#x63A8;&#x9001;&#x591A;&#x7B46;&#x975E;&#x540C;&#x6B65;&#x8ACB;&#x6C42;&#x800C;&#x751F;&#x3002;</p>
 <pre><code class="lang-js"><span class="hljs-keyword">let</span> pump = Packhouse.createPump(<span class="hljs-number">10</span>, callback)
 </code></pre>
 <hr>
@@ -294,10 +366,10 @@ pump.each((press, count) =&gt; {
 
             
                 
-                <a href="order.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page: 訂閱:Order">
-                    <i class="fa fa-angle-left"></i>
-                </a>
                 
+                <a href="order.html" class="navigation navigation-next navigation-unique" aria-label="Next page: Order">
+                    <i class="fa fa-angle-right"></i>
+                </a>
                 
             
         
@@ -306,7 +378,7 @@ pump.each((press, count) =&gt; {
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"流程:Pump","level":"2.8","depth":1,"next":{"title":"Github","level":"3.1","depth":1,"url":"https://github.com/KHC-ZhiHao/Packhouse","ref":"https://github.com/KHC-ZhiHao/Packhouse","articles":[]},"previous":{"title":"訂閱:Order","level":"2.7","depth":1,"path":"pages/order.md","ref":"./pages/order.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-search","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/pump.md","mtime":"2019-06-18T02:27:29.577Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-06-25T04:17:47.301Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Pump","level":"3.2","depth":1,"next":{"title":"Order","level":"3.3","depth":1,"path":"pages/order.md","ref":"./pages/order.md","articles":[]},"previous":{"title":"控制","level":"3.1","depth":1,"ref":"","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-search","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/pump.md","mtime":"2019-07-06T13:07:42.787Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-07-06T14:33:17.804Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
