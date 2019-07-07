@@ -40,5 +40,6 @@
 
 /**
  * @callback CastingCallback
- * @param {*} result 錯誤的結果
+ * @param {*} err 錯誤的結果
+ * @param {*} result Casting的結果
  */

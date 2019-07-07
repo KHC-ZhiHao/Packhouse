@@ -24,6 +24,10 @@
                 <link rel="stylesheet" href="gitbook/gitbook-plugin-highlight/website.css">
                 
             
+                
+                <link rel="stylesheet" href="gitbook/gitbook-plugin-search/search.css">
+                
+            
         
 
     
@@ -54,6 +58,10 @@
     <div class="book-summary">
         
             
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
             
                 <nav role="navigation">
                 
@@ -100,14 +108,15 @@
             
 
             
-        </li>
+            <ul class="articles">
+                
     
-        <li class="chapter " data-level="2.2" data-path="pages/first_function.html">
+        <li class="chapter " data-level="2.1.1" data-path="pages/first_function.html">
             
                 <a href="pages/first_function.html">
             
                     
-                    第一支函式
+                    Tool
             
                 </a>
             
@@ -115,12 +124,12 @@
             
         </li>
     
-        <li class="chapter " data-level="2.3" data-path="pages/support.html">
+        <li class="chapter " data-level="2.1.2" data-path="pages/support.html">
             
                 <a href="pages/support.html">
             
                     
-                    預處理
+                    Support
             
                 </a>
             
@@ -128,7 +137,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.4" data-path="pages/mold.html">
+        <li class="chapter " data-level="2.1.3" data-path="pages/mold.html">
             
                 <a href="pages/mold.html">
             
@@ -141,7 +150,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.5" data-path="pages/store.html">
+        <li class="chapter " data-level="2.1.4" data-path="pages/store.html">
             
                 <a href="pages/store.html">
             
@@ -154,7 +163,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.6" data-path="pages/currying.html">
+        <li class="chapter " data-level="2.1.5" data-path="pages/currying.html">
             
                 <a href="pages/currying.html">
             
@@ -167,7 +176,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.7" data-path="pages/event.html">
+        <li class="chapter " data-level="2.1.6" data-path="pages/event.html">
             
                 <a href="pages/event.html">
             
@@ -180,7 +189,7 @@
             
         </li>
     
-        <li class="chapter " data-level="2.8" data-path="pages/merger.html">
+        <li class="chapter " data-level="2.1.7" data-path="pages/merger.html">
             
                 <a href="pages/merger.html">
             
@@ -190,6 +199,11 @@
                 </a>
             
 
+            
+        </li>
+    
+
+            </ul>
             
         </li>
     
@@ -211,9 +225,10 @@
             
 
             
-        </li>
+            <ul class="articles">
+                
     
-        <li class="chapter " data-level="3.2" data-path="pages/pump.html">
+        <li class="chapter " data-level="3.1.1" data-path="pages/pump.html">
             
                 <a href="pages/pump.html">
             
@@ -226,7 +241,7 @@
             
         </li>
     
-        <li class="chapter " data-level="3.3" data-path="pages/order.html">
+        <li class="chapter " data-level="3.1.2" data-path="pages/order.html">
             
                 <a href="pages/order.html">
             
@@ -239,7 +254,7 @@
             
         </li>
     
-        <li class="chapter " data-level="3.4" data-path="pages/step.html">
+        <li class="chapter " data-level="3.1.3" data-path="pages/step.html">
             
                 <a href="pages/step.html">
             
@@ -253,6 +268,11 @@
         </li>
     
 
+            </ul>
+            
+        </li>
+    
+
     
         
         <li class="divider"></li>
@@ -260,6 +280,20 @@
         
     
         <li class="chapter " data-level="4.1" >
+            
+                <span>
+            
+                    
+                    連結
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="4.1.1" >
             
                 <a target="_blank" href="https://github.com/KHC-ZhiHao/Packhouse">
             
@@ -272,7 +306,7 @@
             
         </li>
     
-        <li class="chapter " data-level="4.2" >
+        <li class="chapter " data-level="4.1.2" >
             
                 <span>
             
@@ -282,6 +316,11 @@
                 </span>
             
 
+            
+        </li>
+    
+
+            </ul>
             
         </li>
     
@@ -325,6 +364,9 @@
                     <div class="page-wrapper" tabindex="-1" role="main">
                         <div class="page-inner">
                             
+<div id="book-search-results">
+    <div class="search-noresults">
+    
                                 <section class="normal markdown-section">
                                 
                                 <p align="center"><img src="images/logo.png"></p>
@@ -393,6 +435,22 @@ sum(<span class="hljs-number">5</span>, <span class="hljs-number">2</span>).then
                                 
                                 </section>
                             
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
                         </div>
                     </div>
                 
@@ -408,7 +466,7 @@ sum(<span class="hljs-number">5</span>, <span class="hljs-number">2</span>).then
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Packhouse","level":"1.1","depth":1,"next":{"title":"主體","level":"2.1","depth":1,"ref":"","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","-search","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"README.md","mtime":"2019-07-06T10:07:24.973Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-07-06T14:33:17.804Z"},"basePath":".","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Packhouse","level":"1.1","depth":1,"next":{"title":"主體","level":"2.1","depth":1,"ref":"","articles":[{"title":"Tool","level":"2.1.1","depth":2,"path":"pages/first_function.md","ref":"./pages/first_function.md","articles":[]},{"title":"Support","level":"2.1.2","depth":2,"path":"pages/support.md","ref":"./pages/support.md","articles":[]},{"title":"Mold","level":"2.1.3","depth":2,"path":"pages/mold.md","ref":"./pages/mold.md","articles":[]},{"title":"Store","level":"2.1.4","depth":2,"path":"pages/store.md","ref":"./pages/store.md","articles":[]},{"title":"Currying","level":"2.1.5","depth":2,"path":"pages/currying.md","ref":"./pages/currying.md","articles":[]},{"title":"Evemt","level":"2.1.6","depth":2,"path":"pages/event.md","ref":"./pages/event.md","articles":[]},{"title":"Merger","level":"2.1.7","depth":2,"path":"pages/merger.md","ref":"./pages/merger.md","articles":[]}]},"dir":"ltr"},"config":{"plugins":["-sharing","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"README.md","mtime":"2019-07-06T10:07:24.973Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-07-07T06:29:02.201Z"},"basePath":".","book":{"language":""}});
         });
     </script>
 </div>
@@ -419,6 +477,14 @@ sum(<span class="hljs-number">5</span>, <span class="hljs-number">2</span>).then
     
         
         <script src="gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="gitbook/gitbook-plugin-search/search.js"></script>
         
     
         

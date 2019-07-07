@@ -46,11 +46,11 @@ class Store {
      * 呼叫一個mold
      * @param {string} name mold name
      * @param {*} target 驗證與轉換對象
-     * @param {CastingCallback} callback 如果驗證錯誤時執行這個函數
+     * @param {CastingCallback} callback 轉換完畢時執行這個函數
      */
 
     $casting(name, target, callback) {
-        return this._tool.casting(name, target, callback)
+        return this._tool.casting(name, 0, target, callback)
     }
 }
 
@@ -165,9 +165,8 @@ class Tool extends Base {
         for (let i = 0; i < moldLength; i++) {
             let mold = this.molds[i]
             if (mold == null) continue
-            params[i] = this.parseMold(mold.name, params[i], user, {
-                index: i,
-                extras: mold.extras
+            this.parseMold(mold.name, params[i], { index: i, extras: mold.extras }, (err, reslut) => {
+                err ? user.error(err) : params[i] = reslut
             })
         }
         // action
@@ -193,17 +192,15 @@ class Tool extends Base {
         })
     }
 
-    parseMold(name, value, user, context) {
-        return this.group.getMold(name).parse(value, user, context)
+    parseMold(name, value, context, callback) {
+        return this.group.getMold(name).parse(value, context, callback)
     }
 
-    casting(name, value, error) {
+    casting(name, index, value, callback) {
         let data = name.split('|')
         let call = data.shift()
-        let type = 'system'
-        let index = 0
         let extras = data
-        return this.parseMold(call, value, { error }, { type, index, extras })
+        this.parseMold(call, value, { index, extras }, callback)
     }
 
     useTool(name) {

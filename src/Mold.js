@@ -15,21 +15,18 @@ class Mold extends Base {
         return this.options.check.call(this.case, param, context)
     }
 
-    casting(param) {
-        return this.options.casting.call(this.case, param)
+    casting(param, context) {
+        return this.options.casting.call(this.case, param, context)
     }
 
-    parse(params, { error }, context) {
+    parse(params, context, callback) {
         let check = this.check(params, context)
+        let value = null
         if (check === true) {
-            return this.casting(params)
-        } else {
-            if (typeof error === 'function') {
-                error(check)
-            } else {
-                this.$systemError('parse', check)
-            }
+            check = null
+            value = this.casting(params, context)
         }
+        callback(check, value)
     }
 }
 

@@ -13,7 +13,7 @@ module.exports = {
         is: {
             check(value, context) {
                 // eslint-disable-next-line valid-typeof
-                return typeof value === context.extras[0]
+                return typeof value === context.extras[0] ? true : `Not a ${context.extras[0]}`
             },
             casting() {
                 return 10
@@ -51,7 +51,12 @@ module.exports = {
         },
         toInt: {
             action(a) {
-                this.success(this.store.$casting('int', a))
+                this.store.$casting('int', a, (err, result) => {
+                    if (err) {
+                        return this.error(err)
+                    }
+                    this.success(result)
+                })
             }
         },
         isTen: {

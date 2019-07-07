@@ -1,6 +1,6 @@
 {
     "title": "PackHouse",
-    "plugins": ["-sharing", "-search", "fontsettings"],
+    "plugins": ["-sharing", "fontsettings"],
     "links": {
         "sidebar": false
     },
