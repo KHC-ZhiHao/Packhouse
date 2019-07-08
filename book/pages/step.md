@@ -6,8 +6,8 @@ Step是一個Pipeline實現，在MVC模式中可以歸類在Controller的部分�
 const step = Packhouse.createStep({
     // 超過愈期時間會強行宣告fail('timeout')
     timeout: 20000,
-    // 在hook重組template並回傳
-    hook(templates, options) {
+    // 在mixin重組template並回傳
+    mixin(templates, options) {
         return templates
     },
     // 當參數進來時宣告

@@ -5,7 +5,7 @@ class StepCore extends Base {
         super('Step')
         this.templates = []
         this.options = this.$verify(options, {
-            hook: [false, ['function'], (t) => t],
+            mixin: [false, ['function'], (t) => t],
             input: [true, ['function']],
             middle: [true, ['function']],
             output: [true, ['function']],
@@ -70,7 +70,7 @@ class Flow extends Base {
         this.over = false
         this.history = new History()
         this.callback = callback
-        this.templates = step.options.hook.call(this.case, templates.slice(), options)
+        this.templates = step.options.mixin.call(this.case, templates.slice(), options)
         this.initContext()
         this.initTimeout()
         this.start(args, options)

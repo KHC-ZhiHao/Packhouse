@@ -94,10 +94,10 @@ describe('#Step', () => {
         expect(meg).to.equal('ouo')
         expect(result).to.equal(false)
     })
-    it('hook', async function() {
+    it('mixin', async function() {
         let check = false
         const step = Packhouse.createStep({
-            hook(templates, options) {
+            mixin(templates, options) {
                 return [
                     async function test(next) {
                         check = true

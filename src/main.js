@@ -33,7 +33,7 @@ class Main {
      * 建立一個Step
      * @param {object} optnios step所需要的參數
      * @param {number} [optnios.timeout] 以ms計數到timeout後擲出timeout message
-     * @param {function} [options.hook] 可攔截template並回傳加工項目
+     * @param {function} [options.mixin] 可攔截template並回傳加工項目
      * @param {function} optnios.input 通用起始點處裡參數
      * @param {function} optnios.middle 中介層處理狀態
      * @param {function} optnios.finish 擲出exit或fail和執行template完畢後都會呼叫此函數
