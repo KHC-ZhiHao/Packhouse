@@ -29,12 +29,15 @@ describe('#Step', () => {
     it('step timeout', async function() {
         let error = ''
         const step = Packhouse.createStep({
-            timeout: 100,
+            timeout: {
+                ms: 100,
+                output() {
+                    error = 'timeout'
+                }
+            },
             input(args, options, { exit, fail }) {},
             middle(context) {},
-            output({ success, message }) {
-                error = message
-            }
+            output({ success, message }) {}
         })
         let test = step.generator({
             templates: [
@@ -43,6 +46,35 @@ describe('#Step', () => {
         })
         await test()
         expect(error).to.equal('timeout')
+    })
+    it('step before output', async function() {
+        let count = 0
+        const step = Packhouse.createStep({
+            input(args, options, { exit, fail }) {},
+            middle(context) {},
+            output({ success, message }) {
+                count += 1
+            }
+        })
+        let test = step.generator({
+            templates: [
+                async function move(next) {
+                    next()
+                }
+            ],
+            outputBefore(done, { history }) {
+                if (history.isDone('move')) {
+                    count += 1
+                }
+                if (history.isDone('9487')) {
+                    count += 1
+                }
+                count += 1
+                done()
+            }
+        })
+        await test()
+        expect(count).to.equal(3)
     })
     it('step exit', async function() {
         let meg = ''

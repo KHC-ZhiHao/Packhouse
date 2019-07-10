@@ -9,5 +9,6 @@ factory.on('error', (context) => {
 })
 factory.addGroup('math', group)
 factory.merger('merger', merger, { test: 'test' })
+
 // eslint-disable-next-line no-debugger
 debugger

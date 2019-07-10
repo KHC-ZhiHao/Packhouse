@@ -40,7 +40,7 @@ class Main {
      * @see {@link Step}
      * @example
      * const step = Packhouse.createStep({
-     *      hook(templates, options) { return [].concat(templates) },
+     *      mixin(templates, options) { return [].concat(templates) },
      *      input(args, options, { exit, fail }) {},
      *      middle({ exit, fail, lastCall, nextCall }) {},
      *      output({ success, message, history }) {}

@@ -374,10 +374,15 @@
                                 <h1 id="step">Step</h1>
 <p>Step&#x662F;&#x4E00;&#x500B;Pipeline&#x5BE6;&#x73FE;&#xFF0C;&#x5728;MVC&#x6A21;&#x5F0F;&#x4E2D;&#x53EF;&#x4EE5;&#x6B78;&#x985E;&#x5728;Controller&#x7684;&#x90E8;&#x5206;&#x3002;</p>
 <pre><code class="lang-js"><span class="hljs-keyword">const</span> step = Packhouse.createStep({
-    <span class="hljs-comment">// &#x8D85;&#x904E;&#x6108;&#x671F;&#x6642;&#x9593;&#x6703;&#x5F37;&#x884C;&#x5BA3;&#x544A;fail(&apos;timeout&apos;)</span>
-    timeout: <span class="hljs-number">20000</span>,
-    <span class="hljs-comment">// &#x5728;hook&#x91CD;&#x7D44;template&#x4E26;&#x56DE;&#x50B3;</span>
-    hook(templates, options) {
+    <span class="hljs-comment">// &#x8D85;&#x904E;&#x6108;&#x671F;&#x6642;&#x9593;&#x6703;&#x5F37;&#x884C;&#x5BA3;&#x544A;&#x5C6C;&#x65BC;&#x81EA;&#x5DF1;&#x7684;output</span>
+    timeout: {
+        ms: <span class="hljs-number">200</span>,
+        output(context) {
+            <span class="hljs-keyword">return</span> <span class="hljs-string">&apos;timeout&apos;</span>
+        }
+    },
+    <span class="hljs-comment">// &#x5728;mixin&#x91CD;&#x7D44;template&#x4E26;&#x56DE;&#x50B3;</span>
+    mixin(templates, options) {
         <span class="hljs-keyword">return</span> templates
     },
     <span class="hljs-comment">// &#x7576;&#x53C3;&#x6578;&#x9032;&#x4F86;&#x6642;&#x5BA3;&#x544A;</span>
@@ -449,6 +454,35 @@ exports.handler = step({
     ]
 })
 </code></pre>
+<h2 id="history">History</h2>
+<p>&#x6BCF;&#x6B21;&#x57F7;&#x884C;&#x70BA;&#x5EFA;&#x69CB;&#x4E00;&#x500B;&#x6B77;&#x53F2;&#x8A0A;&#x606F;&#xFF0C;&#x5728;&#x6BCF;&#x4E00;&#x500B;output&#x7684;&#x884C;&#x70BA;&#x4E2D;&#x88AB;&#x6CE8;&#x5165;context&#x5167;&#x3002;</p>
+<h2 id="before-output">Before Output</h2>
+<p>&#x7576;&#x57F7;&#x884C;&#x7A0B;&#x5E8F;&#x932F;&#x8AA4;&#x6642;&#x5FC5;&#x9808;rollback&#x4E00;&#x4E9B;&#x932F;&#x8AA4;&#x7684;&#x884C;&#x70BA;&#xFF0C;<code>beforeOutput</code>&#x662F;&#x4E00;&#x500B;&#x57F7;&#x884C;&#x6642;output&#x524D;&#x7684;&#x975E;&#x540C;&#x6B65;&#x51FD;&#x6578;&#x3002;</p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> step = <span class="hljs-built_in">require</span>(<span class="hljs-string">&apos;./step&apos;</span>)
+<span class="hljs-keyword">const</span> data = []
+exports.handler = step({
+    options: {
+        start: <span class="hljs-number">0</span>
+    },
+    templates: [
+        <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">create</span>(<span class="hljs-params">next</span>) </span>{
+            data.push(<span class="hljs-string">&apos;1234&apos;</span>)
+            next()
+        }
+        <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">fail</span>(<span class="hljs-params">next, { fail }</span>) </span>{
+            fail()
+        }
+    ],
+    beforeOutput(done, context) {
+        <span class="hljs-keyword">if</span> (context.success === <span class="hljs-literal">false</span>) {
+            <span class="hljs-keyword">if</span> (context.history.isDone(<span class="hljs-string">&apos;create&apos;</span>)) {
+                data.pop()
+            }
+        }
+        done()
+    }
+})
+</code></pre>
 
                                 
                                 </section>
@@ -488,7 +522,7 @@ exports.handler = step({
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Step","level":"3.1.3","depth":2,"next":{"title":"連結","level":"4.1","depth":1,"ref":"","articles":[{"title":"Github","level":"4.1.1","depth":2,"url":"https://github.com/KHC-ZhiHao/Packhouse","ref":"https://github.com/KHC-ZhiHao/Packhouse","articles":[]},{"title":"API Document","level":"4.1.2","depth":2,"ref":"","articles":[]}]},"previous":{"title":"Order","level":"3.1.2","depth":2,"path":"pages/order.md","ref":"./pages/order.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/step.md","mtime":"2019-07-08T13:54:23.189Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-07-08T13:56:12.160Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Step","level":"3.1.3","depth":2,"next":{"title":"連結","level":"4.1","depth":1,"ref":"","articles":[{"title":"Github","level":"4.1.1","depth":2,"url":"https://github.com/KHC-ZhiHao/Packhouse","ref":"https://github.com/KHC-ZhiHao/Packhouse","articles":[]},{"title":"API Document","level":"4.1.2","depth":2,"ref":"","articles":[]}]},"previous":{"title":"Order","level":"3.1.2","depth":2,"path":"pages/order.md","ref":"./pages/order.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/step.md","mtime":"2019-07-10T15:34:46.374Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-07-10T16:13:13.810Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>

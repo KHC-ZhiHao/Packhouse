@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>src/Main.js - Documentation</title>
+    <title>History - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -32,85 +32,52 @@
 
 <div id="main">
     
-    <h1 class="page-title">src/Main.js</h1>
+    <h1 class="page-title">History</h1>
     
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>const Pump = require('./Pump')
-const Step = require('./Step')
-const Order = require('./Order')
-const Factory = require('./Factory')
+        <h2>
+        History
+        </h2>
+        
+            <div class="class-description"><p>Step的歷史紀錄</p></div>
+        
+    
+</header>
 
-/**
- * Packhouse export
- * @hideconstructor
- */
+<article>
+    
 
-class Main {
-    /**
-     * 建立一個factory
-     * @see {@link Factory}
-     */
+    
 
-    static createFactory() {
-        return new Factory()
-    }
+    
 
-    /**
-     * 建立一個Pump
-     * @param {number} total 目標次數
-     * @param {function} finish 達目標次數時觸發
-     * @see {@link Pump}
-     */
+    
+    
+    
 
-    static createPump(total, finish) {
-        return new Pump(total, finish)
-    }
+     
 
-    /**
-     * 建立一個Step
-     * @param {object} optnios step所需要的參數
-     * @param {number} [optnios.timeout] 以ms計數到timeout後擲出timeout message
-     * @param {function} [options.mixin] 可攔截template並回傳加工項目
-     * @param {function} optnios.input 通用起始點處裡參數
-     * @param {function} optnios.middle 中介層處理狀態
-     * @param {function} optnios.finish 擲出exit或fail和執行template完畢後都會呼叫此函數
-     * @see {@link Step}
-     * @example
-     * const step = Packhouse.createStep({
-     *      mixin(templates, options) { return [].concat(templates) },
-     *      input(args, options, { exit, fail }) {},
-     *      middle({ exit, fail, lastCall, nextCall }) {},
-     *      output({ success, message, history }) {}
-     * })
-     */
+    
 
-    static createStep(optnios) {
-        return new Step(optnios)
-    }
+    
 
-    /**
-     * 建立一個Order
-     * @param {object} [options]
-     * @param {number} [options.max=100] 最大快取量，超過會移除舊的並加入新的快取
-     * @see {@link Order}
-     */
+    
 
-    static createOrder(options) {
-        return new Order(options)
-    }
-}
+    
 
-module.exports = Main
-</code></pre>
-        </article>
-    </section>
+    
+</article>
+
+</section>
 
 
 

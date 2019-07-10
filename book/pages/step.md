@@ -4,8 +4,13 @@ Step是一個Pipeline實現，在MVC模式中可以歸類在Controller的部分�
 
 ```js
 const step = Packhouse.createStep({
-    // 超過愈期時間會強行宣告fail('timeout')
-    timeout: 20000,
+    // 超過愈期時間會強行宣告屬於自己的output
+    timeout: {
+        ms: 200,
+        output(context) {
+            return 'timeout'
+        }
+    },
     // 在mixin重組template並回傳
     mixin(templates, options) {
         return templates
@@ -95,5 +100,40 @@ exports.handler = step({
             next()
         }
     ]
+})
+```
+
+## History
+
+每次執行為建構一個歷史訊息，在每一個output的行為中被注入context內。
+
+## Before Output
+
+當執行程序錯誤時必須rollback一些錯誤的行為，`beforeOutput`是一個執行時output前的非同步函數。
+
+```js
+const step = require('./step')
+const data = []
+exports.handler = step({
+    options: {
+        start: 0
+    },
+    templates: [
+        async function create(next) {
+            data.push('1234')
+            next()
+        }
+        async function fail(next, { fail }) {
+            fail()
+        }
+    ],
+    beforeOutput(done, context) {
+        if (context.success === false) {
+            if (context.history.isDone('create')) {
+                data.pop()
+            }
+        }
+        done()
+    }
 })
 ```

@@ -3,14 +3,20 @@ const Base = require('./Base')
 class StepCore extends Base {
     constructor(options) {
         super('Step')
+        this.timeout = null
         this.templates = []
         this.options = this.$verify(options, {
             mixin: [false, ['function'], (t) => t],
             input: [true, ['function']],
             middle: [true, ['function']],
-            output: [true, ['function']],
-            timeout: [false, ['number'], -1]
+            output: [true, ['function']]
         })
+        if (options.timeout) {
+            this.timeout = this.$verify(options.timeout, {
+                ms: [true, ['number']],
+                output: [true, ['function']]
+            })
+        }
     }
 
     addTemplate(func) {
@@ -34,7 +40,12 @@ class StepCore extends Base {
     }
 }
 
-class Case {}
+/**
+ * Step的歷史紀錄
+ * @hideconstructor
+ * @property {array} templates 每個template的歷程
+ * @property {function} isDone 給step function key時如果執行完畢會回傳true
+ */
 
 class History {
     constructor() {
@@ -44,8 +55,14 @@ class History {
 
     exports() {
         return {
-            templates: this.list
+            templates: this.list,
+            isDone: name => this.isDone(name)
         }
+    }
+
+    isDone(name) {
+        let target = this.list.find(temp => temp.name === name) || {}
+        return !!target.finishTime
     }
 
     punchOn({ name }) {
@@ -62,8 +79,10 @@ class History {
     }
 }
 
+class Case {}
+
 class Flow extends Base {
-    constructor(step, args, { options, templates }, callback) {
+    constructor(step, args, { options, templates, outputBefore }, callback) {
         super('Flow')
         this.step = step
         this.case = new Case()
@@ -71,6 +90,7 @@ class Flow extends Base {
         this.history = new History()
         this.callback = callback
         this.templates = step.options.mixin.call(this.case, templates.slice(), options)
+        this.outputBefore = outputBefore
         this.initContext()
         this.initTimeout()
         this.start(args, options)
@@ -89,12 +109,20 @@ class Flow extends Base {
     }
 
     initTimeout() {
-        if (this.step.options.timeout === -1) {
+        if (this.step.timeout == null) {
             return null
         }
-        this.timeout = setTimeout(() => {
-            this.fail('timeout')
-        }, this.step.options.timeout)
+        this.timeout = setTimeout(() => { this.timeoutHandler() }, this.step.timeout.ms)
+    }
+
+    timeoutHandler() {
+        if (this.over === false) {
+            let history = this.history.exports()
+            let context = { success: false, message: 'timeout', history }
+            let data = this.step.timeout.output.call(this.case, context)
+            this.done()
+            this.callback(false, this.getResponse(data, history))
+        }
     }
 
     start(args, options) {
@@ -138,17 +166,22 @@ class Flow extends Base {
         this.finish(false, message)
     }
 
+    done() {
+        this.over = true
+        if (this.timeout) {
+            clearTimeout(this.timeout)
+        }
+    }
+
     finish(success, message) {
+        let history = this.history.exports()
+        let context = { success, message, history }
         if (this.over === false) {
-            if (this.timeout) { clearTimeout(this.timeout) }
-            let history = this.history.exports()
-            let data = this.step.options.output.call(this.case, {
-                success,
-                message,
-                history
-            })
-            this.over = true
-            this.callback(success, this.getResponse(data, history))
+            this.done()
+            this.outputBefore.call(this.case, () => {
+                let data = this.step.options.output.call(this.case, context)
+                this.callback(success, this.getResponse(data, history))
+            }, context)
         }
     }
 
@@ -192,7 +225,8 @@ class Step {
         let args = options.args
         let params = this._core.$verify(options, {
             options: [false, ['object'], {}],
-            templates: [true, ['array']]
+            templates: [true, ['array']],
+            outputBefore: [false, ['function'], done => { done() }]
         })
         return this._core.start('run', args, params)
     }
@@ -207,8 +241,10 @@ class Step {
 
     generator(options) {
         let params = this._core.$verify(options, {
+            debug: [false, ['boolean'], false],
             options: [false, ['object'], {}],
-            templates: [true, ['array']]
+            templates: [true, ['array']],
+            outputBefore: [false, ['function'], done => { done() }]
         })
         return async(...args) => {
             let result = await this._core.start('generator', args, params)
