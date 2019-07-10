@@ -62,7 +62,7 @@ describe('#Step', () => {
                     next()
                 }
             ],
-            outputBefore(done, { history }) {
+            beforeOutput(done, { history }) {
                 if (history.isDone('move')) {
                     count += 1
                 }

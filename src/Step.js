@@ -82,7 +82,7 @@ class History {
 class Case {}
 
 class Flow extends Base {
-    constructor(step, args, { options, templates, outputBefore }, callback) {
+    constructor(step, args, { options, templates, beforeOutput }, callback) {
         super('Flow')
         this.step = step
         this.case = new Case()
@@ -90,7 +90,7 @@ class Flow extends Base {
         this.history = new History()
         this.callback = callback
         this.templates = step.options.mixin.call(this.case, templates.slice(), options)
-        this.outputBefore = outputBefore
+        this.beforeOutput = beforeOutput
         this.initContext()
         this.initTimeout()
         this.start(args, options)
@@ -178,7 +178,7 @@ class Flow extends Base {
         let context = { success, message, history }
         if (this.over === false) {
             this.done()
-            this.outputBefore.call(this.case, () => {
+            this.beforeOutput.call(this.case, () => {
                 let data = this.step.options.output.call(this.case, context)
                 this.callback(success, this.getResponse(data, history))
             }, context)
@@ -218,6 +218,7 @@ class Step {
      * @param {array} options.args 參數列
      * @param {object} options.options step options
      * @param {array} options.template 運行的functions
+     * @param {asyncFunction} [options.beforeOutput] 運行output前的攔截
      * @returns {Promise}
      */
 
@@ -226,7 +227,7 @@ class Step {
         let params = this._core.$verify(options, {
             options: [false, ['object'], {}],
             templates: [true, ['array']],
-            outputBefore: [false, ['function'], done => { done() }]
+            beforeOutput: [false, ['function'], done => { done() }]
         })
         return this._core.start('run', args, params)
     }
@@ -236,6 +237,7 @@ class Step {
      * @param {object} options 建立的參數
      * @param {object} options.options step options
      * @param {array} options.templates 運行的functions
+     * @param {asyncFunction} [options.beforeOutput] 運行output前的攔截
      * @returns {function} async function
      */
 
@@ -244,7 +246,7 @@ class Step {
             debug: [false, ['boolean'], false],
             options: [false, ['object'], {}],
             templates: [true, ['array']],
-            outputBefore: [false, ['function'], done => { done() }]
+            beforeOutput: [false, ['function'], done => { done() }]
         })
         return async(...args) => {
             let result = await this._core.start('generator', args, params)
