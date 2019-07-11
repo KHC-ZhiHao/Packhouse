@@ -153,7 +153,12 @@ class Flow extends Base {
 
     next() {
         if (this.over === false) {
-            this.step.options.middle.call(this.case, this.context)
+            try {
+                this.step.options.middle.call(this.case, this.context)
+            } catch (error) {
+                this.done()
+                throw error
+            }
             this.iterator()
         }
     }
@@ -177,9 +182,10 @@ class Flow extends Base {
         let history = this.history.exports()
         let context = { success, message, history }
         if (this.over === false) {
-            this.done()
+            this.over = true
             this.beforeOutput.call(this.case, () => {
                 let data = this.step.options.output.call(this.case, context)
+                this.done()
                 this.callback(success, this.getResponse(data, history))
             }, context)
         }
