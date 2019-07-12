@@ -2,7 +2,7 @@ feature:
     ✔ factory merger @done(19-06-28 14:53)
     ✔ order標準套路用一個接口呈現 @done(19-06-27 00:45)
     ✔ 可以在group宣告tools和molds @done(19-06-26 15:12)
-    ☐ step history
+    ✔ step history @done(19-07-12 09:08)
     Helper:
         ✔ getType @done(19-06-26 15:12)
         ✔ arrayCopy @done(19-06-26 15:12)
@@ -25,7 +25,7 @@ doc:
     ✔ tool @done(19-06-29 18:12)
     ✔ line @done(19-06-29 18:12)
     ✔ mold @done(19-06-29 18:12)
-    ☐ step
+    ✔ step @done(19-07-12 09:08)
 
 test:
     ✔ main @done(19-06-27 10:20)
@@ -34,8 +34,8 @@ test:
     ✔ tool @done(19-06-28 14:53)
     ✔ line @done(19-06-27 14:06)
     ✔ mold @done(19-06-27 14:24)
-    ☐ step
-    ☐ event sign
+    ✔ step @done(19-07-12 09:08)
+    ✔ event sign @done(19-07-12 09:08)
 
 refactoring :
     ✔ 移除description @done(19-06-25 18:04)
