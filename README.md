@@ -7,9 +7,7 @@
     <br>
 </p>
 
----
-
-# Summary
+## Summary
 
 Packhouse是一個瘋狂的函數包裝器，你可以使用各種奇淫技巧讓函式擁有下列能力：
 
@@ -32,7 +30,7 @@ AWS Lambda是Packhouse的出生地，那個狗幹的調適環境與垃圾級別�
 
 [JS函數式編程指南](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)
 
-# First Function
+## First Function
 
 ```js
 const Packhouse = require('packhouse')
@@ -51,7 +49,7 @@ let sum = factory.tool('math', 'sum').promise
 sum(5, 2).then(console.log) // 7
 ```
 
-# Install
+## Install
 
 npm
 ```bash
@@ -78,13 +76,13 @@ let Packhouse = require('packhouse')
 let factory = Packhouse.createFactory()
 ```
 
-# 運行環境
+## 運行環境
 
 Node 8.1以上。
 
 要運行在瀏覽器也可以，但本庫在編寫時不會考慮瀏覽器相容性。
 
-# Document
+## Document
 
 [Guide](https://khc-zhihao.github.io/Packhouse/started)
 
@@ -92,7 +90,7 @@ Node 8.1以上。
 
 [API Document](https://khc-zhihao.github.io/Packhouse/docs/document.html)
 
-# 版本迭代
+## 版本迭代
 
 1.1.6與1.1.7發生了重大變革，大幅降低了使用所需的知識門檻與正規化模組，但相對的兩版本的相容性趨近於０。
 
