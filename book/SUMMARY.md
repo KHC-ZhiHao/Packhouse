@@ -6,7 +6,7 @@
     * [Mold](./pages/mold.md)
     * [Store](./pages/store.md)
     * [Currying](./pages/currying.md)
-    * [Evemt](./pages/event.md)
+    * [Event](./pages/event.md)
     * [Merger](./pages/merger.md)
 ***
 * 控制
