@@ -18,7 +18,8 @@ Packhouse是一個瘋狂的函數包裝器，你可以使用各種奇淫技巧�
 * 模組化管理
 * 參數驗證與轉換
 * Step Function
-* Currying Function
+* Currying
+* 如詩如畫的可讀性
 
 ## Cloud Function
 

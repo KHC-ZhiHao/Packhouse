@@ -16,4 +16,5 @@
 ***
 * 連結
     * [Github](https://github.com/KHC-ZhiHao/Packhouse)
-    * [API Document]()
+    * [Version](https://khc-zhihao.github.io/Packhouse/version)
+    * [API Document](https://khc-zhihao.github.io/Packhouse/docs/)

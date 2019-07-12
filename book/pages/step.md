@@ -1,5 +1,7 @@
 # Step
 
+*🔬Step是一個實驗性產品，我們將頻繁更動且需要您的回饋。*
+
 Step是一個Pipeline實現，在MVC模式中可以歸類在Controller的部分。
 
 ```js
@@ -90,8 +92,7 @@ module.exports = step.export()
 可以在AWS Lambda這樣宣告：
 
 ```js
-const step = require('./step')
-exports.handler = step({
+exports.handler = require('./step')({
     options: {
         start: 0
     },

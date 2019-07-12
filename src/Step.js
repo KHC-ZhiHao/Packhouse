@@ -40,13 +40,6 @@ class StepCore extends Base {
     }
 }
 
-/**
- * Step的歷史紀錄
- * @hideconstructor
- * @property {array} templates 每個template的歷程
- * @property {function} isDone 給step function key時如果執行完畢會回傳true
- */
-
 class History {
     constructor() {
         this.list = []
@@ -152,15 +145,12 @@ class Flow extends Base {
     }
 
     next() {
-        if (this.over === false) {
-            try {
+        setTimeout(() => {
+            if (this.over === false) {
                 this.step.options.middle.call(this.case, this.context)
-            } catch (error) {
-                this.done()
-                throw error
+                this.iterator()
             }
-            this.iterator()
-        }
+        })
     }
 
     exit(message) {
