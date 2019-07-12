@@ -94,7 +94,7 @@ let factory = Packhouse.createFactory()
 
 [Version](https://khc-zhihao.github.io/Packhouse/version)
 
-[API Document](https://khc-zhihao.github.io/Packhouse/docs/document.html)
+[API Document](https://khc-zhihao.github.io/Packhouse/docs)
 
 <br>
 
