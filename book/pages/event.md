@@ -13,8 +13,6 @@ factory.tool('math', 'sum').promise(5, 5)
 * error
 * success
 * use-before
-* action-tool-before
-* action-line-before
 
 ## 高階應用
 

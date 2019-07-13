@@ -4,27 +4,49 @@ Step是一個Pipeline實現，在MVC模式中可以歸類在Controller的部分�
 
 ```js
 const step = Packhouse.createStep({
-    // 超過愈期時間會強行宣告fail('timeout')
-    timeout: 20000,
-    // 在hook重組template並回傳
-    hook(templates, options) {
-        return templates
+    router(options) {
+        return options.channel
     },
-    // 當參數進來時宣告
-    input(args, options, { exit, fail }) {
-        this.count = args[0] + options.start
-    },
-    // 每一個template之間宣告
-    middle({ exit, fail }) {
-        this.count += 1
-    },
-    // template運算結束或宣告exit or fail
-    output({ success, message }) {
-        // output return 的值就是step的最終結果
-        return this.count
+    channels: {
+        demo: {
+            // 超過愈期時間會宣告自己的output
+            timeout: {
+                ms: 20000,
+                output() {
+                    return 'timeout'
+                }
+            },
+            // base會建構一個prototype，並在每一次執行時實例化
+            base: {
+                add() {
+                    this.count += 1
+                }
+            },
+            // 在hook重組template並回傳
+            hook(templates, options) {
+                return templates
+            },
+            // 當參數進來時宣告
+            input(args, options, { exit, fail, base }) {
+                this.count = args[0] + options.start
+            },
+            // 每一個template之間宣告
+            middle({ exit, fail }) {
+                this.count += 1
+            },
+            // template運算結束或宣告exit or fail
+            output({ success, message }) {
+                // output return 的值就是step的最終結果
+                return this.count
+            }
+        }
     }
 })
 ```
+
+## Router
+
+Cloud Function的呼叫來源有許多種，針對這類上下文的差異，Router返回的值會決定使用的Step。
 
 ## Flow
 
@@ -38,7 +60,8 @@ Exit與Fail都是中斷整個流程，差別在於Output這個方法收到的Suc
 step.run({
     args: [5],
     options: {
-        start: 5
+        start: 5,
+        channel: 'demo'
     },
     templates: [
         async function temp(next, {exit, fail}) {
@@ -51,6 +74,29 @@ step.run({
 }).then(console.log) // 12
 ```
 
+## Base
+
+Base可以統一一些常用的method。
+
+```js
+step.run({
+    args: [5],
+    options: {
+        start: 5,
+        channel: 'demo'
+    },
+    templates: [
+        async function temp(next, {exit, fail, base}) {
+            base.add()
+            next()
+        },
+        async function temp(next, {exit, fail}) {
+            next()
+        }
+    ]
+}).then(console.log) // 13
+```
+
 ## Generator
 
 Run的Args怎麼這麼雞肋？
@@ -60,7 +106,8 @@ Run的Args怎麼這麼雞肋？
 ```js
 let newStep = step.generator({
     options: {
-        start: 5
+        start: 5,
+        channel: 'demo'
     },
     templates: [
         async function temp(next, {exit, fail}) {
@@ -88,7 +135,8 @@ module.exports = step.export()
 const step = require('./step')
 exports.handler = step({
     options: {
-        start: 0
+        start: 0,
+        channel: 'demo'
     },
     templates: [
         async function(next) {

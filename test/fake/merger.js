@@ -11,6 +11,9 @@ module.exports = {
             install(group, options) {
                 group.test = options.test
             },
+            mergers: {
+                to: 'to'
+            },
             tools: {
                 get: {
                     action() {

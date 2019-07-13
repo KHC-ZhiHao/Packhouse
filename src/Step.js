@@ -3,21 +3,55 @@ const Base = require('./Base')
 class StepCore extends Base {
     constructor(options) {
         super('Step')
-        this.templates = []
         this.options = this.$verify(options, {
+            router: [true, ['function']],
+            channels: [true, ['object']]
+        })
+        this.initChannel()
+    }
+
+    initChannel() {
+        this.channels = {}
+        for (let key in this.options.channels) {
+            this.channels[key] = new Channel(this.options.channels[key])
+        }
+    }
+
+    getChannel(options) {
+        let name = this.options.router(options)
+        let channel = this.channels[name]
+        if (channel == null) {
+            this.$systemError('getChannel', `Channel(${name}) not found.`)
+        }
+        return channel
+    }
+}
+
+class Channel extends Base {
+    constructor(options) {
+        super('Step')
+        this.options = this.$verify(options, {
+            base: [false, ['object'], {}],
             hook: [false, ['function'], (t) => t],
             input: [true, ['function']],
             middle: [true, ['function']],
             output: [true, ['function']],
             timeout: [false, ['number'], -1]
         })
+        this.initBase()
     }
 
-    addTemplate(func) {
-        if (typeof func !== 'function') {
-            this.$systemError('addTemplate', 'Param not a function.')
+    initBase() {
+        let base = this.options.base
+        this.Base = function(core) {
+            this._core = core
+            this._base = base
         }
-        this.templates.push(func)
+        for (let key in this.options.base) {
+            this.Base.prototype[key] = function() {
+                this._base[key].apply(this._core, arguments)
+            }
+        }
     }
 
     start(type, args, params) {
@@ -63,42 +97,41 @@ class History {
 }
 
 class Flow extends Base {
-    constructor(step, args, { options, templates }, callback) {
+    constructor(channel, args, { options, templates }, callback) {
         super('Flow')
-        this.step = step
+        this.channel = channel
         this.case = new Case()
+        this.base = new channel.Base(this.case)
         this.over = false
         this.history = new History()
         this.callback = callback
-        this.templates = step.options.hook.call(this.case, templates.slice(), options)
+        this.templates = channel.options.hook.call(this.case, templates.slice(), options)
         this.initContext()
         this.initTimeout()
         this.start(args, options)
     }
 
     initContext() {
-        this.flow = {
-            exit: this.exit.bind(this),
-            fail: this.fail.bind(this)
-        }
         this.context = {
-            ...this.flow,
+            base: this.base,
+            exit: this.exit.bind(this),
+            fail: this.fail.bind(this),
             lastCall: null,
             nextCall: null
         }
     }
 
     initTimeout() {
-        if (this.step.options.timeout === -1) {
+        if (this.channel.options.timeout === -1) {
             return null
         }
         this.timeout = setTimeout(() => {
             this.fail('timeout')
-        }, this.step.options.timeout)
+        }, this.channel.options.timeout)
     }
 
     start(args, options) {
-        this.step.options.input.call(this.case, args, options, this.flow)
+        this.channel.options.input.call(this.case, args, options, this.context)
         this.iterator()
     }
 
@@ -106,7 +139,7 @@ class Flow extends Base {
         if (this.over === false) {
             let template = this.templates.shift()
             if (template == null) {
-                return this.flow.exit()
+                return this.context.exit()
             }
             let next = () => {
                 if (this.over) {
@@ -119,13 +152,13 @@ class Flow extends Base {
             this.history.punchOn({ name: template.name })
             this.context.nextCall = this.templates[0] ? this.templates[0].name : null
             this.context.lastCall = template.name || null
-            template.call(this.case, next, this.flow)
+            template.call(this.case, next, this.context)
         }
     }
 
     next() {
         if (this.over === false) {
-            this.step.options.middle.call(this.case, this.context)
+            this.channel.options.middle.call(this.case, this.context)
             this.iterator()
         }
     }
@@ -142,7 +175,7 @@ class Flow extends Base {
         if (this.over === false) {
             if (this.timeout) { clearTimeout(this.timeout) }
             let history = this.history.exports()
-            let data = this.step.options.output.call(this.case, {
+            let data = this.channel.options.output.call(this.case, {
                 success,
                 message,
                 history
@@ -188,13 +221,13 @@ class Step {
      * @returns {Promise}
      */
 
-    run(options = {}) {
+    run(options = {}, type = 'run') {
         let args = options.args
         let params = this._core.$verify(options, {
             options: [false, ['object'], {}],
             templates: [true, ['array']]
         })
-        return this._core.start('run', args, params)
+        return this._core.getChannel(params.options).start(type, args, params)
     }
 
     /**
@@ -206,12 +239,8 @@ class Step {
      */
 
     generator(options) {
-        let params = this._core.$verify(options, {
-            options: [false, ['object'], {}],
-            templates: [true, ['array']]
-        })
         return async(...args) => {
-            let result = await this._core.start('generator', args, params)
+            let result = await this.run({ args, ...options }, 'generator')
             return result.data
         }
     }
