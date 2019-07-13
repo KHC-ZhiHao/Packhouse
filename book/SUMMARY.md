@@ -6,7 +6,7 @@
     * [Mold](./pages/mold.md)
     * [Store](./pages/store.md)
     * [Currying](./pages/currying.md)
-    * [Evemt](./pages/event.md)
+    * [Event](./pages/event.md)
     * [Merger](./pages/merger.md)
 ***
 * 控制
@@ -16,4 +16,5 @@
 ***
 * 連結
     * [Github](https://github.com/KHC-ZhiHao/Packhouse)
-    * [API Document]()
+    * [Version](https://khc-zhihao.github.io/Packhouse/version)
+    * [API Document](https://khc-zhihao.github.io/Packhouse/docs)

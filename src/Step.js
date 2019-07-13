@@ -30,27 +30,18 @@ class StepCore extends Base {
 class Channel extends Base {
     constructor(options) {
         super('Step')
+        this.timeout = null
         this.options = this.$verify(options, {
-            base: [false, ['object'], {}],
-            hook: [false, ['function'], (t) => t],
+            mixin: [false, ['function'], (t) => t],
             input: [true, ['function']],
             middle: [true, ['function']],
-            output: [true, ['function']],
-            timeout: [false, ['number'], -1]
+            output: [true, ['function']]
         })
-        this.initBase()
-    }
-
-    initBase() {
-        let base = this.options.base
-        this.Base = function(core) {
-            this._core = core
-            this._base = base
-        }
-        for (let key in this.options.base) {
-            this.Base.prototype[key] = function() {
-                this._base[key].apply(this._core, arguments)
-            }
+        if (options.timeout) {
+            this.timeout = this.$verify(options.timeout, {
+                ms: [true, ['number']],
+                output: [true, ['function']]
+            })
         }
     }
 
@@ -68,8 +59,6 @@ class Channel extends Base {
     }
 }
 
-class Case {}
-
 class History {
     constructor() {
         this.list = []
@@ -78,8 +67,14 @@ class History {
 
     exports() {
         return {
-            templates: this.list
+            templates: this.list,
+            isDone: name => this.isDone(name)
         }
+    }
+
+    isDone(name) {
+        let target = this.list.find(temp => temp.name === name) || {}
+        return !!target.finishTime
     }
 
     punchOn({ name }) {
@@ -96,16 +91,18 @@ class History {
     }
 }
 
+class Case {}
+
 class Flow extends Base {
-    constructor(channel, args, { options, templates }, callback) {
+    constructor(channel, args, { options, templates, beforeOutput }, callback) {
         super('Flow')
         this.channel = channel
         this.case = new Case()
-        this.base = new channel.Base(this.case)
         this.over = false
         this.history = new History()
         this.callback = callback
-        this.templates = channel.options.hook.call(this.case, templates.slice(), options)
+        this.templates = channel.options.mixin.call(this.case, templates.slice(), options)
+        this.beforeOutput = beforeOutput
         this.initContext()
         this.initTimeout()
         this.start(args, options)
@@ -113,7 +110,6 @@ class Flow extends Base {
 
     initContext() {
         this.context = {
-            base: this.base,
             exit: this.exit.bind(this),
             fail: this.fail.bind(this),
             lastCall: null,
@@ -122,12 +118,20 @@ class Flow extends Base {
     }
 
     initTimeout() {
-        if (this.channel.options.timeout === -1) {
+        if (this.channel.timeout == null) {
             return null
         }
-        this.timeout = setTimeout(() => {
-            this.fail('timeout')
-        }, this.channel.options.timeout)
+        this.timeout = setTimeout(() => { this.timeoutHandler() }, this.channel.timeout.ms)
+    }
+
+    timeoutHandler() {
+        if (this.over === false) {
+            let history = this.history.exports()
+            let context = { success: false, message: 'timeout', history }
+            let data = this.channel.timeout.output.call(this.case, context)
+            this.done()
+            this.callback(false, this.getResponse(data, history))
+        }
     }
 
     start(args, options) {
@@ -157,10 +161,12 @@ class Flow extends Base {
     }
 
     next() {
-        if (this.over === false) {
-            this.channel.options.middle.call(this.case, this.context)
-            this.iterator()
-        }
+        setTimeout(() => {
+            if (this.over === false) {
+                this.channel.options.middle.call(this.case, this.context)
+                this.iterator()
+            }
+        })
     }
 
     exit(message) {
@@ -171,17 +177,23 @@ class Flow extends Base {
         this.finish(false, message)
     }
 
+    done() {
+        this.over = true
+        if (this.timeout) {
+            clearTimeout(this.timeout)
+        }
+    }
+
     finish(success, message) {
+        let history = this.history.exports()
+        let context = { success, message, history }
         if (this.over === false) {
-            if (this.timeout) { clearTimeout(this.timeout) }
-            let history = this.history.exports()
-            let data = this.channel.options.output.call(this.case, {
-                success,
-                message,
-                history
-            })
             this.over = true
-            this.callback(success, this.getResponse(data, history))
+            this.beforeOutput.call(this.case, () => {
+                let data = this.channel.options.output.call(this.case, context)
+                this.done()
+                this.callback(success, this.getResponse(data, history))
+            }, context)
         }
     }
 
@@ -218,6 +230,7 @@ class Step {
      * @param {array} options.args 參數列
      * @param {object} options.options step options
      * @param {array} options.template 運行的functions
+     * @param {asyncFunction} [options.beforeOutput] 運行output前的攔截
      * @returns {Promise}
      */
 
@@ -225,7 +238,8 @@ class Step {
         let args = options.args
         let params = this._core.$verify(options, {
             options: [false, ['object'], {}],
-            templates: [true, ['array']]
+            templates: [true, ['array']],
+            beforeOutput: [false, ['function'], done => { done() }]
         })
         return this._core.getChannel(params.options).start(type, args, params)
     }
@@ -235,6 +249,7 @@ class Step {
      * @param {object} options 建立的參數
      * @param {object} options.options step options
      * @param {array} options.templates 運行的functions
+     * @param {asyncFunction} [options.beforeOutput] 運行output前的攔截
      * @returns {function} async function
      */
 

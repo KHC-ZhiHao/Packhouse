@@ -1,5 +1,7 @@
 # Step
 
+*🔬Step是一個實驗性產品，我們將頻繁更動且需要您的回饋。*
+
 Step是一個Pipeline實現，在MVC模式中可以歸類在Controller的部分。
 
 ```js
@@ -16,14 +18,8 @@ const step = Packhouse.createStep({
                     return 'timeout'
                 }
             },
-            // base會建構一個prototype，並在每一次執行時實例化
-            base: {
-                add() {
-                    this.count += 1
-                }
-            },
-            // 在hook重組template並回傳
-            hook(templates, options) {
+            // 在mixin重組template並回傳
+            mixin(templates, options) {
                 return templates
             },
             // 當參數進來時宣告
@@ -74,29 +70,6 @@ step.run({
 }).then(console.log) // 12
 ```
 
-## Base
-
-Base可以統一一些常用的method。
-
-```js
-step.run({
-    args: [5],
-    options: {
-        start: 5,
-        channel: 'demo'
-    },
-    templates: [
-        async function temp(next, {exit, fail, base}) {
-            base.add()
-            next()
-        },
-        async function temp(next, {exit, fail}) {
-            next()
-        }
-    ]
-}).then(console.log) // 13
-```
-
 ## Generator
 
 Run的Args怎麼這麼雞肋？
@@ -132,8 +105,7 @@ module.exports = step.export()
 可以在AWS Lambda這樣宣告：
 
 ```js
-const step = require('./step')
-exports.handler = step({
+exports.handler = require('./step')({
     options: {
         start: 0,
         channel: 'demo'
@@ -145,3 +117,41 @@ exports.handler = step({
     ]
 })
 ```
+<<<<<<< HEAD
+=======
+
+## History
+
+每次執行為建構一個歷史訊息，在每一個output的行為中被注入context內。
+
+## Before Output
+
+當執行程序錯誤時必須rollback一些錯誤的行為，`beforeOutput`是一個執行時output前的非同步函數。
+
+```js
+const step = require('./step')
+const data = []
+exports.handler = step({
+    options: {
+        start: 0
+    },
+    templates: [
+        async function create(next) {
+            data.push('1234')
+            next()
+        }
+        async function fail(next, { fail }) {
+            fail()
+        }
+    ],
+    beforeOutput(done, context) {
+        if (context.success === false) {
+            if (context.history.isDone('create')) {
+                data.pop()
+            }
+        }
+        done()
+    }
+})
+```
+>>>>>>> origin/master
