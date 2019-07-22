@@ -52,7 +52,7 @@ class Store {
      */
 
     $casting(name, target, callback) {
-        return this._tool.casting(name, 0, target, callback)
+        return this._tool.parseMold(name, target, 0, callback)
     }
 }
 
@@ -93,29 +93,8 @@ class Tool extends Base {
     }
 
     install() {
-        this.initMolds()
         this.options.create(this.store)
         this.install = null
-    }
-
-    initMolds() {
-        let length = this.options.molds.length
-        this.molds = new Array(length)
-        for (let i = 0; i < length; i++) {
-            let mold = this.options.molds[i]
-            if (mold) {
-                let data = this.options.molds[i].split('|')
-                let name = data.shift()
-                let extras = {}
-                for (let text of data) {
-                    let [key, value] = text.split(':')
-                    extras[key] = value === undefined ? true : value
-                }
-                this.molds[i] = { name, extras }
-            } else {
-                this.molds[i] = null
-            }
-        }
     }
 
     exports(context) {
@@ -163,12 +142,13 @@ class Tool extends Base {
     call(params, context, response) {
         // mold
         let user = new User(this, response, context)
-        let moldLength = this.molds.length
-        for (let i = 0; i < moldLength; i++) {
-            let mold = this.molds[i]
+        let length = this.options.molds.length
+        for (let i = 0; i < length; i++) {
+            let mold = this.options.molds[i]
             if (mold == null) continue
-            this.parseMold(mold.name, params[i], { index: i, extras: mold.extras }, (err, reslut) => {
-                err ? user.error(err) : params[i] = reslut
+            this.parseMold(mold, params[i], i, (err, reslut) => {
+                if (err) { return user.error(err) }
+                params[i] = reslut
             })
         }
         // action
@@ -194,15 +174,8 @@ class Tool extends Base {
         })
     }
 
-    parseMold(name, value, context, callback) {
-        return this.group.getMold(name).parse(value, context, callback)
-    }
-
-    casting(name, index, value, callback) {
-        let data = name.split('|')
-        let call = data.shift()
-        let extras = data
-        this.parseMold(call, value, { index, extras }, callback)
+    parseMold(name, value, index, callback) {
+        return this.group.parseMold(name, value, index, callback)
     }
 
     useTool(name) {

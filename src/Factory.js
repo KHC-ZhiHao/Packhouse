@@ -12,7 +12,7 @@ class FactoryCore extends Base {
         this.event.addChannel('success')
         this.event.addChannel('use-before')
         this.modules = {}
-        this.moldbox = {}
+        this.moldbox = new Mold()
         this.groupbox = {}
         for (let key in Configs.defaultMolds) {
             this.addMold(key, Configs.defaultMolds[key])
@@ -52,13 +52,6 @@ class FactoryCore extends Base {
         return this.groupbox[name]
     }
 
-    getMold(name) {
-        if (this.hasMold(name) === false) {
-            this.$systemError('getMold', `Mold(${name}) not found.`)
-        }
-        return this.moldbox[name]
-    }
-
     getCoop(groupName, context) {
         return {
             tool: (name) => { return this.callTool(groupName, name, context) },
@@ -94,14 +87,11 @@ class FactoryCore extends Base {
     }
 
     addMold(name, options) {
-        if (this.hasMold(name)) {
-            this.$systemError('addMold', `Name(${name}) already exists.`)
-        }
-        this.moldbox[name] = new Mold(options)
+        this.moldbox.add(name, options)
     }
 
     hasMold(name) {
-        return !!this.moldbox[name]
+        return this.moldbox.has(name)
     }
 
     hasGroup(name) {

@@ -14,7 +14,7 @@ class Group extends Base {
         this.factory = factory
         this.toolbox = {}
         this.linebox = {}
-        this.moldbox = {}
+        this.moldbox = new Mold(this.factory.moldbox, this.namespace)
         this.options = this.$verify(data, {
             tools: [false, ['object'], {}],
             lines: [false, ['object'], {}],
@@ -62,6 +62,10 @@ class Group extends Base {
         }
     }
 
+    parseMold(name, value, index, callback) {
+        return this.moldbox.parse(name, value, index, callback)
+    }
+
     getTool(name) {
         if (this.hasTool(name) === false) {
             this.$systemError('getTool', `Tool(${name}) not found.`)
@@ -74,13 +78,6 @@ class Group extends Base {
             this.$systemError('getLine', `Line(${name}) not found.`)
         }
         return this.linebox[name]
-    }
-
-    getMold(name) {
-        if (this.hasMold(name) === false) {
-            this.$systemError('getMold', `Mold(${name}) not found.`)
-        }
-        return this.moldbox[name] || this.factory.getMold(this.namespace + name)
     }
 
     callCoop(name, context) {
@@ -110,10 +107,7 @@ class Group extends Base {
     }
 
     addMold(name, options) {
-        if (this.hasMold(name)) {
-            this.$systemError('addMold', `Name(${name}) already exists.`)
-        }
-        this.moldbox[name] = new Mold(options)
+        this.moldbox.add(name, options)
     }
 
     hasTool(name) {
@@ -125,7 +119,7 @@ class Group extends Base {
     }
 
     hasMold(name) {
-        return !!(this.moldbox[name] || this.factory.hasMold(this.namespace + name))
+        return this.moldbox.has(name)
     }
 }
 

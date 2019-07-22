@@ -12,10 +12,10 @@ module.exports = {
                 if (typeof param !== 'number') {
                     return `Param ${system.index} not a number(${param}).`
                 }
-                if (system.extras.max && value > Number(system.extras.max)) {
+                if (system.extras.max && param > Number(system.extras.max)) {
                     return 'max:' + system.extras.max
                 }
-                if (system.extras.min && value < Number(system.extras.min)) {
+                if (system.extras.min && param < Number(system.extras.min)) {
                     return 'min:' + system.extras.min
                 }
                 return true
@@ -24,16 +24,7 @@ module.exports = {
         int: {
             check(param, system) {
                 if (param == null && system.extras.abe === true) { return true }
-                if (typeof param !== 'number') {
-                    return `Param ${system.index} not a number(${param}).`
-                }
-                if (system.extras.max && value > Number(system.extras.max)) {
-                    return 'max:' + system.extras.max
-                }
-                if (system.extras.min && value < Number(system.extras.min)) {
-                    return 'min:' + system.extras.min
-                }
-                return true
+                return system.check(`number|min:${system.extras.min}|max:${system.extras.max}`, param)
             },
             casting(param) {
                 return Math.floor(param)
