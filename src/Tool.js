@@ -89,11 +89,7 @@ class Tool extends Base {
     }
 
     emit(name, options) {
-        this.group.emit(name, {
-            type: 'tool',
-            from: this.name,
-            ...options
-        })
+        this.group.emit(name, { type: 'tool', from: this.name, ...options })
     }
 
     install() {
@@ -165,7 +161,6 @@ class Tool extends Base {
     }
 
     call(params, context, response) {
-        this.emit('action-tool-before', context)
         // mold
         let user = new User(this, response, context)
         let moldLength = this.molds.length

@@ -19,6 +19,7 @@ class Group extends Base {
             tools: [false, ['object'], {}],
             lines: [false, ['object'], {}],
             molds: [false, ['object'], {}],
+            mergers: [false, ['object'], {}],
             install: [false, ['function'], () => {}]
         })
         this.init()
@@ -83,7 +84,7 @@ class Group extends Base {
     }
 
     callCoop(name, context) {
-        return this.factory.getCoop(this.namespace + name, context)
+        return this.factory.getCoop(this.namespace + this.options.mergers[name], context)
     }
 
     callTool(name, context) {

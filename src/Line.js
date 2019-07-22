@@ -26,14 +26,6 @@ class Line extends Base {
         }
     }
 
-    emit(name, options) {
-        this.group.emit(name, {
-            type: 'line',
-            from: this.name,
-            ...options
-        })
-    }
-
     use() {
         return (...args) => {
             return (new Deploy(this, args)).conveyer
@@ -115,7 +107,6 @@ class Deploy extends Base {
     }
 
     process(response) {
-        this.main.emit('action-line-before')
         new Process(this, response)
     }
 }

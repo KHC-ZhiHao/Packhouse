@@ -6,32 +6,43 @@ Step是一個Pipeline實現，在MVC模式中可以歸類在Controller的部分�
 
 ```js
 const step = Packhouse.createStep({
-    // 超過愈期時間會強行宣告屬於自己的output
-    timeout: {
-        ms: 200,
-        output(context) {
-            return 'timeout'
+    router(options) {
+        return options.channel
+    },
+    channels: {
+        demo: {
+            // 超過愈期時間會宣告自己的output
+            timeout: {
+                ms: 20000,
+                output() {
+                    return 'timeout'
+                }
+            },
+            // 在mixin重組template並回傳
+            mixin(templates, options) {
+                return templates
+            },
+            // 當參數進來時宣告
+            input(args, options, { exit, fail, base }) {
+                this.count = args[0] + options.start
+            },
+            // 每一個template之間宣告
+            middle({ exit, fail }) {
+                this.count += 1
+            },
+            // template運算結束或宣告exit or fail
+            output({ success, message }) {
+                // output return 的值就是step的最終結果
+                return this.count
+            }
         }
-    },
-    // 在mixin重組template並回傳
-    mixin(templates, options) {
-        return templates
-    },
-    // 當參數進來時宣告
-    input(args, options, { exit, fail }) {
-        this.count = args[0] + options.start
-    },
-    // 每一個template之間宣告
-    middle({ exit, fail }) {
-        this.count += 1
-    },
-    // template運算結束或宣告exit or fail
-    output({ success, message }) {
-        // output return 的值就是step的最終結果
-        return this.count
     }
 })
 ```
+
+## Router
+
+Cloud Function的呼叫來源有許多種，針對這類上下文的差異，Router返回的值會決定使用的Step。
 
 ## Flow
 
@@ -45,7 +56,8 @@ Exit與Fail都是中斷整個流程，差別在於Output這個方法收到的Suc
 step.run({
     args: [5],
     options: {
-        start: 5
+        start: 5,
+        channel: 'demo'
     },
     templates: [
         async function temp(next, {exit, fail}) {
@@ -67,7 +79,8 @@ Run的Args怎麼這麼雞肋？
 ```js
 let newStep = step.generator({
     options: {
-        start: 5
+        start: 5,
+        channel: 'demo'
     },
     templates: [
         async function temp(next, {exit, fail}) {
@@ -94,7 +107,8 @@ module.exports = step.export()
 ```js
 exports.handler = require('./step')({
     options: {
-        start: 0
+        start: 0,
+        channel: 'demo'
     },
     templates: [
         async function(next) {
@@ -103,6 +117,8 @@ exports.handler = require('./step')({
     ]
 })
 ```
+<<<<<<< HEAD
+=======
 
 ## History
 
@@ -138,3 +154,4 @@ exports.handler = step({
     }
 })
 ```
+>>>>>>> origin/master

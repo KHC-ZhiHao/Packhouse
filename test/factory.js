@@ -57,18 +57,6 @@ describe('#Factory', () => {
             })
     })
     it('event', function() {
-        let count = 0
-        this.factory.on('action-tool-before', (context) => {
-            expect(context.caller.type).to.equal('tool')
-        })
-        this.factory.on('action-line-before', (context) => {
-            count += 1
-            expect(context.caller.type).to.equal('line')
-        })
-        this.factory.on('action-line-before', (context) => {
-            count += 1
-            expect(context.caller.type).to.equal('line')
-        })
         this.factory.on('use-before', (context) => {
             if (context.groupSign) {
                 expect(context.groupSign).to.equal('merger')
@@ -93,6 +81,5 @@ describe('#Factory', () => {
             .action(87, (error, result) => {
                 expect(result).to.equal(5)
             })
-        expect(count).to.equal(2)
     })
 })

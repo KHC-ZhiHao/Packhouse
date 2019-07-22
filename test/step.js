@@ -5,11 +5,16 @@ describe('#Step', () => {
     it('step', async function() {
         let count = 0
         const step = Packhouse.createStep({
-            input(args, options, { exit, fail }) {
-                count = args[0]
-            },
-            middle(context) {},
-            output({ success, message }) {}
+            router: o => 'test',
+            channels: {
+                test: {
+                    input(args, options, { exit, fail }) {
+                        count = args[0]
+                    },
+                    middle(context) {},
+                    output({ success, message }) {}
+                }
+            }
         })
         let test = step.generator({
             templates: [
@@ -29,15 +34,20 @@ describe('#Step', () => {
     it('step timeout', async function() {
         let error = ''
         const step = Packhouse.createStep({
-            timeout: {
-                ms: 100,
-                output() {
-                    error = 'timeout'
+            router: o => 'test',
+            channels: {
+                test: {
+                    timeout: {
+                        ms: 100,
+                        output() {
+                            error = 'timeout'
+                        }
+                    },
+                    input(args, options, { exit, fail }) {},
+                    middle(context) {},
+                    output({ success, message }) {}
                 }
-            },
-            input(args, options, { exit, fail }) {},
-            middle(context) {},
-            output({ success, message }) {}
+            }
         })
         let test = step.generator({
             templates: [
@@ -50,10 +60,15 @@ describe('#Step', () => {
     it('step before output', async function() {
         let count = 0
         const step = Packhouse.createStep({
-            input(args, options, { exit, fail }) {},
-            middle(context) {},
-            output({ success, message }) {
-                count += 1
+            router: o => 'test',
+            channels: {
+                test: {
+                    input(args, options, { exit, fail }) {},
+                    middle(context) {},
+                    output({ success, message }) {
+                        count += 1
+                    }
+                }
             }
         })
         let test = step.generator({
@@ -80,11 +95,16 @@ describe('#Step', () => {
         let meg = ''
         let result = false
         const step = Packhouse.createStep({
-            input(args, options, { exit, fail }) {},
-            middle(context) {},
-            output({ success, message }) {
-                meg = message
-                result = success
+            router: o => 'test',
+            channels: {
+                test: {
+                    input(args, options, { exit, fail }) {},
+                    middle(context) {},
+                    output({ success, message }) {
+                        meg = message
+                        result = success
+                    }
+                }
             }
         })
         let test = step.generator({
@@ -105,11 +125,16 @@ describe('#Step', () => {
         let meg = ''
         let result = true
         const step = Packhouse.createStep({
-            input(args, options, { exit, fail }) {},
-            middle(context) {},
-            output({ success, message }) {
-                meg = message
-                result = success
+            router: o => 'test',
+            channels: {
+                test: {
+                    input(args, options, { exit, fail }) {},
+                    middle(context) {},
+                    output({ success, message }) {
+                        meg = message
+                        result = success
+                    }
+                }
             }
         })
         let test = step.generator({
@@ -129,17 +154,22 @@ describe('#Step', () => {
     it('mixin', async function() {
         let check = false
         const step = Packhouse.createStep({
-            mixin(templates, options) {
-                return [
-                    async function test(next) {
-                        check = true
-                        next()
-                    }
-                ].concat(templates)
-            },
-            input(args, options, { exit, fail }) {},
-            middle(context) {},
-            output({ success, message }) {}
+            router: o => 'test',
+            channels: {
+                test: {
+                    mixin(templates, options) {
+                        return [
+                            async function test(next) {
+                                check = true
+                                next()
+                            }
+                        ].concat(templates)
+                    },
+                    input(args, options, { exit, fail }) {},
+                    middle(context) {},
+                    output({ success, message }) {}
+                }
+            }
         })
         let test = step.generator({
             templates: [
@@ -154,11 +184,16 @@ describe('#Step', () => {
     it('middle', async function() {
         let count = 0
         const step = Packhouse.createStep({
-            input(args, options, { exit, fail }) {},
-            middle(context) {
-                count += 1
-            },
-            output({ success, message }) {}
+            router: o => 'test',
+            channels: {
+                test: {
+                    input(args, options, { exit, fail }) {},
+                    middle(context) {
+                        count += 1
+                    },
+                    output({ success, message }) {}
+                }
+            }
         })
         let test = step.generator({
             templates: [

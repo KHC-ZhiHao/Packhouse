@@ -11,8 +11,6 @@ class FactoryCore extends Base {
         this.event.addChannel('error')
         this.event.addChannel('success')
         this.event.addChannel('use-before')
-        this.event.addChannel('action-tool-before')
-        this.event.addChannel('action-line-before')
         this.modules = {}
         this.moldbox = {}
         this.groupbox = {}
@@ -126,9 +124,9 @@ class Factory {
      * @param {string} name 事件名稱
      * @param {function} callback 觸發回呼事件
      * @example
+     * factory.on('error', (context) => {})
+     * factory.on('success', (context) => {})
      * factory.on('use-before', (context) => {})
-     * factory.on('action-tool-before', (context) => {})
-     * factory.on('action-line-before', (context) => {})
      */
 
     on(name, callback) {

@@ -4,6 +4,9 @@ module.exports = {
     install(group, options) {
         group.test = options.test
     },
+    mergers: {
+        cp: 'coop'
+    },
     molds: {
         isTen: {
             check(value) {
@@ -45,7 +48,7 @@ module.exports = {
         },
         less: {
             create(store) {
-                store.less = store.$coop('coop').tool('less')
+                store.less = store.$coop('cp').tool('less')
             },
             action(a, b) {
                 this.store
