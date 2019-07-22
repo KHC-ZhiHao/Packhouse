@@ -68,17 +68,23 @@ class FactoryCore extends Base {
         }
     }
 
-    emitCall(type, options) {
-        this.emit('use-before', { type, ...options })
+    emitCall(type, groupName, toolName, context) {
+        this.emit('use-before', {
+            type,
+            groupName,
+            groupSign: groupName.match('@') ? groupName.split('@')[0] : null,
+            toolName,
+            context
+        })
     }
 
     callTool(groupName, name, context) {
-        this.emitCall('tool', { groupName, toolName: name, context })
+        this.emitCall('tool', groupName, name, context)
         return this.getGroup(groupName).callTool(name, context)
     }
 
     callLine(groupName, name, context) {
-        this.emitCall('line', { groupName, toolName: name, context })
+        this.emitCall('line', groupName, name, context)
         return this.getGroup(groupName).callLine(name, context)
     }
 

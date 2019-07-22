@@ -1,4 +1,5 @@
 const Base = require('./Base')
+const Main = require('./Main')
 const Helper = require('./Helper')
 const Profile = require('./Profile')
 const Support = require('./Support')
@@ -13,6 +14,7 @@ class Store {
     constructor(tool) {
         this._tool = tool
         this.$group = tool.group.store
+        this.$packhouse = Main
     }
 
     /**
@@ -108,7 +110,12 @@ class Tool extends Base {
             if (mold) {
                 let data = this.options.molds[i].split('|')
                 let name = data.shift()
-                this.molds[i] = { name, extras: data }
+                let extras = {}
+                for (let text of data) {
+                    let [key, value] = text.split(':')
+                    extras[key] = value === undefined ? true : value
+                }
+                this.molds[i] = { name, extras }
             } else {
                 this.molds[i] = null
             }

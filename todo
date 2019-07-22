@@ -3,6 +3,10 @@ feature:
     ✔ order標準套路用一個接口呈現 @done(19-06-27 00:45)
     ✔ 可以在group宣告tools和molds @done(19-06-26 15:12)
     ✔ step history @done(19-07-12 09:08)
+    ☐ date的doc
+    ☐ store指向$packhouse
+    ☐ number可以規定大小
+
     Helper:
         ✔ getType @done(19-06-26 15:12)
         ✔ arrayCopy @done(19-06-26 15:12)
@@ -14,8 +18,6 @@ event:
 basic:
     ✔ 加入單元測試 @done(19-06-26 21:07)
     ✔ 加入webpack @done(19-06-26 15:11)
-
-started:
 
 doc:
     ✔ main @done(19-06-29 18:12)

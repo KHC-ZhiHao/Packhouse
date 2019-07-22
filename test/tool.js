@@ -60,6 +60,11 @@ describe('#Tool', () => {
             .action(1.5487, (err, reslut) => {
                 expect(reslut).to.equal(1)
             })
+        this.factory
+            .tool('test', 'toInt') // 必須1以上
+            .action(0, (err, reslut) => {
+                expect(!!err).to.equal(true)
+            })
     })
     it('ng', function() {
         this.factory

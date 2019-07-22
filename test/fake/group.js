@@ -12,8 +12,7 @@ module.exports = {
         },
         is: {
             check(value, context) {
-                // eslint-disable-next-line valid-typeof
-                return typeof value === context.extras[0] ? true : `Not a ${context.extras[0]}`
+                return context.extras[typeof value] ? true : `Not a ${context.extras[0]}`
             },
             casting() {
                 return 10
@@ -31,6 +30,12 @@ module.exports = {
                     .use(`${a}+${b}`, this.error, this.success, (error, success) => {
                         success(a + b)
                     })
+            }
+        },
+        usePackhouse: {
+            action() {
+                this.store.$packhouse.createPump(10, () => {})
+                this.success(true)
             }
         },
         double: {
@@ -51,7 +56,7 @@ module.exports = {
         },
         toInt: {
             action(a) {
-                this.store.$casting('int', a, (err, result) => {
+                this.store.$casting('int|min:1', a, (err, result) => {
                     if (err) {
                         return this.error(err)
                     }

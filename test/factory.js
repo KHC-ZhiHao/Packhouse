@@ -49,6 +49,13 @@ describe('#Factory', () => {
                 expect(result).to.equal(5)
             })
     })
+    it('use packhouse', function() {
+        this.factory
+            .tool('test', 'usePackhouse')
+            .action((error, result) => {
+                expect(result).to.equal(true)
+            })
+    })
     it('event', function() {
         let count = 0
         this.factory.on('action-tool-before', (context) => {
@@ -63,7 +70,11 @@ describe('#Factory', () => {
             expect(context.caller.type).to.equal('line')
         })
         this.factory.on('use-before', (context) => {
-            expect(context.groupName).to.equal('test')
+            if (context.groupSign) {
+                expect(context.groupSign).to.equal('merger')
+            } else {
+                expect(context.groupName).to.equal('test')
+            }
         })
         this.factory
             .line('test', 'compute')()
@@ -76,6 +87,11 @@ describe('#Factory', () => {
             .tool('test', 'sum')
             .action(5, 7, (error, result) => {
                 expect(result).to.equal(12)
+            })
+        this.factory
+            .tool('merger@test', 'callSelf')
+            .action(87, (error, result) => {
+                expect(result).to.equal(5)
             })
         expect(count).to.equal(2)
     })
