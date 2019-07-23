@@ -78,14 +78,14 @@ factory.join('math', {
     molds: {
         max: {
             check(value, context) {
-                let max = Number(context.extras[0])
+                let max = Number(context.extras.value)
                 return value < max ? true : `Need less ${max}`
             }
         }
     }
     tools: {
         floor: {
-            molds: ['max|20'],
+            molds: ['max|value:20'],
             action(value) {
                 this.success(value)
             }
@@ -133,6 +133,7 @@ factory.join('math', {
 
 * number: 驗證是否為數字
 * int: 驗證是否為數字並轉成整數
+* date: 驗證是否符合Date的規則，並轉為timestamp
 * boolean : 驗證是否為布林值
 * string: 驗證是否為字串
 * array: 驗證是否為陣列
@@ -142,6 +143,8 @@ factory.join('math', {
 
 以上的Public Mold都能接收一項abe(Allowed be empty)的參數，允許參數為空。
 
+> number和int可以再接收min與max兩個參數
+
 ```js
 factory.join('math', {
     tools: {
@@ -149,6 +152,24 @@ factory.join('math', {
             molds: ['number|abe', 'number'],
             action(a = 0, b) {
                 this.success(a + b)
+            }
+        }
+    }
+})
+```
+
+### 共用驗證
+
+max與number的驗證幾乎是相同的，這時可以使用check來借用number的驗證。
+
+> 當extras接收的對象是字串undefined時會視為該參數不存在。
+
+```js
+factory.join('math', {
+    molds: {
+        max: {
+            check(value, context) {
+                return context.check(`number|max:${context.extras.value}`, value)
             }
         }
     }
