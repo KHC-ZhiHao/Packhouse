@@ -33,8 +33,8 @@ let group = {
 ```js
 group.tools = {
     circumference: {
-        create(store) {
-            store.pi = store.$group.pi || 3.14159
+        create(store, group) {
+            store.pi = group.pi || 3.14159
         },
         action(r) {
             this.success(r * 2 * this.store.pi)

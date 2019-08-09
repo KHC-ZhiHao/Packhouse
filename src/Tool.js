@@ -93,7 +93,7 @@ class Tool extends Base {
     }
 
     install() {
-        this.options.create(this.store)
+        this.options.create(this.store, this.group.store)
         this.install = null
     }
 

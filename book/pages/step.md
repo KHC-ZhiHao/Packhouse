@@ -117,8 +117,6 @@ exports.handler = require('./step')({
     ]
 })
 ```
-<<<<<<< HEAD
-=======
 
 ## History
 
@@ -154,4 +152,3 @@ exports.handler = step({
     }
 })
 ```
->>>>>>> origin/master
