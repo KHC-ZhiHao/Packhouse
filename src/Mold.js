@@ -8,7 +8,7 @@ class Box extends Base {
         this.molds = {}
         this.caches = {}
         this.parent = parent
-        this.namespace = namespace
+        this.namespace = namespace || ''
         this.check = (text, source) => {
             let { name, extras } = this.cache(text)
             return this.get(name).check(source, this.getContext(0, extras))
@@ -16,18 +16,35 @@ class Box extends Base {
     }
 
     has(name) {
-        return !!this.molds[name] || (this.parent ? this.parent.has(this.namespace + name) : false)
+        if (!!this.molds[name]) {
+            return true
+        }
+        if (this.parent && this.parent.has(this.namespace + name)) {
+            return true
+        }
+        if (this.parent && this.parent.has(name)) {
+            return true
+        }
+        return false
     }
 
     get(name) {
         if (this.has(name) === false) {
             this.$systemError('get', `Mold(${name}) not found.`)
         }
-        return this.molds[name] || this.parent.get(this.namespace + name)
+        if (this.molds[name]) {
+            return this.molds[name]
+        }
+        if (this.parent.has(this.namespace + name)) {
+            return this.parent.get(this.namespace + name)
+        }
+        if (this.parent.has(name)) {
+            return this.parent.get(name)
+        }
     }
 
     add(name, options) {
-        if (this.has(name)) {
+        if (this.molds[name]) {
             this.$systemError('add', `Name(${name}) already exists.`)
         }
         this.molds[name] = new Mold(options)

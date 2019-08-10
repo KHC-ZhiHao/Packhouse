@@ -27,6 +27,12 @@ module.exports = {
                     action(value) {
                         this.store.toFive.ng(this.error).action(value, this.success)
                     }
+                },
+                mergerString: {
+                    molds: ['string'],
+                    action() {
+                        this.success()
+                    }
                 }
             }
         },

@@ -51,6 +51,9 @@ describe('#Factory', () => {
             .action(87, (error, result) => {
                 expect(result).to.equal(5)
             })
+        this.factory
+            .tool('merger@test', 'mergerString')
+            .action('123', (error, result) => {})
     })
     it('use packhouse', function() {
         this.factory
