@@ -43,6 +43,9 @@ describe('#Factory', () => {
             })
     })
     it('merger and call self', function() {
+        this.factory.on('use-before', function(context) {
+            console.log(context)
+        })
         this.factory
             .tool('merger@test', 'callSelf')
             .action(87, (error, result) => {

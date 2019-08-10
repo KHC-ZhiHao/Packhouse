@@ -7,7 +7,7 @@
     "test": "mocha",
     "book": "gitbook build ./book ./started",
     "docs": "./node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
-    "build": "mocha && cross-env webpack --progress --hide-modules && npm run book && npm run docs"
+    "prod": "mocha && cross-env webpack --progress --hide-modules && npm run book && npm run docs"
   },
   "repository": {
     "type": "git",

@@ -449,14 +449,14 @@ factory.tool(<span class="hljs-string">&apos;math&apos;</span>, <span class="hlj
     molds: {
         max: {
             check(value, context) {
-                <span class="hljs-keyword">let</span> max = <span class="hljs-built_in">Number</span>(context.extras[<span class="hljs-number">0</span>])
+                <span class="hljs-keyword">let</span> max = <span class="hljs-built_in">Number</span>(context.extras.value)
                 <span class="hljs-keyword">return</span> value &lt; max ? <span class="hljs-literal">true</span> : <span class="hljs-string">`Need less <span class="hljs-subst">${max}</span>`</span>
             }
         }
     }
     tools: {
         floor: {
-            molds: [<span class="hljs-string">&apos;max|20&apos;</span>],
+            molds: [<span class="hljs-string">&apos;max|value:20&apos;</span>],
             action(value) {
                 <span class="hljs-keyword">this</span>.success(value)
             }
@@ -494,6 +494,7 @@ factory.tool(<span class="hljs-string">&apos;math&apos;</span>, <span class="hlj
 <ul>
 <li>number: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x6578;&#x5B57;</li>
 <li>int: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x6578;&#x5B57;&#x4E26;&#x8F49;&#x6210;&#x6574;&#x6578;</li>
+<li>date: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x7B26;&#x5408;Date&#x7684;&#x898F;&#x5247;&#xFF0C;&#x4E26;&#x8F49;&#x70BA;timestamp</li>
 <li>boolean : &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x5E03;&#x6797;&#x503C;</li>
 <li>string: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x5B57;&#x4E32;</li>
 <li>array: &#x9A57;&#x8B49;&#x662F;&#x5426;&#x70BA;&#x9663;&#x5217;</li>
@@ -502,12 +503,30 @@ factory.tool(<span class="hljs-string">&apos;math&apos;</span>, <span class="hlj
 <li>required: &#x9A57;&#x8B49;&#x53C3;&#x6578;&#x4E0D;&#x80FD;&#x70BA;&#x7A7A;</li>
 </ul>
 <p>&#x4EE5;&#x4E0A;&#x7684;Public Mold&#x90FD;&#x80FD;&#x63A5;&#x6536;&#x4E00;&#x9805;abe(Allowed be empty)&#x7684;&#x53C3;&#x6578;&#xFF0C;&#x5141;&#x8A31;&#x53C3;&#x6578;&#x70BA;&#x7A7A;&#x3002;</p>
+<blockquote>
+<p>number&#x548C;int&#x53EF;&#x4EE5;&#x518D;&#x63A5;&#x6536;min&#x8207;max&#x5169;&#x500B;&#x53C3;&#x6578;</p>
+</blockquote>
 <pre><code class="lang-js">factory.join(<span class="hljs-string">&apos;math&apos;</span>, {
     tools: {
         sum: {
             molds: [<span class="hljs-string">&apos;number|abe&apos;</span>, <span class="hljs-string">&apos;number&apos;</span>],
             action(a = <span class="hljs-number">0</span>, b) {
                 <span class="hljs-keyword">this</span>.success(a + b)
+            }
+        }
+    }
+})
+</code></pre>
+<h3 id="&#x5171;&#x7528;&#x9A57;&#x8B49;">&#x5171;&#x7528;&#x9A57;&#x8B49;</h3>
+<p>max&#x8207;number&#x7684;&#x9A57;&#x8B49;&#x5E7E;&#x4E4E;&#x662F;&#x76F8;&#x540C;&#x7684;&#xFF0C;&#x9019;&#x6642;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;check&#x4F86;&#x501F;&#x7528;number&#x7684;&#x9A57;&#x8B49;&#x3002;</p>
+<blockquote>
+<p>&#x7576;extras&#x63A5;&#x6536;&#x7684;&#x5C0D;&#x8C61;&#x662F;&#x5B57;&#x4E32;undefined&#x6642;&#x6703;&#x8996;&#x70BA;&#x8A72;&#x53C3;&#x6578;&#x4E0D;&#x5B58;&#x5728;&#x3002;</p>
+</blockquote>
+<pre><code class="lang-js">factory.join(<span class="hljs-string">&apos;math&apos;</span>, {
+    molds: {
+        max: {
+            check(value, context) {
+                <span class="hljs-keyword">return</span> context.check(<span class="hljs-string">`number|max:<span class="hljs-subst">${context.extras.value}</span>`</span>, value)
             }
         }
     }
@@ -556,7 +575,7 @@ factory.tool(<span class="hljs-string">&apos;math&apos;</span>, <span class="hlj
     <script>
         var gitbook = gitbook || [];
         gitbook.push(function() {
-            gitbook.page.hasChanged({"page":{"title":"Mold","level":"2.1.3","depth":2,"next":{"title":"Store","level":"2.1.4","depth":2,"path":"pages/store.md","ref":"./pages/store.md","articles":[]},"previous":{"title":"Support","level":"2.1.2","depth":2,"path":"pages/support.md","ref":"./pages/support.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/mold.md","mtime":"2019-07-13T08:30:39.415Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-07-13T08:46:32.747Z"},"basePath":"..","book":{"language":""}});
+            gitbook.page.hasChanged({"page":{"title":"Mold","level":"2.1.3","depth":2,"next":{"title":"Store","level":"2.1.4","depth":2,"path":"pages/store.md","ref":"./pages/store.md","articles":[]},"previous":{"title":"Support","level":"2.1.2","depth":2,"path":"pages/support.md","ref":"./pages/support.md","articles":[]},"dir":"ltr"},"config":{"plugins":["-sharing","fontsettings"],"styles":{"website":"./style/main.css"},"pluginsConfig":{"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"search":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"PackHouse","links":{"sidebar":false},"gitbook":"*"},"file":{"path":"pages/mold.md","mtime":"2019-07-23T15:42:21.139Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-08-10T09:23:56.112Z"},"basePath":"..","book":{"language":""}});
         });
     </script>
 </div>
