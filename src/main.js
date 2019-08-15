@@ -47,6 +47,17 @@ class Main {
     }
 
     /**
+     * 建立一個Frag
+     * @param {object} [options]
+     * @param {number} [options.limit=1] 並行運行數量
+     * @see {@link Frag}
+     */
+
+    static createFrag(options) {
+        return new Frag(options)
+    }
+
+    /**
      * 建立一個Order
      * @param {object} [options]
      * @param {number} [options.max=100] 最大快取量，超過會移除舊的並加入新的快取
@@ -60,6 +71,7 @@ class Main {
 
 module.exports = Main
 
+const Frag = require('./Frag')
 const Pump = require('./Pump')
 const Step = require('./Step')
 const Order = require('./Order')

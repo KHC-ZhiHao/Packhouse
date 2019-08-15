@@ -42,10 +42,27 @@ module.exports = {
                 return Array.isArray(param) ? true : `Param ${system.index} not a array(${param}).`
             }
         },
-        object: {
+        buffer: {
             check(param, system) {
                 if (param == null && system.extras.abe === true) { return true }
-                return typeof param === 'object' ? true : `Param ${system.index} not a object(${param}).`
+                return Buffer.isBuffer(param) ? true : `Param ${system.index} not a buffer(${param}).`
+            }
+        },
+        object: {
+            check(value, system) {
+                if (value == null && system.extras.abe === true) { return true }
+                if (typeof value !== 'object') {
+                    return `Param ${system.index} not a object(${value}).`
+                }
+                if (system.extras.in) {
+                    let keys = system.extras.in.split(',')
+                    for (let key of keys) {
+                        if (value.hasOwnProperty(key) === false) {
+                            return `Param Key(${key}) is required`
+                        }
+                    }
+                }
+                return true
             }
         },
         function: {

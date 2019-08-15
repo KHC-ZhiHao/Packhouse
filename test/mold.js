@@ -33,6 +33,18 @@ describe('#Mold', () => {
                 expect(result).to.equal(true)
             })
     })
+    it('test object in', function() {
+        this.factory
+            .tool('test', 'keyHasRoot')
+            .action({ root: '123' }, (err, result) => {
+                expect(result).to.equal(true)
+            })
+        this.factory
+            .tool('test', 'keyHasRoot')
+            .action({}, (err, result) => {
+                expect(!!err).to.equal(true)
+            })
+    })
     it('test extras mold', function() {
         this.factory
             .tool('test', 'isStringAndToTen')

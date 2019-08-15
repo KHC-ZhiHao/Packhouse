@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>src/Response.js - Documentation</title>
+    <title>src/Frag.js - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -32,7 +32,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">src/Response.js</h1>
+    <h1 class="page-title">src/Frag.js</h1>
     
 
     
@@ -42,180 +42,104 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>const Helper = require('./Helper')
+            <pre class="prettyprint source linenums"><code>const Base = require('./Base')
+
+class FragCore extends Base {
+    constructor(options = {}) {
+        super('Frag')
+        this.threads = []
+        this.options = this.$verify(options, {
+            limit: [false, ['number'], null]
+        })
+    }
+
+    add(thread) {
+        if (typeof thread !== 'function') {
+            this.$systemError('add', 'Thread not a function.')
+        }
+        this.threads.push(thread)
+    }
+
+    clear() {
+        this.threads = []
+    }
+
+    start(callback) {
+        if (typeof callback !== 'function') {
+            this.$systemError('start', 'Callback not a function.')
+        }
+        let now = 0
+        let isStop = false
+        let threads = this.threads.slice()
+        let stop = () => {
+            if (isStop === false) {
+                callback()
+                isStop = true
+            }
+        }
+        let next = () => {
+            if (isStop) {
+                return null
+            }
+            let thread = threads.shift()
+            if (thread) {
+                now += 1
+                thread(() => {
+                    next()
+                    now -= 1
+                    if (now &lt;= 0) {
+                        stop()
+                    }
+                }, stop)
+            }
+        }
+        let paraLength = this.options.limit ? this.options.limit : threads.length
+        for (let i = 0; i &lt; paraLength; i++) {
+            next()
+        }
+    }
+}
 
 /**
- * @namespace Response
- * @description 執行tool或line時最後呼叫的模式
+ * 批次處裡的模型
+ * @hideconstructor
  */
 
-/**
- * @function Response.Action
- * @description 使用callback來接收參數
- * @param {...any} params 該tool需要的參數
- * @param {function} callback (error, result)
- */
-
-/**
- * @function Response.Promise
- * @description 使用promise接收參數
- * @param {...any} params 該tool需要的參數
- * @returns {promise}
- */
-
-/**
- * @function Response.Recursive
- * @description 遞迴這個tool，不支援line
- * @param {...any} params 該tool需要的參數
- * @param {function} callback (error, result, { count, stack })
- */
-
-class Response {
-    constructor(group, supports) {
-        this.sop = supports.sop
-        this.over = false
-        this.group = group
-        this.welds = null
-        this.exports = {
-            error: this.error.bind(this),
-            success: this.success.bind(this)
-        }
-        if (supports.welds.length > 0) {
-            this.welds = Helper.arrayCopy(supports.welds)
-        }
-        if (supports.noGood) {
-            this.noGood = supports.noGood.action
-            this.noGoodOptions = supports.noGood.options
-        }
+class Frag {
+    constructor(options) {
+        this._core = new FragCore(options)
     }
 
-    isLive() {
-        return !this.over
+    /**
+     * 加入指定一次執行續
+     * @param {function} thread 執行續
+     * @returns {this}
+     */
+
+    add(thread) {
+        this._core.add(thread)
+        return this
     }
 
-    getError(message) {
-        return message || 'unknown error'
+    /**
+     * 清空執行續
+     */
+
+    clear() {
+        this._core.clear()
     }
 
-    error(result) {
-        if (this.over === false) {
-            this.over = true
-            this.errorBase(result)
-            this.callSop({ result, success: false })
-        }
-    }
+    /**
+     * 運行執行續
+     * @param {function} callback 執行續結束後宣告
+     */
 
-    success(result) {
-        if (this.over === false) {
-            this.over = true
-            this.runWeld(result, (result) => {
-                this.successBase(result)
-                this.callSop({ result, success: true })
-            })
-        }
-    }
-
-    runWeld(result, callback) {
-        if (this.welds == null) {
-            callback(result)
-            return null
-        }
-        let weld = this.welds.shift()
-        let tool = null
-        let noGood = (e) => {
-            this.noGood(e)
-            this.callSop({ result, success: false })
-        }
-        if (weld) {
-            tool = this.group.callTool(weld.tool)
-            weld.pack(result, tool.pack.bind(tool))
-            tool.ng(noGood, this.noGoodOptions)
-                .action((result) => {
-                    this.runWeld(result, callback)
-                })
-        } else {
-            callback(result)
-        }
-    }
-
-    callSop(context) {
-        if (this.sop) {
-            this.sop(context)
-        }
+    start(callback) {
+        this._core.start(callback)
     }
 }
 
-class Action extends Response {
-    constructor(group, supports, callback) {
-        super(group, supports)
-        this.callback = callback || function() {}
-    }
-
-    errorBase(result) {
-        let message = this.getError(result)
-        if (this.noGood) {
-            this.noGood(message)
-        } else {
-            this.callback(message, null)
-        }
-    }
-
-    successBase(result) {
-        if (this.noGood) {
-            this.callback(result)
-        } else {
-            this.callback(null, result)
-        }
-    }
-}
-
-class Recursive extends Action {
-    constructor(tool, group, supports, context, callback) {
-        super(group, supports, callback)
-        this.stack = (...params) => {
-            params = Helper.createArgs(params, supports)
-            tool.recursive(params, supports, context, callback)
-        }
-    }
-
-    successBase(result) {
-        if (this.noGood) {
-            this.callback(result, this.stack)
-        } else {
-            this.callback(null, result, this.stack)
-        }
-    }
-}
-
-class Promise extends Response {
-    constructor(group, supports, resolve, reject) {
-        super(group, supports)
-        this.reject = reject
-        this.resolve = resolve
-    }
-
-    errorBase(result) {
-        let message = this.getError(result)
-        if (this.noGood) {
-            this.noGood(message)
-        }
-        if (this.noGood &amp;&amp; this.noGoodOptions.resolve) {
-            this.resolve(message)
-        } else {
-            this.reject(message)
-        }
-    }
-
-    successBase(result) {
-        this.resolve(result)
-    }
-}
-
-module.exports = {
-    Action,
-    Promise,
-    Recursive
-}
+module.exports = Frag
 </code></pre>
         </article>
     </section>

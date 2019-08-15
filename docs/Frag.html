@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Response - Documentation</title>
+    <title>Frag - Documentation</title>
     
     
     <script src="scripts/prettify/prettify.js"></script>
@@ -32,7 +32,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">Response</h1>
+    <h1 class="page-title">Frag</h1>
     
 
     
@@ -45,68 +45,15 @@
 <header>
     
         <h2>
-        Response
+        Frag
         </h2>
+        
+            <div class="class-description"><p>批次處裡的模型</p></div>
         
     
 </header>
 
 <article>
-    
-        <div class="container-overview">
-        
-            
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_Response.js.html">src/Response.js</a>, <a href="src_Response.js.html#line3">line 3</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-            
-                <div class="description"><p>執行tool或line時最後呼叫的模式</p></div>
-            
-
-            
-        
-        </div>
     
 
     
@@ -131,7 +78,7 @@
 
     
 
-    <h4 class="name" id=".Action"><span class="type-signature">(static) </span>Action<span class="signature">(&hellip;params, callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="add"><span class="type-signature"></span>add<span class="signature">(thread)</span><span class="type-signature"> &rarr; {this}</span></h4>
 
     
 
@@ -143,7 +90,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_Response.js.html">src/Response.js</a>, <a href="src_Response.js.html#line8">line 8</a>
+        <a href="src_Frag.js.html">src/Frag.js</a>, <a href="src_Frag.js.html#line75">line 75</a>
     </li></ul></dd>
     
 
@@ -183,7 +130,7 @@
 
 
 <div class="description">
-    <p>使用callback來接收參數</p>
+    <p>加入指定一次執行續</p>
 </div>
 
 
@@ -209,8 +156,6 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -223,40 +168,7 @@
 
         <tr>
             
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">any</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                    &lt;repeatable><br>
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>該tool需要的參數</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>callback</code></td>
+                <td class="name"><code>thread</code></td>
             
 
             <td class="type">
@@ -269,166 +181,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"><p>(error, result)</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".Promise"><span class="type-signature">(static) </span>Promise<span class="signature">(&hellip;params)</span><span class="type-signature"> &rarr; {promise}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_Response.js.html">src/Response.js</a>, <a href="src_Response.js.html#line15">line 15</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>使用promise接收參數</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">any</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                    &lt;repeatable><br>
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>該tool需要的參數</p></td>
+            <td class="description last"><p>執行續</p></td>
         </tr>
 
     
@@ -461,7 +217,7 @@
     </dt>
     <dd>
         
-<span class="param-type">promise</span>
+<span class="param-type">this</span>
 
 
     </dd>
@@ -476,7 +232,7 @@
 
     
 
-    <h4 class="name" id=".Recursive"><span class="type-signature">(static) </span>Recursive<span class="signature">(&hellip;params, callback)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="clear"><span class="type-signature"></span>clear<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
@@ -488,7 +244,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_Response.js.html">src/Response.js</a>, <a href="src_Response.js.html#line22">line 22</a>
+        <a href="src_Frag.js.html">src/Frag.js</a>, <a href="src_Frag.js.html#line84">line 84</a>
     </li></ul></dd>
     
 
@@ -528,7 +284,94 @@
 
 
 <div class="description">
-    <p>遞迴這個tool，不支援line</p>
+    <p>清空執行續</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="start"><span class="type-signature"></span>start<span class="signature">(callback)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_Frag.js.html">src/Frag.js</a>, <a href="src_Frag.js.html#line93">line 93</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description">
+    <p>運行執行續</p>
 </div>
 
 
@@ -554,8 +397,6 @@
         <th>Type</th>
 
         
-        <th>Attributes</th>
-        
 
         
 
@@ -564,39 +405,6 @@
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>params</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">any</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-
-                
-
-                
-                    &lt;repeatable><br>
-                
-                </td>
-            
-
-            
-
-            <td class="description last"><p>該tool需要的參數</p></td>
-        </tr>
-
     
 
         <tr>
@@ -614,18 +422,10 @@
             </td>
 
             
-                <td class="attributes">
-                
-
-                
-
-                
-                </td>
-            
 
             
 
-            <td class="description last"><p>(error, result, { count, stack })</p></td>
+            <td class="description last"><p>執行續結束後宣告</p></td>
         </tr>
 
     

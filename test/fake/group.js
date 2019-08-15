@@ -46,6 +46,12 @@ module.exports = {
                 this.success(a * 2)
             }
         },
+        keyHasRoot: {
+            molds: ['object|in:root'],
+            action(value) {
+                this.success(true)
+            }
+        },
         less: {
             create(store) {
                 store.less = store.$coop('cp').tool('less')
