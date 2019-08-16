@@ -5,7 +5,7 @@ class FragCore extends Base {
         super('Frag')
         this.threads = []
         this.options = this.$verify(options, {
-            limit: [false, ['number'], null]
+            parallel: [false, ['number'], null]
         })
     }
 
@@ -14,6 +14,14 @@ class FragCore extends Base {
             this.$systemError('add', 'Thread not a function.')
         }
         this.threads.push(thread)
+    }
+
+    each(items, callback) {
+        for (let i = 0; i < items.length; i++) {
+            this.add((done, stop) => {
+                callback(items[i], i, done, stop)
+            })
+        }
     }
 
     clear() {
@@ -27,9 +35,14 @@ class FragCore extends Base {
         let now = 0
         let isStop = false
         let threads = this.threads.slice()
-        let stop = () => {
+        let result = {
+            stop: null,
+            done: []
+        }
+        let stop = (message) => {
             if (isStop === false) {
-                callback()
+                result.stop = message
+                callback(result)
                 isStop = true
             }
         }
@@ -40,8 +53,9 @@ class FragCore extends Base {
             let thread = threads.shift()
             if (thread) {
                 now += 1
-                thread(() => {
+                thread((message) => {
                     next()
+                    result.done.push(message)
                     now -= 1
                     if (now <= 0) {
                         stop()
@@ -49,8 +63,8 @@ class FragCore extends Base {
                 }, stop)
             }
         }
-        let paraLength = this.options.limit ? this.options.limit : threads.length
-        for (let i = 0; i < paraLength; i++) {
+        let parallelLength = this.options.parallel ? this.options.parallel : threads.length
+        for (let i = 0; i < parallelLength; i++) {
             next()
         }
     }
@@ -74,6 +88,17 @@ class Frag {
 
     add(thread) {
         this._core.add(thread)
+        return this
+    }
+
+    /**
+     * 批次加入執行續
+     * @param {array} items 執行續
+     * @returns {this}
+     */
+
+    each(items, callback) {
+        this._core.each(items, callback)
         return this
     }
 

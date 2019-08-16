@@ -7,14 +7,15 @@ describe('#Frag', () => {
         let frag = Packhouse.createFrag(1)
         frag.add((done) => {
             count += 1
-            done()
+            done('1234')
         })
         frag.add((done) => {
             count += 1
-            done()
+            done('1234')
         })
-        frag.start(() => {
+        frag.start((result) => {
             expect(count).to.equal(2)
+            expect(result.done[0]).to.equal('1234')
             done()
         })
     })
@@ -22,7 +23,7 @@ describe('#Frag', () => {
         let now = Date.now()
         let count = 0
         let frag = Packhouse.createFrag({
-            limit: 2
+            parallel: 2
         })
         frag.add((done) => {
             count += 1
@@ -59,12 +60,23 @@ describe('#Frag', () => {
             done()
         })
     })
+    it('each', function(done) {
+        let count = 0
+        let frag = Packhouse.createFrag()
+        frag.each([1, 1, 1, 1, 2], (data, index, done) => {
+            count += data + index
+            done()
+        }).start(() => {
+            expect(count).to.equal(16)
+            done()
+        })
+    })
     it('stop', function(done) {
         let count = 0
         let frag = Packhouse.createFrag()
         frag.add((done, stop) => {
             count += 1
-            stop()
+            stop('stop')
         })
         frag.add((done) => {
             setTimeout(() => {
@@ -72,8 +84,9 @@ describe('#Frag', () => {
                 done()
             }, 10)
         })
-        frag.start(() => {
+        frag.start((result) => {
             expect(count).to.equal(1)
+            expect(result.stop).to.equal('stop')
             done()
         })
     })
