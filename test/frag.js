@@ -4,7 +4,7 @@ const Packhouse = require('../src/Main')
 describe('#Frag', () => {
     it('normal', function(done) {
         let count = 0
-        let frag = Packhouse.createFrag(1)
+        let frag = Packhouse.createFrag({ parallel: 1 })
         frag.add((done) => {
             count += 1
             done('1234')
@@ -62,7 +62,7 @@ describe('#Frag', () => {
     })
     it('each', function(done) {
         let count = 0
-        let frag = Packhouse.createFrag()
+        let frag = Packhouse.createFrag({ parallel: 1 })
         frag.each([1, 1, 1, 1, 2], (data, index, done) => {
             count += data + index
             done()

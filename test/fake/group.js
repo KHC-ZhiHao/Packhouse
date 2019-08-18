@@ -85,8 +85,14 @@ module.exports = {
                 this.success(value)
             }
         },
-        isboolean: {
+        isBoolean: {
             molds: ['boolean'],
+            action() {
+                this.success(true)
+            }
+        },
+        isBuffer: {
+            molds: ['buffer'],
             action() {
                 this.success(true)
             }

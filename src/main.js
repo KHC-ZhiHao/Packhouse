@@ -49,7 +49,7 @@ class Main {
     /**
      * 建立一個Frag
      * @param {object} [options]
-     * @param {number} [options.limit=1] 並行運行數量
+     * @param {number} [options.parallel=1] 並行運行數量
      * @see {@link Frag}
      */
 

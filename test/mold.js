@@ -22,14 +22,19 @@ describe('#Mold', () => {
     })
     it('test system mold', function() {
         this.factory
-            .tool('test', 'isboolean')
+            .tool('test', 'isBoolean')
             .action(true, (err, result) => {
                 expect(result).to.equal(true)
             })
         this.factory
-            .tool('test', 'isboolean')
+            .tool('test', 'isBoolean')
             .ng((err) => { expect(err).to.be.a('string') })
             .action(true, (result) => {
+                expect(result).to.equal(true)
+            })
+        this.factory
+            .tool('test', 'isBuffer')
+            .action(Buffer.from([]), (err, result) => {
                 expect(result).to.equal(true)
             })
     })
