@@ -2,6 +2,7 @@ const Base = require('./Base')
 const Tool = require('./Tool')
 const Line = require('./Line')
 const Mold = require('./Mold')
+const Utils = require('./Utils')
 
 class GroupStore {}
 class Group extends Base {
@@ -15,7 +16,7 @@ class Group extends Base {
         this.toolbox = {}
         this.linebox = {}
         this.moldbox = new Mold(this.factory.moldbox, this.namespace)
-        this.options = this.$verify(data, {
+        this.options = Utils.verify(data, {
             tools: [false, ['object'], {}],
             lines: [false, ['object'], {}],
             molds: [false, ['object'], {}],
@@ -24,14 +25,6 @@ class Group extends Base {
         })
         this.init()
         this.options.install.call(this.store, this.store, configs)
-    }
-
-    emit(name, caller) {
-        this.factory.emit(name, {
-            groupName: this.name,
-            groupSign: this.sign,
-            caller
-        })
     }
 
     init() {
@@ -68,42 +61,42 @@ class Group extends Base {
 
     getTool(name) {
         if (this.hasTool(name) === false) {
-            this.$systemError('getTool', `Tool(${name}) not found.`)
+            this.$devError('getTool', `Tool(${name}) not found.`)
         }
         return this.toolbox[name]
     }
 
     getLine(name) {
         if (this.hasLine(name) === false) {
-            this.$systemError('getLine', `Line(${name}) not found.`)
+            this.$devError('getLine', `Line(${name}) not found.`)
         }
         return this.linebox[name]
     }
 
-    callCoop(name, context) {
-        return this.factory.getCoop(this.namespace + this.options.mergers[name], context)
+    callCoop(name) {
+        return this.factory.getCoop(this.namespace + this.options.mergers[name])
     }
 
-    callTool(name, context) {
-        return this.getTool(name).use(context)
+    callTool(name) {
+        return this.getTool(name).use()
     }
 
-    callLine(name, context) {
-        return this.getLine(name).use(context)
+    callLine(name) {
+        return this.getLine(name).use()
     }
 
     addTool(name, options) {
         if (this.hasTool(name)) {
-            this.$systemError('addTool', `Name(${name}) already exists.`)
+            this.$devError('addTool', `Name(${name}) already exists.`)
         }
-        this.toolbox[name] = new Tool(this, options, { name })
+        this.toolbox[name] = new Tool(this, options, name)
     }
 
     addLine(name, options) {
         if (this.hasLine(name)) {
-            this.$systemError('addLine', `Name(${name}) already exists.`)
+            this.$devError('addLine', `Name(${name}) already exists.`)
         }
-        this.linebox[name] = new Line(this, options, { name })
+        this.linebox[name] = new Line(this, options, name)
     }
 
     addMold(name, options) {

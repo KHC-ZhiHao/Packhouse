@@ -1,17 +1,18 @@
 const Base = require('./Base')
 const Tool = require('./Tool')
-const Support = require('./Support')
+const Utils = require('./Utils')
+const Context = require('./Context')
 const Response = require('./Response')
 
 class Line extends Base {
-    constructor(group, options, context = {}) {
+    constructor(group, options, name) {
         super('Line')
-        this.name = context.name || 'no_name_line'
-        this.tools = {}
+        this.name = name || 'no_name_line'
         this.group = group
-        this.options = this.$verify(options, {
-            molds: [false, ['array'], []],
+        this.options = Utils.verify(options, {
             input: [true, ['function']],
+            frame: [false, ['function'], () => {}],
+            molds: [false, ['array'], []],
             output: [true, ['function']],
             layout: [true, ['object']]
         })
@@ -21,8 +22,8 @@ class Line extends Base {
 
     checkPrivateKey() {
         let layout = this.options.layout
-        if (layout.action || layout.promise || layout.rule) {
-            this.$systemError('init', 'Layout has private key is action, promise, rule')
+        if (layout.action || layout.promise) {
+            this.$devError('init', 'Layout has private key is action, promise.')
         }
     }
 
@@ -34,33 +35,34 @@ class Line extends Base {
 }
 
 class Deploy extends Base {
-    constructor(main, params) {
+    constructor(main, args) {
         super('Deploy')
         this.flow = []
         this.main = main
-        this.params = params
+        this.args = args
+        this.group = this.main.group
         this.layout = main.options.layout
-        this.supports = new Support()
+        this.context = new Context()
+        this.mainTool = undefined
         this.init()
     }
 
     init() {
         this.input = this.createTool('input', {
             molds: this.main.options.molds,
-            action: this.main.options.input
+            handler: this.main.options.input,
+            install: (store, include, system) => this.main.options.frame(include, system)
         })
-        this.output = this.createTool('output', this.main.options.output)
+        this.output = this.createTool('output', {
+            handler: this.main.options.output
+        })
         this.initConveyer()
     }
 
-    createTool(name, target) {
-        let opts = typeof target === 'function' ? { action: target } : target
-        let tool = new Tool(this.main.group, opts, {
-            name: 'line-' + this.main.name + '-' + name,
-            store: this.store
-        })
-        if (this.store == null) {
-            this.store = tool.store
+    createTool(name, options) {
+        let tool = new Tool(this.main.group, options, `line-${this.main.name}-${name}`, this.mainTool)
+        if (this.mainTool == null) {
+            this.mainTool = tool
         }
         return tool.use()
     }
@@ -68,45 +70,50 @@ class Deploy extends Base {
     initConveyer() {
         this.conveyer = {
             action: this.action.bind(this),
-            promise: this.promise.bind(this),
-            setRule: this.setRule.bind(this)
+            promise: this.promise.bind(this)
         }
         for (let name of this.main.layoutKeys) {
-            this.conveyer[name] = (...options) => {
-                this.register(name, options)
+            this.conveyer[name] = (...args) => {
+                this.register(name, args)
                 return this.conveyer
             }
         }
     }
 
-    register(name, params) {
+    register(name, args) {
         this.flow.push({
-            name: name,
-            method: this.createTool(name, this.layout[name]),
-            params: params
+            name,
+            args,
+            tool: this.createTool(name, this.layout[name])
         })
     }
 
+    emit(channel, data) {
+        this.group.factory.event.emit(channel, data)
+    }
+
     action(callback) {
-        let supports = this.supports.copy()
-        let response = new Response.Action(this.main.group, supports, callback)
-        this.process(response)
+        let response = new Response.Action(this, null, this.context, callback)
+        this.process('action', response)
     }
 
     promise() {
         return new Promise((resolve, reject) => {
-            let supports = this.supports.copy()
-            let response = new Response.Promise(this.main.group, supports, resolve, reject)
-            this.process(response)
+            let response = new Response.Promise(this, null, this.context, resolve, reject)
+            this.process('promise', response)
         })
     }
 
-    setRule(...options) {
-        this.supports.setRule(...options)
-        return this.conveyer
-    }
-
-    process(response) {
+    process(mode, response) {
+        this.emit('run', {
+            ...context,
+            detail: {
+                type: 'line',
+                name: this.main.name,
+                args: this.args,
+                mode
+            }
+        })
         new Process(this, response)
     }
 }
@@ -115,22 +122,14 @@ class Process extends Base {
     constructor(deploy, response) {
         super('Process')
         this.stop = false
-        this.flow = deploy.flow
         this.index = 0
-        this.input = deploy.input
-        this.params = deploy.params
-        this.output = deploy.output
+        this.deploy = deploy
         this.error = response.exports.error
         this.success = response.exports.success
-        this.input
+        this.deploy
+            .input
             .ng(e => this.fail(e))
-            .action(...this.params, this.next.bind(this))
-    }
-
-    finish() {
-        this.output
-            .ng(e => this.fail(e))
-            .action(this.success)
+            .action(this.deploy.context, ...this.deploy.args, this.next.bind(this))
     }
 
     fail(error) {
@@ -141,18 +140,27 @@ class Process extends Base {
     }
 
     next() {
-        if (this.stop === true) return
-        let flow = this.flow[this.index]
+        if (this.stop === true) {
+            return null
+        }
+        let flow = this.deploy.flow[this.index]
         if (flow) {
-            flow.method
+            flow.tool
                 .ng(e => this.fail(e))
-                .action(...flow.params, () => {
+                .action(this.deploy.context, ...flow.args, () => {
                     this.index += 1
                     this.next()
                 })
         } else {
             this.finish()
         }
+    }
+
+    finish() {
+        this.deploy
+            .output
+            .ng(e => this.fail(e))
+            .action(this.deploy.context, this.success)
     }
 }
 

@@ -1,4 +1,5 @@
 const Base = require('./Base')
+const Utils = require('./Utils')
 
 class MoldStore {}
 
@@ -30,7 +31,7 @@ class Box extends Base {
 
     get(name) {
         if (this.has(name) === false) {
-            this.$systemError('get', `Mold(${name}) not found.`)
+            this.$devError('get', `Mold(${name}) not found.`)
         }
         if (this.molds[name]) {
             return this.molds[name]
@@ -45,7 +46,7 @@ class Box extends Base {
 
     add(name, options) {
         if (this.molds[name]) {
-            this.$systemError('add', `Name(${name}) already exists.`)
+            this.$devError('add', `Name(${name}) already exists.`)
         }
         this.molds[name] = new Mold(options)
     }
@@ -84,7 +85,7 @@ class Mold extends Base {
     constructor(options = {}) {
         super('Mold')
         this.case = new MoldStore()
-        this.options = this.$verify(options, {
+        this.options = Utils.verify(options, {
             check: [false, ['function'], function() { return true }],
             casting: [false, ['function'], function(source) { return source }]
         })
@@ -99,11 +100,11 @@ class Mold extends Base {
     }
 
     parse(source, context, callback) {
-        let check = this.check(source, context)
+        let check = this.check(source, context, Utils)
         let value = null
         if (check === true) {
             check = null
-            value = this.casting(source, context)
+            value = this.casting(source, context, Utils)
         }
         callback(check, value)
     }

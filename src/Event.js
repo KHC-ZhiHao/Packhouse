@@ -1,35 +1,67 @@
 const Base = require('./Base')
+const Utils = require('./Utils')
 
 class Event extends Base {
-    constructor(factory) {
+    constructor(caller) {
         super('Event')
-        this.factory = factory
+        this.caller = caller
         this.channels = {}
     }
 
     addChannel(name) {
-        this.channels[name] = []
+        this.channels[name] = new Channel(this)
     }
 
-    on(name, callback) {
+    getChannel(name) {
         if (this.channels[name] == null) {
-            this.$systemError('on', `Channel(${name}) not found.`)
+            this.addChannel(name)
         }
+        return this.channels[name]
+    }
+
+    on(channelName, callback) {
+        return this.getChannel(channelName).addListener(callback)
+    }
+
+    off(channelName, id) {
+        this.getChannel(channelName).removeListener(id)
+    }
+
+    emit(channelName, data) {
+        this.getChannel(channelName).broadcast(data)
+    }
+}
+
+class Channel extends Base {
+    constructor(event) {
+        super('Channel')
+        this.event = event
+        this.listeners = {}
+    }
+
+    checkListener(id) {
+        if (this.listeners[id] == null) {
+            this.$devError('checkListener', `Listener id(${id}) not found.`)
+        }
+    }
+
+    addListener(callback) {
         if (typeof callback !== 'function') {
-            this.$systemError('on', `Callback must be a function`, callback)
+            this.$devError('addListener', 'Callback must be a function', callback)
         }
-        this.channels[name].push(callback)
+        let id = Utils.generateId()
+        this.listeners[id] = callback
+        return id
     }
 
-    broadcast(name, context) {
-        if (this.channels[name] == null) {
-            this.$systemError('on', `Channel(${name}) not found.`)
-        }
-        for (let callback of this.channels[name]) {
-            callback.call(this.factory, {
-                name,
-                ...context
-            })
+    removeListener(id) {
+        this.checkListener(id)
+        delete this.listeners[id]
+    }
+
+    broadcast(data) {
+        for (let id in this.listeners) {
+            this.listeners[id].call(this.event.caller, { id }, data)
         }
     }
 }

@@ -8,6 +8,12 @@ feature:
     ✔ store指向$packhouse @done(19-07-23 00:57)
     ✔ mold check 的 doc @done(19-07-23 23:41)
     ✔ number可以規定大小 @done(19-07-23 00:57)
+    ✔ 沒有追蹤ID就是不行 @done(19-09-01 01:13)
+    ✔ 更好的getType @done(19-08-29 22:17)
+    ✔ helper verify @done(19-08-29 22:17)
+    ✔ 移除大多預處裡 @done(19-09-01 01:13)
+    ✔ 移除recursive @done(19-09-01 01:13)
+    ☐ 移除Pump，移至pors
 
     Helper:
         ✔ getType @done(19-06-26 15:12)

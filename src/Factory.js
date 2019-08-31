@@ -1,38 +1,28 @@
 const Base = require('./Base')
 const Mold = require('./Mold')
-const Group = require('./Group')
 const Event = require('./Event')
-const Configs = require('./Configs')
+const Group = require('./Group')
+const Utils = require('./Utils')
+const Molds = require('./Molds')
 
 class FactoryCore extends Base {
     constructor() {
         super('Factory')
         this.event = new Event(this)
-        this.event.addChannel('error')
-        this.event.addChannel('success')
-        this.event.addChannel('use-before')
         this.modules = {}
         this.moldbox = new Mold()
         this.groupbox = {}
-        for (let key in Configs.defaultMolds) {
-            this.addMold(key, Configs.defaultMolds[key])
+        for (let key in Molds) {
+            this.addMold(key, Molds[key])
         }
-    }
-
-    on(name, callback) {
-        this.event.on(name, callback)
-    }
-
-    emit(name, data) {
-        this.event.broadcast(name, data)
     }
 
     merger(name, data, configs) {
         if (this.modules[name]) {
-            this.$systemError('join', `Name(${name}) already exists.`)
+            this.$devError('merger', `Name(${name}) already exists.`)
         }
         let namespace = name + '@'
-        let options = this.$verify(data, {
+        let options = Utils.verify(data, {
             molds: [false, ['object'], {}],
             groups: [false, ['object'], {}]
         })
@@ -47,41 +37,55 @@ class FactoryCore extends Base {
 
     getGroup(name) {
         if (this.hasGroup(name) === false) {
-            this.$systemError('getGroup', `Group(${name}) not found.`)
+            this.$devError('getGroup', `Group(${name}) not found.`)
         }
         return this.groupbox[name]
     }
 
-    getCoop(groupName, context) {
+    getCoop(groupName) {
         return {
-            tool: (name) => { return this.callTool(groupName, name, context) },
-            line: (name) => { return this.callLine(groupName, name, context) }
+            tool: name => this.callTool(groupName, name),
+            line: name => this.callLine(groupName, name)
         }
     }
 
-    emitCall(type, groupName, toolName, context) {
-        this.emit('use-before', {
+    getProcess(type, group, name) {
+        let groupDetail = group.split('@')
+        this.event.emit('use', {
             type,
-            groupName,
-            groupSign: groupName.match('@') ? groupName.split('@')[0] : null,
-            toolName,
-            context
+            name,
+            group: {
+                sign: groupDetail[1] ? groupDetail[0] : null,
+                name: groupDetail[1] ? groupDetail[1] : groupDetail[0]
+            }
         })
+        let target = null
+        if (type === 'tool') {
+            target = this.getGroup(group).callTool(name)
+        } else {
+            target = this.getGroup(group).callLine(name)
+        }
+        let action = target.action
+        let promise = target.promise
+        target.action = (...args) => action(null, ...args)
+        target.promise = (...args) => promise(null, ...args)
+        return target
     }
 
-    callTool(groupName, name, context) {
-        this.emitCall('tool', groupName, name, context)
-        return this.getGroup(groupName).callTool(name, context)
+    callTool(group, name) {
+        return this.getProcess('tool', group, name)
     }
 
-    callLine(groupName, name, context) {
-        this.emitCall('line', groupName, name, context)
-        return this.getGroup(groupName).callLine(name, context)
+    callLine(group, name) {
+        return this.getProcess('line', group, name)
     }
 
     addGroup(name, groupOptions, configs, namespace) {
+        if (typeof name !== 'string') {
+            this.$devError('addGroup', `Name(${name}) not a string.`)
+        }
         if (this.groupbox[name] != null) {
-            this.$systemError('addGroup', `Name(${name}) already exists.`)
+            this.$devError('addGroup', `Name(${name}) already exists.`)
         }
         this.groupbox[name] = new Group(this, groupOptions, configs, { name, namespace })
     }
@@ -109,18 +113,12 @@ class Factory {
         this._core = new FactoryCore()
     }
 
-    /**
-     * 監聽事件
-     * @param {string} name 事件名稱
-     * @param {function} callback 觸發回呼事件
-     * @example
-     * factory.on('error', (context) => {})
-     * factory.on('success', (context) => {})
-     * factory.on('use-before', (context) => {})
-     */
+    on(channelName, callback) {
+        this._core.event.on(channelName, callback)
+    }
 
-    on(name, callback) {
-        this._core.on(name, callback)
+    off(channelName, id) {
+        this._core.event.off(channelName, id)
     }
 
     /**

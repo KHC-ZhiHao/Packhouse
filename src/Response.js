@@ -1,4 +1,5 @@
-const Helper = require('./Helper')
+const Base = require('./Base.js')
+const Utils = require('./Utils.js')
 
 /**
  * @namespace Response
@@ -19,29 +20,27 @@ const Helper = require('./Helper')
  * @returns {promise}
  */
 
-/**
- * @function Response.Recursive
- * @description 遞迴這個tool，不支援line
- * @param {...any} params 該tool需要的參數
- * @param {function} callback (error, result, { count, stack })
- */
-
-class Response {
-    constructor(group, supports) {
-        this.sop = supports.sop
+class Response extends Base {
+    constructor(caller, context, configs) {
+        super('Response')
         this.over = false
-        this.group = group
         this.welds = null
+        this.group = caller.group
+        this.caller = caller
+        this.context = context
         this.exports = {
             error: this.error.bind(this),
             success: this.success.bind(this)
         }
-        if (supports.welds.length > 0) {
-            this.welds = Helper.arrayCopy(supports.welds)
-        }
-        if (supports.noGood) {
-            this.noGood = supports.noGood.action
-            this.noGoodOptions = supports.noGood.options
+        if (configs) {
+            this.sop = configs.sop
+            if (configs.welds.length > 0) {
+                this.welds = Utils.arrayCopy(configs.welds)
+            }
+            if (configs.noGood) {
+                this.noGood = configs.noGood.action
+                this.noGoodOptions = configs.noGood.options
+            }
         }
     }
 
@@ -56,17 +55,37 @@ class Response {
     error(result) {
         if (this.over === false) {
             this.over = true
+            this.caller.emit('done', {
+                ...this.context,
+                detail: {
+                    result,
+                    success: false
+                }
+            })
             this.errorBase(result)
-            this.callSop({ result, success: false })
+            this.callSop({
+                result,
+                success: false
+            })
         }
     }
 
     success(result) {
         if (this.over === false) {
             this.over = true
+            this.caller.emit('done', {
+                ...this.context,
+                detail: {
+                    result,
+                    success: true
+                }
+            })
             this.runWeld(result, (result) => {
                 this.successBase(result)
-                this.callSop({ result, success: true })
+                this.callSop({
+                    result,
+                    success: true
+                })
             })
         }
     }
@@ -76,19 +95,20 @@ class Response {
             callback(result)
             return null
         }
-        let weld = this.welds.shift()
         let tool = null
+        let weld = this.welds.shift()
         let noGood = (e) => {
             this.noGood(e)
-            this.callSop({ result, success: false })
+            this.callSop({
+                result,
+                success: false
+            })
         }
         if (weld) {
             tool = this.group.callTool(weld.tool)
             weld.pack(result, tool.pack.bind(tool))
             tool.ng(noGood, this.noGoodOptions)
-                .action((result) => {
-                    this.runWeld(result, callback)
-                })
+                .handler(this.context, result => this.runWeld(result, callback))
         } else {
             callback(result)
         }
@@ -102,9 +122,12 @@ class Response {
 }
 
 class Action extends Response {
-    constructor(group, supports, callback) {
-        super(group, supports)
-        this.callback = callback || function() {}
+    constructor(caller, configs, context, callback) {
+        super(caller, context, configs)
+        this.callback = callback
+        if (typeof callback !== 'function') {
+            this.$devError('getActionCallback', 'Action must has a callback.')
+        }
     }
 
     errorBase(result) {
@@ -125,27 +148,9 @@ class Action extends Response {
     }
 }
 
-class Recursive extends Action {
-    constructor(tool, group, supports, context, callback) {
-        super(group, supports, callback)
-        this.stack = (...params) => {
-            params = Helper.createArgs(params, supports)
-            tool.recursive(params, supports, context, callback)
-        }
-    }
-
-    successBase(result) {
-        if (this.noGood) {
-            this.callback(result, this.stack)
-        } else {
-            this.callback(null, result, this.stack)
-        }
-    }
-}
-
 class Promise extends Response {
-    constructor(group, supports, resolve, reject) {
-        super(group, supports)
+    constructor(caller, configs, context, resolve, reject) {
+        super(caller, context, configs)
         this.reject = reject
         this.resolve = resolve
     }
@@ -169,6 +174,5 @@ class Promise extends Response {
 
 module.exports = {
     Action,
-    Promise,
-    Recursive
+    Promise
 }

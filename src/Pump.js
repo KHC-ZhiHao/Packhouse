@@ -1,10 +1,11 @@
 const Base = require('./Base')
+const Utils = require('./Utils')
 
 class PumpCore extends Base {
     constructor(total, finish) {
         super('Pump')
         this.count = 0
-        this.options = this.$verify({ total, finish }, {
+        this.options = Utils.verify({ total, finish }, {
             total: [true, ['number']],
             finish: [true, ['function']]
         })
@@ -21,10 +22,10 @@ class PumpCore extends Base {
     add(count) {
         let type = typeof count
         if (count != null && type !== 'number') {
-            this.$systemError('add', 'Count not a number.', number)
+            this.$devError('add', 'Count not a number.', number)
         }
         if (type === 'number' && count < 0) {
-            this.$systemError('add', 'Count cannot be negative.', number)
+            this.$devError('add', 'Count cannot be negative.', number)
         }
         this.options.total += count
         return this.options.total
@@ -32,7 +33,7 @@ class PumpCore extends Base {
 
     each(callback) {
         if (typeof callback !== 'function') {
-            this.$systemError('each', 'Callback not a function', callback)
+            this.$devError('each', 'Callback not a function', callback)
         }
         let press = this.press.bind(this)
         for (let i = this.count; i < this.options.total; i++) {

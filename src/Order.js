@@ -1,17 +1,18 @@
 const Base = require('./Base')
+const Utils = require('./Utils')
 
 class OrderCore extends Base {
     constructor(options = {}) {
         super('Order')
         this.init()
-        this.options = this.$verify(options, {
+        this.options = Utils.verify(options, {
             max: [false, ['number'], 100]
         })
     }
 
     has(key) {
         if (typeof key !== 'string') {
-            this.$systemError('has', 'Key not a string.', key)
+            this.$devError('has', 'Key not a string.', key)
         }
         return !!this.caches[key]
     }
@@ -48,7 +49,7 @@ class OrderCore extends Base {
             this.length -= 1
             delete this.caches[this.keys.shift()]
         } else {
-            this.$systemError('remove', `Key(${key}) not found.`)
+            this.$devError('remove', `Key(${key}) not found.`)
         }
     }
 
