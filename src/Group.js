@@ -6,16 +6,16 @@ const Utils = require('./Utils')
 
 class GroupStore {}
 class Group extends Base {
-    constructor(factory, data = {}, configs = {}, context = {}) {
+    constructor(packhouse, data = {}, configs = {}, context = {}) {
         super('Group')
         this.name = context.name.replace(context.namespace || '', '')
         this.sign = context.name.match('@') ? context.name.split('@')[0] : ''
         this.namespace = context.namespace || ''
         this.store = new GroupStore()
-        this.factory = factory
         this.toolbox = {}
         this.linebox = {}
-        this.moldbox = new Mold(this.factory.moldbox, this.namespace)
+        this.moldbox = new Mold(packhouse.moldbox, this.namespace)
+        this.packhouse = packhouse
         this.options = Utils.verify(data, {
             tools: [false, ['object'], {}],
             lines: [false, ['object'], {}],
@@ -74,7 +74,7 @@ class Group extends Base {
     }
 
     callCoop(name) {
-        return this.factory.getCoop(this.namespace + this.options.mergers[name])
+        return this.packhouse.getCoop(this.namespace + this.options.mergers[name])
     }
 
     callTool(name) {

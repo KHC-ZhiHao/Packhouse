@@ -92,19 +92,19 @@ class Mold extends Base {
     }
 
     check(source, context) {
-        return this.options.check.call(this.case, source, context)
+        return this.options.check.call(this.case, source, context, Utils)
     }
 
     casting(source, context) {
-        return this.options.casting.call(this.case, source, context)
+        return this.options.casting.call(this.case, source, context, Utils)
     }
 
     parse(source, context, callback) {
-        let check = this.check(source, context, Utils)
+        let check = this.check(source, context)
         let value = null
         if (check === true) {
             check = null
-            value = this.casting(source, context, Utils)
+            value = this.casting(source, context)
         }
         callback(check, value)
     }

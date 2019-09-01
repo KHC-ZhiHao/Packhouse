@@ -61,7 +61,10 @@ class Channel extends Base {
 
     broadcast(data) {
         for (let id in this.listeners) {
-            this.listeners[id].call(this.event.caller, { id }, data)
+            this.listeners[id].call(this.event.caller, {
+                id,
+                off: () => this.removeListener(id)
+            }, data)
         }
     }
 }

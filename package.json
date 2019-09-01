@@ -5,9 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "mocha",
-    "book": "gitbook build ./book ./started",
-    "docs": "./node_modules/.bin/jsdoc --configure .jsdoc.json --verbose",
-    "prod": "mocha && cross-env webpack --progress --hide-modules && npm run book && npm run docs"
+    "book": "gitbook build ./book ./guide",
+    "prod": "mocha && cross-env webpack --progress --hide-modules && npm run book"
   },
   "repository": {
     "type": "git",
@@ -31,7 +30,6 @@
     "babel-loader": "^8.0.6",
     "chai": "^4.2.0",
     "cross-env": "^5.2.0",
-    "docdash": "^1.1.1",
     "eslint": "^6.1.0",
     "eslint-config-standard": "^12.0.0",
     "eslint-loader": "^2.1.2",
@@ -39,7 +37,6 @@
     "eslint-plugin-node": "^9.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
-    "jsdoc": "^3.6.3",
     "mocha": "^6.2.0",
     "webpack": "^4.35.0",
     "webpack-cli": "^3.3.7"

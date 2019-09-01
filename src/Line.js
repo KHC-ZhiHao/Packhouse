@@ -89,7 +89,7 @@ class Deploy extends Base {
     }
 
     emit(channel, data) {
-        this.group.factory.event.emit(channel, data)
+        this.group.packhouse.event.emit(channel, data)
     }
 
     action(callback) {
@@ -128,7 +128,7 @@ class Process extends Base {
         this.success = response.exports.success
         this.deploy
             .input
-            .ng(e => this.fail(e))
+            .noGood(e => this.fail(e))
             .action(this.deploy.context, ...this.deploy.args, this.next.bind(this))
     }
 
@@ -146,7 +146,7 @@ class Process extends Base {
         let flow = this.deploy.flow[this.index]
         if (flow) {
             flow.tool
-                .ng(e => this.fail(e))
+                .noGood(e => this.fail(e))
                 .action(this.deploy.context, ...flow.args, () => {
                     this.index += 1
                     this.next()
@@ -159,7 +159,7 @@ class Process extends Base {
     finish() {
         this.deploy
             .output
-            .ng(e => this.fail(e))
+            .noGood(e => this.fail(e))
             .action(this.deploy.context, this.success)
     }
 }

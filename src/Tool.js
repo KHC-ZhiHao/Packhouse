@@ -1,8 +1,8 @@
 const Base = require('./Base')
-const Main = require('./Main')
 const Utils = require('./Utils')
 const Lambda = require('./Lambda')
 const Response = require('./Response')
+const ToolHandler = require('./ToolHandler')
 
 class System {
     constructor(tool) {
@@ -16,14 +16,6 @@ class System {
     get utils() {
         return Utils
     }
-
-    get packhouse() {
-        return Main
-    }
-
-    casting(name, target, callback) {
-        return this._tool.parseMold(name, target, 0, callback)
-    }
 }
 
 class Includes {
@@ -32,8 +24,8 @@ class Includes {
         this._name = name
     }
 
-    coop(name) {
-        this._tool.used[this._name] = this._tool.group.callCoop(name)
+    coop(merger, type, name) {
+        this._tool.used[this._name] = this._tool.group.callCoop(merger)[type](name)
         return this._tool.used[this._name]
     }
 
@@ -45,21 +37,6 @@ class Includes {
     line(name) {
         this._tool.used[this._name] = this._tool.group.callLine(name)
         return this._tool.used[this._name]
-    }
-}
-
-class User extends Base {
-    constructor(tool, used, context, response) {
-        super('User')
-        this.used = used
-        this.store = tool.store
-        this.context = context
-        this.error = reslut => {
-            response.error(reslut)
-        }
-        this.success = reslut => {
-            response.success(reslut)
-        }
     }
 }
 
@@ -87,11 +64,11 @@ class Tool extends Base {
     }
 
     emit(channel, data) {
-        this.group.factory.event.emit(channel, data)
+        this.group.packhouse.event.emit(channel, data)
     }
 
     call({ parameters, used, mode, context, response }) {
-        let user = new User(this, used, context, response)
+        let handler = new ToolHandler(this, used, context, response)
         // mold
         let length = this.options.molds.length
         for (let i = 0; i < length; i++) {
@@ -101,7 +78,7 @@ class Tool extends Base {
             }
             this.parseMold(mold, parameters[i], i, (err, reslut) => {
                 if (err) {
-                    return user.error(err)
+                    return handler.error(err)
                 }
                 parameters[i] = reslut
             })
@@ -113,12 +90,16 @@ class Tool extends Base {
                 type: 'tool',
                 name: this.name,
                 args: parameters,
-                mode
+                mode,
+                group: {
+                    name: this.group.name,
+                    sign: this.group.sign
+                }
             }
         })
         // action
         if (response.isLive()) {
-            this.options.handler.apply(user, parameters)
+            this.options.handler.apply(handler, parameters)
         }
     }
 

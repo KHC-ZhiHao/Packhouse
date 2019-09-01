@@ -35,8 +35,8 @@ class LambdaCore extends Base {
                 }
             }
             return this.tool[mode]({
-                args,
                 used,
+                args,
                 context,
                 configs: this.configs
             })
@@ -59,15 +59,6 @@ class LambdaCore extends Base {
 
     addWeld(tool, pack) {
         this.welds.push({ tool, pack })
-    }
-
-    setRule(noGood, sop, options) {
-        if (noGood) {
-            this.setNoGood(noGood, options)
-        }
-        if (sop) {
-            this.setSop(sop)
-        }
     }
 
     setNoGood(action, options) {
@@ -95,15 +86,10 @@ class LambdaCore extends Base {
         this.packages = this.packages.concat(args)
     }
 
-    rePack(args) {
+    repack(args) {
         this.packages = args
     }
 }
-
-/**
- * 在宣告tool前的部屬預宣告行為
- * @hideconstructor
- */
 
 class Lambda {
     constructor(tool) {
@@ -112,69 +98,28 @@ class Lambda {
         this.promise = this._core.promise
     }
 
-    /**
-     * 錯誤預處裡，宣告後會移除action callback的error參數
-     * @param {NgCallback} callback 錯誤時執行的對象
-     * @param {object} [options] 額外參數
-     * @param {boolean} [options.resolve] 在promise模式時，報錯也回傳resolve
-     */
-
-    ng(callback, options) {
+    noGood(callback, options) {
         this._core.setNoGood(callback, options)
         return this
     }
-
-    /**
-     * 不論錯誤或成功都會宣告註冊的函數
-     * @param {SopCallback} action 執行的對象
-     */
 
     sop(action) {
         this._core.setSop(action)
         return this
     }
 
-    /**
-     * 這是一起宣告ng和sop的接口
-     * @param {NgCallback} ng ng callback
-     * @param {SopCallback} sop sop callback
-     * @param {object} [options] 額外參數
-     * @param {boolean} [options.resolve] 在promise模式時，報錯也回傳resolve
-     */
-
-    rule(ng, sop, options) {
-        this._core.setRule(ng, sop, options)
-        return this
-    }
-
-    /**
-     * 連接每個tool的接口，可以共用ng，weld為註冊制，能不斷註冊，只能使用同group的tool
-     * @param {string} tool tool name
-     * @param {WeldCallback} callback 包裝並執行
-     */
-
     weld(tool, callback) {
         this._core.addWeld(tool, callback)
         return this
     }
-
-    /**
-     * 參數可以預先加入，可接連加入
-     * @param  {...any} args 預先加入的參數
-     */
 
     pack(...args) {
         this._core.pack(args)
         return this
     }
 
-    /**
-     * 重新配置預參數
-     * @param  {...any} args 預先加入的參數
-     */
-
-    rePack(...args) {
-        this._core.rePack(args)
+    repack(...args) {
+        this._core.repack(args)
         return this
     }
 }

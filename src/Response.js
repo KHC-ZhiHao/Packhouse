@@ -1,25 +1,6 @@
 const Base = require('./Base.js')
 const Utils = require('./Utils.js')
 
-/**
- * @namespace Response
- * @description 執行tool或line時最後呼叫的模式
- */
-
-/**
- * @function Response.Action
- * @description 使用callback來接收參數
- * @param {...any} params 該tool需要的參數
- * @param {function} callback (error, result)
- */
-
-/**
- * @function Response.Promise
- * @description 使用promise接收參數
- * @param {...any} params 該tool需要的參數
- * @returns {promise}
- */
-
 class Response extends Base {
     constructor(caller, context, configs) {
         super('Response')
@@ -97,18 +78,26 @@ class Response extends Base {
         }
         let tool = null
         let weld = this.welds.shift()
-        let noGood = (e) => {
-            this.noGood(e)
+        let noGood = (result) => {
+            if (this.noGood) {
+                this.noGood(result)
+            }
             this.callSop({
                 result,
                 success: false
             })
+            this.errorBase(result)
         }
         if (weld) {
             tool = this.group.callTool(weld.tool)
             weld.pack(result, tool.pack.bind(tool))
-            tool.ng(noGood, this.noGoodOptions)
-                .handler(this.context, result => this.runWeld(result, callback))
+            tool.action(this.context, (error, result) => {
+                if (error) {
+                    noGood(error)
+                } else {
+                    this.runWeld(result, callback)
+                }
+            })
         } else {
             callback(result)
         }

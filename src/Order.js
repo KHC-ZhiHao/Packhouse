@@ -112,50 +112,25 @@ class CacheCore extends Base {
     }
 }
 
-/**
- * 快取物件
- * @hideconstructor
- */
-
 class Cache {
     constructor() {
         this._core = new CacheCore(this)
     }
 
-    /**
-     * 註冊一組緩衝
-     * @param {function} error 如果這個快取是觸發錯誤時觸發
-     * @param {function} success 如果這個快取是成功時觸發
-     */
-
-    buffer(error, success) {
+    buffer({ error, success }) {
         this._core.buffer(error, success)
         return this
     }
-
-    /**
-     * 當快取被註冊時觸發一次
-     * @param {function():cache} callback 觸發的function
-     */
 
     finish(callback) {
         this._core.finish(callback)
         return this
     }
 
-    /**
-     * 當快取沒有被註冊時由此事件觸發
-     * @param {function(error,success):cache} callback 觸發的function
-     */
-
     action(callback) {
         this._core.action(callback)
         return this
     }
-
-    /**
-     * 清空註冊狀態
-     */
 
     clear() {
         this._core.init()
@@ -173,53 +148,25 @@ class Order {
         this._core = new OrderCore(options)
     }
 
-    /**
-     * 有無該key的快取狀態
-     * @param {string} key 指定cache
-     * @returns {boolean}
-     */
-
     has(key) {
         return this._core.has(key)
     }
 
-    /**
-     * 使用cache
-     * @param {string} key 指定cache
-     * @param {OrderError} error buffer error
-     * @param {OrderSuccess} success buffer success
-     * @param {OrderCallback} callback action callback
-     */
-
-    use(key, error, success, callback) {
+    use(key, response, callback) {
         this._core
             .getOrCreate(key)
-            .buffer(error, success)
+            .buffer(response)
             .finish(cache => cache.clear())
             .action(callback)
     }
-
-    /**
-     * 清空所有cache
-     */
 
     clear() {
         return this._core.clear()
     }
 
-    /**
-     * 清空指定cache
-     * @param {string} key 指定cache
-     */
-
     remove(key) {
         return this._core.remove(key)
     }
-
-    /**
-     * 建立或獲取快取物件
-     * @param {string} key 指定cache
-     */
 
     getOrCreat(key) {
         return this._core.getOrCreate(key)

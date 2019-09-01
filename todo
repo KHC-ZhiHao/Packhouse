@@ -13,7 +13,7 @@ feature:
     ✔ helper verify @done(19-08-29 22:17)
     ✔ 移除大多預處裡 @done(19-09-01 01:13)
     ✔ 移除recursive @done(19-09-01 01:13)
-    ☐ 移除Pump，移至pors
+    ✔ 移除Pump，移至pors @done(19-09-01 20:14)
 
     Helper:
         ✔ getType @done(19-06-26 15:12)

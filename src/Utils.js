@@ -1,19 +1,4 @@
 class Utils {
-    /**
-     * 獲取型別
-     * @static
-     * @param {*} target 任何型態都行
-     * @returns {string} example之外的型態則回傳typeof的值
-     * @example
-     *  getType([]) // array
-     *  getType(null) // empty
-     *  getType(undefined) // empty
-     *  getType(NaN) // NaN
-     *  getType(/test/) // regexp
-     *  getType(new Promise(() => {})) // promise
-     *  getType(Buffer.from('123')) // buffer
-     */
-
     static getType(target) {
         let type = typeof target
         if (Array.isArray(target)) {
@@ -36,20 +21,6 @@ class Utils {
         }
         return type
     }
-
-    /**
-     * 驗證和回傳預設與付值結果
-     * @static
-     * @param {object} data 標的物
-     * @param {object.<array>} validates 驗證模型[required:boolean, types:array, default:*]
-     * @returns {object}
-     * @example
-     *  let options = verify({ a: 5 }, {
-     *      a: [true, ['number'], 0],
-     *      b: [false, ['number'], 'test']
-     *  })
-     *  console.log(options.b) // test
-     */
 
     static verify(data = {}, validates) {
         let newData = {}
@@ -74,12 +45,6 @@ class Utils {
         return newData
     }
 
-    /**
-     * 模擬uuid的建構方法，但不是真的uuid，不保證不會重複，但很難重複
-     * @static
-     * @returns {string}
-     */
-
     static generateId() {
         var now = Date.now()
         if (typeof performance !== 'undefined' && typeof performance.now === 'function') {
@@ -92,11 +57,6 @@ class Utils {
         })
     }
 
-    /**
-     * 主要是這比slice快很多
-     * @param {array} target
-     */
-
     static arrayCopy(target) {
         var i = target.length
         var output = []
@@ -105,6 +65,12 @@ class Utils {
         }
         return output
     }
+
+    static order(options) {
+        return new Order(options)
+    }
 }
 
 module.exports = Utils
+
+const Order = require('./Order')

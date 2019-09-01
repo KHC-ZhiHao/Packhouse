@@ -16,20 +16,20 @@ module.exports = {
                 return `Value ${index} not a number(${value}).`
             }
             if (extras.max && param > Number(extras.max)) {
-                return 'max:' + extras.max
+                return `Value ${index} less of (${extras.max}).`
             }
             if (extras.min && param < Number(extras.min)) {
-                return 'min:' + extras.min
+                return `Value ${index} exceed of (${extras.min}).`
             }
             return true
         }
     },
     int: {
-        check(value, { extras }) {
+        check(value, { extras, check }) {
             if (value == null && system.extras.abe === true) {
                 return true
             }
-            return system.check(`number|min:${extras.min}|max:${extras.max}`, value)
+            return check(`number|min:${extras.min}|max:${extras.max}`, value)
         },
         casting(value) {
             return Math.floor(value)
