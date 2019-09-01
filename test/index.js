@@ -52,10 +52,10 @@ describe('#Packhouse', () => {
             })
     })
 
-    it('sop', function(done) {
+    it('always', function(done) {
         this.packhouse
             .tool('demoGroup', 'sum')
-            .sop(({ result, success }) => {
+            .always(({ result, success }) => {
                 expect(result).to.equal(30)
                 expect(success).to.equal(true)
                 done()
@@ -65,10 +65,10 @@ describe('#Packhouse', () => {
             })
     })
 
-    it('sop error', function(done) {
+    it('always error', function(done) {
         this.packhouse
             .tool('demoGroup', 'sum')
-            .sop(({ result, success }) => {
+            .always(({ result, success }) => {
                 expect(success).to.equal(false)
                 done()
             })

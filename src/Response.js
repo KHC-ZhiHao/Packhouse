@@ -14,7 +14,7 @@ class Response extends Base {
             success: this.success.bind(this)
         }
         if (configs) {
-            this.sop = configs.sop
+            this.always = configs.always
             if (configs.welds.length > 0) {
                 this.welds = Utils.arrayCopy(configs.welds)
             }
@@ -44,7 +44,7 @@ class Response extends Base {
                 }
             })
             this.errorBase(result)
-            this.callSop({
+            this.callAlways({
                 result,
                 success: false
             })
@@ -63,7 +63,7 @@ class Response extends Base {
             })
             this.runWeld(result, (result) => {
                 this.successBase(result)
-                this.callSop({
+                this.callAlways({
                     result,
                     success: true
                 })
@@ -82,7 +82,7 @@ class Response extends Base {
             if (this.noGood) {
                 this.noGood(result)
             }
-            this.callSop({
+            this.callAlways({
                 result,
                 success: false
             })
@@ -103,9 +103,9 @@ class Response extends Base {
         }
     }
 
-    callSop(context) {
-        if (this.sop) {
-            this.sop(context)
+    callAlways(context) {
+        if (this.always) {
+            this.always(context)
         }
     }
 }

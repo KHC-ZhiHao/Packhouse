@@ -5,9 +5,9 @@ const Context = require('./Context')
 class LambdaCore extends Base {
     constructor(tool) {
         super('Lambda')
-        this.sop = null
         this.tool = tool
         this.welds = []
+        this.always = null
         this.noGood = null
         this.packages = []
         this.action = this.createLambda('action')
@@ -16,8 +16,8 @@ class LambdaCore extends Base {
 
     get configs() {
         return {
-            sop: this.sop,
             welds: Utils.arrayCopy(this.welds),
+            always: this.always,
             noGood: this.noGood,
             packages: Utils.arrayCopy(this.packages)
         }
@@ -48,8 +48,8 @@ class LambdaCore extends Base {
         let action = lambda.action
         let promise = lambda.promise
         let configs = this.configs
-        lambda._core.sop = configs.sop
         lambda._core.welds = configs.welds
+        lambda._core.always = configs.always
         lambda._core.noGood = configs.noGood
         lambda._core.packages = configs.packages
         lambda.action = (...args) => action(context, ...args)
@@ -74,11 +74,11 @@ class LambdaCore extends Base {
         }
     }
 
-    setSop(action) {
+    setAlways(action) {
         if (typeof action === 'function') {
-            this.sop = action
+            this.always = action
         } else {
-            this.$devError('setSOP', 'SOP param not a function.', action)
+            this.$devError('setAlways', 'Always param not a function.', action)
         }
     }
 
@@ -98,16 +98,6 @@ class Lambda {
         this.promise = this._core.promise
     }
 
-    noGood(callback, options) {
-        this._core.setNoGood(callback, options)
-        return this
-    }
-
-    sop(action) {
-        this._core.setSop(action)
-        return this
-    }
-
     weld(tool, callback) {
         this._core.addWeld(tool, callback)
         return this
@@ -120,6 +110,16 @@ class Lambda {
 
     repack(...args) {
         this._core.repack(args)
+        return this
+    }
+
+    noGood(callback, options) {
+        this._core.setNoGood(callback, options)
+        return this
+    }
+
+    always(action) {
+        this._core.setAlways(action)
         return this
     }
 }
