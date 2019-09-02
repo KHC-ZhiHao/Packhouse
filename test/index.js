@@ -344,4 +344,68 @@ describe('#Packhouse', () => {
                 }
             })
     })
+
+    it('promise', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .promise(10, 20)
+            .then((result) => {
+                expect(result).to.equal(30)
+                done()
+            })
+    })
+
+    it('promise error', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .promise(10, '20')
+            .catch((error) => {
+                expect(typeof error).to.equal('string')
+                done()
+            })
+    })
+
+    it('promise error with ng', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .noGood(() => {})
+            .promise(10, '20')
+            .then(result => {
+                expect(typeof result).to.equal('string')
+                done()
+            })
+    })
+
+    it('promise error with ng and reject', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .noGood(() => {}, { reject: true })
+            .promise(10, '20')
+            .catch(result => {
+                expect(typeof result).to.equal('string')
+                done()
+            })
+    })
+
+    it('promise error with ng and done ng', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .noGood((result) => {
+                expect(typeof result).to.equal('string')
+                done()
+            })
+            .promise(10, '20')
+    })
+
+    it('promise error with ng and done always', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .always(({ result, success }) => {
+                expect(typeof result).to.equal('string')
+                expect(success).to.equal(false)
+                done()
+            })
+            .noGood(() => {})
+            .promise(10, '20')
+    })
 })

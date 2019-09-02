@@ -19,8 +19,8 @@ class Response extends Base {
                 this.welds = Utils.arrayCopy(configs.welds)
             }
             if (configs.noGood) {
-                this.noGood = configs.noGood.action
-                this.noGoodOptions = configs.noGood.options
+                this.noGood = configs.noGood
+                this.noGoodOptions = configs.noGoodOptions
             }
         }
     }
@@ -43,11 +43,11 @@ class Response extends Base {
                     success: false
                 }
             })
-            this.errorBase(result)
             this.callAlways({
                 result,
                 success: false
             })
+            this.errorBase(result)
         }
     }
 
@@ -62,11 +62,11 @@ class Response extends Base {
                 }
             })
             this.runWeld(result, (result) => {
-                this.successBase(result)
                 this.callAlways({
                     result,
                     success: true
                 })
+                this.successBase(result)
             })
         }
     }
@@ -149,7 +149,7 @@ class Promise extends Response {
         if (this.noGood) {
             this.noGood(message)
         }
-        if (this.noGood && this.noGoodOptions.resolve) {
+        if (this.noGood && !this.noGoodOptions.reject) {
             this.resolve(message)
         } else {
             this.reject(message)

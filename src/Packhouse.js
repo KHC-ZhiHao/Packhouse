@@ -124,16 +124,16 @@ class Packhouse {
         this._core.event.off(channelName, id)
     }
 
-    plugin(plugin) {
-        plugin.install(this)
-    }
-
     tool(groupName, name) {
         return this._core.callTool(groupName, name)
     }
 
     line(groupName, name) {
         return this._core.callLine(groupName, name)
+    }
+
+    plugin(plugin) {
+        plugin.install(this)
     }
 
     merger(name, options, configs) {

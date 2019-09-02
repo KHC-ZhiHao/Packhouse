@@ -9,6 +9,7 @@ class LambdaCore extends Base {
         this.welds = []
         this.always = null
         this.noGood = null
+        this.noGoodOptions = {}
         this.packages = []
         this.action = this.createLambda('action')
         this.promise = this.createLambda('promise')
@@ -19,6 +20,7 @@ class LambdaCore extends Base {
             welds: Utils.arrayCopy(this.welds),
             always: this.always,
             noGood: this.noGood,
+            noGoodOptions: JSON.parse(JSON.stringify(this.noGoodOptions)),
             packages: Utils.arrayCopy(this.packages)
         }
     }
@@ -63,12 +65,10 @@ class LambdaCore extends Base {
 
     setNoGood(action, options) {
         if (typeof action === 'function') {
-            this.noGood = { action }
-            if (options) {
-                this.noGood.options = Utils.verify(options, {
-                    resolve: [false, ['boolean'], false]
-                })
-            }
+            this.noGood = action
+            this.noGoodOptions = Utils.verify(options || {}, {
+                reject: [false, ['boolean'], false]
+            })
         } else {
             this.$devError('setNG', 'NG param not a function.', action)
         }
