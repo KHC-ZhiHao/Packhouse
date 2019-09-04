@@ -52,6 +52,7 @@ class Tool extends Base {
             handler: [true, ['function']],
             install: [false, ['function'], () => {}]
         })
+        this.moldsJSON = JSON.stringify(this.options.molds)
     }
 
     install() {
@@ -91,6 +92,7 @@ class Tool extends Base {
                 name: this.name,
                 args: parameters,
                 mode,
+                molds: this.moldsJSON,
                 group: {
                     name: this.group.name,
                     sign: this.group.sign

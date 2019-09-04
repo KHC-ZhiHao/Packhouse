@@ -117,11 +117,11 @@ class Packhouse {
     }
 
     on(channelName, callback) {
-        this._core.event.on(channelName, callback)
+        return this._core.event.on(channelName, callback)
     }
 
     off(channelName, id) {
-        this._core.event.off(channelName, id)
+        return this._core.event.off(channelName, id)
     }
 
     tool(groupName, name) {
