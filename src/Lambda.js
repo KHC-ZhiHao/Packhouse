@@ -20,7 +20,7 @@ class LambdaCore extends Base {
             welds: Utils.arrayCopy(this.welds),
             always: this.always,
             noGood: this.noGood,
-            noGoodOptions: JSON.parse(JSON.stringify(this.noGoodOptions)),
+            noGoodOptions: Object.assign({}, this.noGoodOptions),
             packages: Utils.arrayCopy(this.packages)
         }
     }

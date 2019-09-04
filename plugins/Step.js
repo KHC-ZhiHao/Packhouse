@@ -1,22 +1,19 @@
-const Packhouse = require('packhouse')
-
 class StepCore {
-    constructor(options) {
+    constructor(packhouse, options) {
         this.timeout = null
-        this.options = Packhouse.utils.verify(options, {
-            middle: [true, ['function']],
+        this.packhouse = packhouse
+        this.options = packhouse.utils.verify(options, {
+            create: [false, ['function'], () => {}],
+            middle: [false, ['function'], () => {}],
             output: [true, ['function']],
-            timeout: [false, ['number'], null]
+            timeout: [false, ['number'], null],
+            failReject: [false, ['boolean', false]]
         })
     }
 
-    register(packhouse) {
-        this.packhouse = packhouse
-    }
-
-    start(templates) {
-        return new Promise((resolve) => {
-            new Flow(this, templates, resolve)
+    start(options, templates) {
+        return new Promise((resolve, reject) => {
+            new Flow(this, options, templates, resolve, reject)
         })
     }
 }
@@ -25,13 +22,31 @@ class History {
     constructor(core) {
         this.list = []
         this.index = 0
+        this.startTime = Date.now()
         this.packhouse = core.packhouse
     }
 
     exports() {
+        let now = Date.now()
+        let profile = {
+            startTime: this.startTime,
+            finishTime: now,
+            totalTime: now - this.startTime
+        }
         return {
+            profile,
             templates: this.list,
-            isDone: name => this.isDone(name)
+            isDone: name => this.isDone(name),
+            toJSON: (beautify) => {
+                let data = {
+                    profile,
+                    templates: this.list
+                }
+                if (beautify) {
+                    return JSON.stringify(this.packhouse.utils.inspect(data), null, 4)
+                }
+                return JSON.stringify(this.packhouse.utils.inspect(data))
+            }
         }
     }
 
@@ -49,7 +64,7 @@ class History {
             finishTime: null
         }
         this.list[this.index] = data
-        this.useEventId = this.packhouse.on('use', (event, { id, caller, detail }) => {
+        this.useEventId = this.packhouse.on('run', (event, { id, caller, detail }) => {
             logs[id] = {
                 logs: {},
                 startTime: Date.now(),
@@ -57,35 +72,46 @@ class History {
             }
             if (caller) {
                 logs[caller.id].logs[id] = logs[id]
+            } else {
+                data.logs[id] = logs[id]
             }
         })
         this.doneEventId = this.packhouse.on('done', (event, { id, caller, detail }) => {
-            logs[id].result = detail.result
-            logs[id].success = detail.success
-            logs[id].finishTime = Date.now()
-            logs[id].totalTime = logs[id].finishTime - logs[id].startTime
+            let log = null
+            if (caller) {
+                log = logs[caller.id].logs[id]
+            } else {
+                log = data.logs[id]
+            }
+            log.result = detail.result
+            log.success = detail.success
+            log.finishTime = Date.now()
+            log.totalTime = logs[id].finishTime - logs[id].startTime
         })
     }
 
     output() {
         this.list[this.index].finishTime = Date.now()
+        this.list[this.index].totalTime = this.list[this.index].finishTime - this.list[this.index].startTime
         this.index += 1
-        this.packhouse.off(this.useEventId)
-        this.packhouse.off(this.doneEventId)
+        this.packhouse.off('run', this.useEventId)
+        this.packhouse.off('done', this.doneEventId)
     }
 }
 
-class Flow extends Base {
-    constructor(core, templates, callback) {
-        super('Flow')
+class Flow {
+    constructor(core, options, templates, success, error) {
         this.core = core
         this.self = {}
         this.over = false
+        this.error = error
+        this.options = options
+        this.success = success
         this.history = new History(core)
-        this.callback = callback
         this.templates = templates.slice()
         this.initContext()
         this.initTimeout()
+        this.start()
     }
 
     initContext() {
@@ -107,17 +133,25 @@ class Flow extends Base {
     timeoutHandler() {
         if (this.over === false) {
             let history = this.history.exports()
-            this.core.output.call(this.self, (result) => {
-                this.done()
-                this.callback(result)
-            }, {
+            let context = {
                 history,
                 timeout: true
+            }
+            this.core.options.output.call(this.self, context, (result) => {
+                this.done()
+                this.success(result)
+            }, (result) => {
+                this.done()
+                this.error(result)
             })
         }
     }
 
     start() {
+        let templates = this.core.options.create.call(this.self, this.templates, this.options)
+        if (templates) {
+            this.templates = templates
+        }
         this.iterator()
     }
 
@@ -129,9 +163,11 @@ class Flow extends Base {
             }
             let next = () => {
                 if (this.over) {
-                    return this.$systemError('iterator', 'Step is exit or fail.')
+                    throw new Error('Packhouse Step : Already exit or fail.')
                 }
-                next = () => this.$systemError('iterator', 'Next has already been declared.')
+                next = () => {
+                    throw new Error('Packhouse Step : Already exit or fail.')
+                }
                 this.history.output()
                 this.next()
             }
@@ -160,16 +196,20 @@ class Flow extends Base {
 
     finish(success, message) {
         let history = this.history.exports()
+        let context = {
+            success,
+            message,
+            history,
+            timeout: false
+        }
         if (this.over === false) {
             this.over = true
-            this.core.options.output.call(this.self, (result) => {
+            this.core.options.output.call(this.self, context, (result) => {
                 this.done()
-                this.callback(result)
-            }, {
-                success,
-                message,
-                history,
-                timeout: false
+                this.success(result)
+            }, (result) => {
+                this.done()
+                this.error(result)
             })
         }
     }
@@ -182,12 +222,14 @@ class Flow extends Base {
 
 class Step {
     constructor(options) {
-        this._core = new StepCore(options)
+        this._options = options
     }
 
     install(packhouse) {
-        this._core.register(packhouse)
-        packhouse.step = templates => this._core.start(templates)
+        this._core = new StepCore(packhouse, this._options)
+        packhouse.step = ({ templates, options }) => {
+            return this._core.start(options, templates)
+        }
     }
 }
 
