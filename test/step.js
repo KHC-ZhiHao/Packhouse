@@ -47,7 +47,6 @@ describe('#Step', () => {
     it('history', function(done) {
         const step = new Step({
             output({ history }, success, error) {
-                console.log(history.toJSON(true))
                 success('123')
             }
         })

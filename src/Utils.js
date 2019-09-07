@@ -79,40 +79,6 @@ class Utils {
         }
         return output
     }
-
-    static inspect(target, used = []) {
-        if (target == null) {
-            return null
-        }
-        let output = Array.isArray(target) ? [] : {}
-        for (let key in target) {
-            let aims = target[key]
-            let type = Utils.getType(aims)
-            if (type === 'function') {
-                continue
-            } else if (type === 'object' || type === 'array') {
-                let newUsed = [target].concat(used)
-                if (newUsed.includes(aims)) {
-                    output[key] = 'inspect: Circular structure object.'
-                } else {
-                    output[key] = Utils.inspect(aims, newUsed)
-                }
-            } else {
-                if (type === 'buffer') {
-                    output[key] = 'inspect: buffer'
-                } else if (type === 'promise') {
-                    output[key] = 'inspect: promise'
-                } else if (type === 'NaN') {
-                    output[key] = 'inspect: NaN'
-                } else if (type === 'regexp') {
-                    output[key] = 'inspect: regexp'
-                } else {
-                    output[key] = aims
-                }
-            }
-        }
-        return output
-    }
 }
 
 module.exports = Utils

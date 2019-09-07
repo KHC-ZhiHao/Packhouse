@@ -26,6 +26,57 @@ class History {
         this.packhouse = core.packhouse
     }
 
+    inspect(target, used = []) {
+        if (target == null) {
+            return null
+        }
+        let output = Array.isArray(target) ? [] : {}
+        for (let key in target) {
+            let aims = target[key]
+            let type = this.packhouse.utils.getType(aims)
+            if (type === 'function') {
+                continue
+            } else if (type === 'object' || type === 'array') {
+                let newUsed = [target].concat(used)
+                if (newUsed.includes(aims)) {
+                    output[key] = {
+                        inspect: true,
+                        type: 'CircularStructureObject'
+                    }
+                } else {
+                    output[key] = this.inspect(aims, newUsed)
+                }
+            } else {
+                if (type === 'buffer') {
+                    output[key] = {
+                        inspect: true,
+                        type: 'buffer',
+                        size: aims.length
+                    }
+                } else if (type === 'promise') {
+                    output[key] = {
+                        inspect: true,
+                        type: 'promise'
+                    }
+                } else if (type === 'NaN') {
+                    output[key] = {
+                        inspect: true,
+                        type: 'NaN'
+                    }
+                } else if (type === 'regexp') {
+                    output[key] = {
+                        inspect: true,
+                        type: 'regexp',
+                        expression: aims.toString()
+                    }
+                } else {
+                    output[key] = aims
+                }
+            }
+        }
+        return output
+    }
+
     exports() {
         let now = Date.now()
         let profile = {
@@ -43,9 +94,9 @@ class History {
                     templates: this.list
                 }
                 if (beautify) {
-                    return JSON.stringify(this.packhouse.utils.inspect(data), null, 4)
+                    return JSON.stringify(this.inspect(data), null, 4)
                 }
-                return JSON.stringify(this.packhouse.utils.inspect(data))
+                return JSON.stringify(this.inspect(data))
             }
         }
     }
