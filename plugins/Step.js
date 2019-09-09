@@ -1,19 +1,19 @@
 class StepCore {
-    constructor(packhouse, options) {
-        this.timeout = null
+    constructor(packhouse) {
         this.packhouse = packhouse
-        this.options = packhouse.utils.verify(options, {
+    }
+
+    start(options) {
+        let system = this.packhouse.utils.verify(options, {
             create: [false, ['function'], () => {}],
             middle: [false, ['function'], () => {}],
             output: [true, ['function']],
             timeout: [false, ['number'], null],
+            template: [true, ['array']],
             failReject: [false, ['boolean', false]]
         })
-    }
-
-    start(options, templates) {
         return new Promise((resolve, reject) => {
-            new Flow(this, options, templates, resolve, reject)
+            new Flow(this, system, resolve, reject)
         })
     }
 }
@@ -86,12 +86,12 @@ class History {
         }
         return {
             profile,
-            templates: this.list,
+            template: this.list,
             isDone: name => this.isDone(name),
             toJSON: (beautify) => {
                 let data = {
                     profile,
-                    templates: this.list
+                    template: this.list
                 }
                 if (beautify) {
                     return JSON.stringify(this.inspect(data), null, 4)
@@ -151,15 +151,15 @@ class History {
 }
 
 class Flow {
-    constructor(core, options, templates, success, error) {
+    constructor(core, system, success, error) {
         this.core = core
         this.self = {}
         this.over = false
         this.error = error
-        this.options = options
+        this.system = system
         this.success = success
         this.history = new History(core)
-        this.templates = templates.slice()
+        this.template = this.system.template.slice()
         this.initContext()
         this.initTimeout()
         this.start()
@@ -175,10 +175,10 @@ class Flow {
     }
 
     initTimeout() {
-        if (this.core.timeout == null) {
+        if (this.system.timeout == null) {
             return null
         }
-        this.timeout = setTimeout(() => this.timeoutHandler(), this.core.timeout)
+        this.timeout = setTimeout(() => this.timeoutHandler(), this.system.timeout)
     }
 
     timeoutHandler() {
@@ -188,7 +188,7 @@ class Flow {
                 history,
                 timeout: true
             }
-            this.core.options.output.call(this.self, context, (result) => {
+            this.system.output.call(this.self, context, (result) => {
                 this.done()
                 this.success(result)
             }, (result) => {
@@ -199,16 +199,13 @@ class Flow {
     }
 
     start() {
-        let templates = this.core.options.create.call(this.self, this.templates, this.options)
-        if (templates) {
-            this.templates = templates
-        }
+        this.system.create.call(this.self, this.template)
         this.iterator()
     }
 
     iterator() {
         if (this.over === false) {
-            let template = this.templates.shift()
+            let template = this.template.shift()
             if (template == null) {
                 return this.context.exit()
             }
@@ -224,7 +221,7 @@ class Flow {
             }
             this.history.input({ name: template.name })
             this.context.lastCall = template.name || null
-            this.context.nextCall = this.templates[0] ? this.templates[0].name : null
+            this.context.nextCall = this.template[0] ? this.template[0].name : null
             template.call(this.self, next, this.context)
         }
     }
@@ -232,7 +229,7 @@ class Flow {
     next() {
         setTimeout(() => {
             if (this.over === false) {
-                this.core.options.middle.call(this.self, this.context)
+                this.system.middle.call(this.self, this.context)
                 this.iterator()
             }
         }, 1)
@@ -255,7 +252,7 @@ class Flow {
         }
         if (this.over === false) {
             this.over = true
-            this.core.options.output.call(this.self, context, (result) => {
+            this.system.output.call(this.self, context, (result) => {
                 this.done()
                 this.success(result)
             }, (result) => {
@@ -278,8 +275,8 @@ class Step {
 
     install(packhouse) {
         this._core = new StepCore(packhouse, this._options)
-        packhouse.step = ({ templates, options }) => {
-            return this._core.start(options, templates)
+        packhouse.step = (options) => {
+            return this._core.start(options)
         }
     }
 }

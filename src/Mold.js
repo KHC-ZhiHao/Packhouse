@@ -10,10 +10,6 @@ class Box extends Base {
         this.caches = {}
         this.parent = parent
         this.namespace = namespace || ''
-        this.check = (text, source) => {
-            let { name, extras } = this.cache(text)
-            return this.get(name).check(source, this.getContext(0, extras))
-        }
     }
 
     has(name) {
@@ -44,11 +40,11 @@ class Box extends Base {
         }
     }
 
-    add(name, options) {
+    add(name, callback) {
         if (this.molds[name]) {
             this.$devError('add', `Name(${name}) already exists.`)
         }
-        this.molds[name] = new Mold(options)
+        this.molds[name] = new Mold(callback)
     }
 
     cache(text) {
@@ -75,38 +71,20 @@ class Box extends Base {
     getContext(index, extras) {
         return {
             index,
-            check: this.check,
             extras
         }
     }
 }
 
 class Mold extends Base {
-    constructor(options = {}) {
+    constructor(callback) {
         super('Mold')
         this.case = new MoldStore()
-        this.options = Utils.verify(options, {
-            check: [false, ['function'], function() { return true }],
-            casting: [false, ['function'], function(source) { return source }]
-        })
+        this.callback = callback
     }
 
-    check(source, context) {
-        return this.options.check.call(this.case, source, context, Utils)
-    }
-
-    casting(source, context) {
-        return this.options.casting.call(this.case, source, context, Utils)
-    }
-
-    parse(source, context, callback) {
-        let check = this.check(source, context)
-        let value = null
-        if (check === true) {
-            check = null
-            value = this.casting(source, context)
-        }
-        callback(check, value)
+    parse(source, context) {
+        return this.callback.call(this.case, source, context, Utils)
     }
 }
 

@@ -1,8 +1,18 @@
 <p align="center"><img src="https://khc-zhihao.github.io/MyBook/Packhouse/images/logo.png"></p>
 
-<p align="center" style="font-size:2em">Functional Programming Library</p>
+<p align="center" style="font-size:2em">Functional Programming Framework</p>
+
 <p align="center">
     <a href="https://www.npmjs.com/package/packhouse"><img src="https://img.shields.io/npm/v/packhouse.svg"></a>
+    <a href="https://travis-ci.org/KHC-ZhiHao/Packhouse">
+    <img src="https://travis-ci.org/KHC-ZhiHao/Packhouse.svg?branch=master" alt="travis-ci"  style="max-width:100%;">
+    </a>
+    <a href="https://coveralls.io/github/KHC-ZhiHao/Packhouse?branch=master">
+        <img src="https://coveralls.io/repos/github/KHC-ZhiHao/Packhouse/badge.svg?branch=master" alt="Coverage Status"  style="max-width:100%;">
+    </a>
+    <a href="https://standardjs.com/">
+        <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard Code Style"  style="max-width:100%;">
+    </a>
     <a href="https://github.com/KHC-ZhiHao/Packhouse"><img src="https://img.shields.io/github/stars/KHC-ZhiHao/Packhouse.svg?style=social"></a>
     <br>
 </p>

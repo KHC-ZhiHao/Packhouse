@@ -19,8 +19,8 @@ class Handler {
         return this._used[name]
     }
 
-    casting(name, target, callback) {
-        return this._tool.parseMold(name, target, 0, callback)
+    casting(name, target) {
+        return this._tool.parseMold(name, target, 0)
     }
 }
 

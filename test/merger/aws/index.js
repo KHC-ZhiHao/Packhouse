@@ -2,12 +2,11 @@ let dynamoDB = require('./dynamodb')
 
 module.exports = {
     molds: {
-        tableName: {
-            check(value) {
-                return typeof value === 'string' ? true : 'error'
-            },
-            casting(value) {
+        tableName(value) {
+            if (typeof value === 'string') {
                 return 'table - ' + value
+            } else {
+                throw new Error('error')
             }
         }
     },

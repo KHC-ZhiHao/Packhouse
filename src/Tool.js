@@ -77,12 +77,11 @@ class Tool extends Base {
             if (mold == null) {
                 continue
             }
-            this.parseMold(mold, parameters[i], i, (err, reslut) => {
-                if (err) {
-                    return handler.error(err)
-                }
-                parameters[i] = reslut
-            })
+            try {
+                parameters[i] = this.parseMold(mold, parameters[i], i)
+            } catch (error) {
+                return handler.error(error)
+            }
         }
         // event
         this.emit('run', {
@@ -142,8 +141,8 @@ class Tool extends Base {
         return args
     }
 
-    parseMold(name, value, index, callback) {
-        return this.group.parseMold(name, value, index, callback)
+    parseMold(name, value, index) {
+        return this.group.parseMold(name, value, index)
     }
 
     use() {
