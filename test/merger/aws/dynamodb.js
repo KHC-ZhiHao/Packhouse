@@ -1,5 +1,4 @@
 module.exports = {
-    alias: 'dynamodb',
     install(group, { ddb }) {
         group.ddb = ddb
     },

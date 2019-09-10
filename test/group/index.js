@@ -1,5 +1,4 @@
 module.exports = {
-    alias: 'user',
     install(group, options) {
         group.test = options.test
     },
