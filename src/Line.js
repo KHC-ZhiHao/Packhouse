@@ -51,7 +51,7 @@ class Deploy extends Base {
         this.input = this.createTool('input', {
             molds: this.main.options.molds,
             handler: this.main.options.input,
-            install: (store, include, system) => this.main.options.frame(include, system)
+            install: system => this.main.options.frame(system)
         })
         this.output = this.createTool('output', {
             handler: this.main.options.output

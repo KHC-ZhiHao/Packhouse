@@ -5,8 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "nyc mocha",
-    "book": "gitbook build ./book ./guide",
-    "prod": "nyc mocha && cross-env webpack --progress --hide-modules && npm run book",
+    "prod": "nyc mocha && cross-env webpack --progress --hide-modules",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {

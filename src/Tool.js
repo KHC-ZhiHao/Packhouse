@@ -4,20 +4,6 @@ const Lambda = require('./Lambda')
 const Response = require('./Response')
 const ToolHandler = require('./ToolHandler')
 
-class System {
-    constructor(tool) {
-        this._tool = tool
-    }
-
-    get group() {
-        return this._tool.group.store
-    }
-
-    get utils() {
-        return Utils
-    }
-}
-
 class Includes {
     constructor(tool, name) {
         this._tool = tool
@@ -40,6 +26,25 @@ class Includes {
     }
 }
 
+class System {
+    constructor(tool) {
+        this._tool = tool
+        this.include = name => this._tool.include(name)
+    }
+
+    get group() {
+        return this._tool.group.store
+    }
+
+    get utils() {
+        return Utils
+    }
+
+    get store() {
+        return this._tool.store
+    }
+}
+
 class Tool extends Base {
     constructor(group, options, name, reference = {}) {
         super('Tool')
@@ -57,7 +62,7 @@ class Tool extends Base {
 
     install() {
         this.install = null
-        this.options.install(this.store, this.include.bind(this), new System(this))
+        this.options.install(new System(this))
     }
 
     include(name) {

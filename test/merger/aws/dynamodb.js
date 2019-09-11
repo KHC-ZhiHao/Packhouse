@@ -10,7 +10,7 @@ module.exports = {
             }
         },
         optionTest: {
-            install(store, include, { group }) {
+            install({ store, group }) {
                 store.ddb = group.ddb
             },
             handler() {

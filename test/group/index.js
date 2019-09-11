@@ -24,7 +24,7 @@ module.exports = {
         },
         get: {
             molds: ['string'],
-            install(store, include) {
+            install({ include }) {
                 include('get').coop('dynamoDB', 'tool', 'get').pack('a')
             },
             handler(name) {
@@ -58,7 +58,7 @@ module.exports = {
             }
         },
         storeTest: {
-            install(store) {
+            install({ store }) {
                 store.result = 'test'
             },
             handler() {
@@ -66,7 +66,7 @@ module.exports = {
             }
         },
         includeTest: {
-            install(store, include) {
+            install({ include }) {
                 include('sum').tool('sum')
             },
             handler(value1, value2) {
@@ -77,7 +77,7 @@ module.exports = {
             }
         },
         groupTest: {
-            install(store, include, { group }) {
+            install({ store, group }) {
                 store.test = group.test
             },
             handler() {
@@ -95,7 +95,7 @@ module.exports = {
             }
         },
         utilsTest: {
-            install(store, include, { utils }) {
+            install({ store, utils }) {
                 store.getType = utils.getType
             },
             handler(value) {
@@ -103,7 +103,7 @@ module.exports = {
             }
         },
         orderTest: {
-            install(store, include, { utils }) {
+            install({ store, utils }) {
                 store.order = utils.order()
             },
             handler(name) {

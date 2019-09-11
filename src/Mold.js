@@ -84,7 +84,8 @@ class Mold extends Base {
     }
 
     parse(source, context) {
-        return this.callback.call(this.case, source, context, Utils)
+        context.utils = Utils
+        return this.callback.call(this.case, source, context)
     }
 }
 

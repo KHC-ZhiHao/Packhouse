@@ -69,7 +69,7 @@ module.exports = {
             throw new Error(`Value ${index} not a buffer(${value}).`)
         }
     },
-    object(value, { extras, index }, utils) {
+    object(value, { extras, index, utils }) {
         if (value == null && extras.abe === true) {
             return value
         }
