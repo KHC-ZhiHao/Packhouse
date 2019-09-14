@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "nyc mocha",
-    "prod": "nyc mocha && cross-env webpack --progress --hide-modules",
+    "build": "nyc mocha && cross-env webpack --progress --hide-modules",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "repository": {

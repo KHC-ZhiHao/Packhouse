@@ -112,10 +112,6 @@ class Packhouse {
         return Utils
     }
 
-    static utils() {
-        return Utils
-    }
-
     static groupFormat(data) {
         return Object.assign({
             tools: {},
@@ -166,5 +162,7 @@ class Packhouse {
         return this._core.hasGroup(name)
     }
 }
+
+Packhouse.utils = Utils
 
 module.exports = Packhouse

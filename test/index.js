@@ -416,4 +416,13 @@ describe('#Packhouse', () => {
             .noGood(() => {})
             .promise(10, '20')
     })
+
+    it('utils : peel', function() {
+        let target = Packhouse.utils.peel({
+            a: {
+                b: 5
+            }
+        }, 'a.b')
+        expect(target).to.equal(5)
+    })
 })
