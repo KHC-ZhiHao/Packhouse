@@ -112,16 +112,6 @@ class Packhouse {
         return Utils
     }
 
-    static groupFormat(data) {
-        return Object.assign({
-            tools: {},
-            lines: {},
-            molds: {},
-            mergers: {},
-            install: () => {}
-        }, data)
-    }
-
     on(channelName, callback) {
         return this._core.event.on(channelName, callback)
     }
@@ -164,5 +154,14 @@ class Packhouse {
 }
 
 Packhouse.utils = Utils
+Packhouse.groupFormat = (data) => {
+    return Object.assign({
+        tools: {},
+        lines: {},
+        molds: {},
+        mergers: {},
+        install: () => {}
+    }, data)
+}
 
 module.exports = Packhouse
