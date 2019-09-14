@@ -34,9 +34,7 @@ class History {
         for (let key in target) {
             let aims = target[key]
             let type = this.packhouse.utils.getType(aims)
-            if (type === 'function') {
-                continue
-            } else if (type === 'object' || type === 'array') {
+            if (type === 'object' || type === 'array') {
                 let newUsed = [target].concat(used)
                 if (newUsed.includes(aims)) {
                     output[key] = {
@@ -47,7 +45,14 @@ class History {
                     output[key] = this.inspect(aims, newUsed)
                 }
             } else {
-                if (type === 'buffer') {
+                if (type === 'function') {
+                    output[key] = {
+                        inspect: true,
+                        type: 'function',
+                        name: aims.name,
+                        length: aims.length
+                    }
+                } else if (type === 'buffer') {
                     output[key] = {
                         inspect: true,
                         type: 'buffer',
@@ -68,6 +73,13 @@ class History {
                         inspect: true,
                         type: 'regexp',
                         expression: aims.toString()
+                    }
+                } else if (type === 'error') {
+                    output[key] = {
+                        inspect: true,
+                        type: 'error',
+                        trace: aims.trace,
+                        message: aims.message
                     }
                 } else {
                     output[key] = aims

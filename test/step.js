@@ -50,14 +50,49 @@ describe('#Step', () => {
                 packhouse.tool('demo', 'includeTest').action(10, 20, () => {
                     next()
                 })
+            },
+            function(next) {
+                packhouse.tool('demo', 'get').action(123, () => {
+                    next()
+                })
             }
         ]
         let packhouse = new Packhouse()
         packhouse.plugin(Step)
         packhouse.addGroup('demo', group)
+        packhouse.merger('aws', require('./merger/aws/index.js'))
         packhouse.step({
             template,
             output({ history }, success, error) {
+                expect(typeof history.toJSON(true)).to.equal('string')
+                success('123')
+            }
+        })
+            .then((result) => {
+                expect(result).to.equal('123')
+                done()
+            })
+    })
+
+    it('history error', function(done) {
+        let template = [
+            function(next) {
+                packhouse
+                    .tool('demo', 'get')
+                    .action(123, () => {
+                        next()
+                    })
+            }
+        ]
+        let packhouse = new Packhouse()
+        packhouse.plugin(Step)
+        packhouse.addGroup('demo', group)
+        packhouse.merger('aws', require('./merger/aws/index.js'))
+        packhouse.step({
+            template,
+            output({ history }, success, error) {
+                let key = Object.keys(history.template[0].logs)[0]
+                expect(history.template[0].logs[key].result instanceof Error).to.equal(true)
                 success('123')
             }
         })

@@ -3,12 +3,8 @@ class Handler {
         this._used = used
         this._tool = tool
         this.context = context
-        this.error = reslut => {
-            response.error(reslut)
-        }
-        this.success = reslut => {
-            response.success(reslut)
-        }
+        this.error = reslut => response.error(reslut)
+        this.success = reslut => response.success(reslut)
     }
 
     get store() {

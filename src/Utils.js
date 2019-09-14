@@ -19,6 +19,9 @@ class Utils {
         if (typeof Buffer !== 'undefined' && Buffer.isBuffer(target)) {
             return 'buffer'
         }
+        if (target instanceof Error) {
+            return 'error'
+        }
         return type
     }
 

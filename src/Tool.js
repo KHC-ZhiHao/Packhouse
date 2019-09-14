@@ -75,19 +75,6 @@ class Tool extends Base {
 
     call({ parameters, used, mode, context, response }) {
         let handler = new ToolHandler(this, used, context, response)
-        // mold
-        let length = this.options.molds.length
-        for (let i = 0; i < length; i++) {
-            let mold = this.options.molds[i]
-            if (mold == null) {
-                continue
-            }
-            try {
-                parameters[i] = this.parseMold(mold, parameters[i], i)
-            } catch (error) {
-                return handler.error(error)
-            }
-        }
         // event
         this.emit('run', {
             ...context,
@@ -103,6 +90,19 @@ class Tool extends Base {
                 }
             }
         })
+        // mold
+        let length = this.options.molds.length
+        for (let i = 0; i < length; i++) {
+            let mold = this.options.molds[i]
+            if (mold == null) {
+                continue
+            }
+            try {
+                parameters[i] = this.parseMold(mold, parameters[i], i)
+            } catch (error) {
+                return handler.error(error)
+            }
+        }
         // action
         if (response.isLive()) {
             this.options.handler.apply(handler, parameters)
