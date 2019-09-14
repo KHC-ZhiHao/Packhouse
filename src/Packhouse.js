@@ -142,8 +142,8 @@ class Packhouse {
         return this._core.callLine(groupName, name)
     }
 
-    plugin(plugin) {
-        plugin.install(this)
+    plugin(Plugin, options) {
+        new Plugin(this, options)
     }
 
     merger(name, options, configs) {

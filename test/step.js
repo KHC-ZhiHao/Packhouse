@@ -6,14 +6,13 @@ const group = require('./group')
 
 describe('#Step', () => {
     it('success', function(done) {
-        const step = new Step()
         let template = [
             function(next) {
                 next()
             }
         ]
         let packhouse = new Packhouse()
-        packhouse.plugin(step)
+        packhouse.plugin(Step)
         packhouse.step({
             template,
             output(context, success) {
@@ -26,14 +25,13 @@ describe('#Step', () => {
             })
     })
     it('error', function(done) {
-        const step = new Step()
         let template = [
             function(next) {
                 next()
             }
         ]
         let packhouse = new Packhouse()
-        packhouse.plugin(step)
+        packhouse.plugin(Step)
         packhouse.step({
             template,
             output(context, success, error) {
@@ -47,7 +45,6 @@ describe('#Step', () => {
     })
 
     it('history', function(done) {
-        const step = new Step()
         let template = [
             function(next) {
                 packhouse.tool('demo', 'includeTest').action(10, 20, () => {
@@ -56,7 +53,7 @@ describe('#Step', () => {
             }
         ]
         let packhouse = new Packhouse()
-        packhouse.plugin(step)
+        packhouse.plugin(Step)
         packhouse.addGroup('demo', group)
         packhouse.step({
             template,

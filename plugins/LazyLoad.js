@@ -1,10 +1,6 @@
 class LazyLoad {
-    constructor(options) {
-        this.options = options
-    }
-
-    install(packhouse) {
-        let options = packhouse.utils.verify(this.options, {
+    constructor(packhouse, options) {
+        options = packhouse.utils.verify(options, {
             group: [true, ['function']],
             groupOptions: [false, ['object'], {}],
             merger: [true, ['function']],

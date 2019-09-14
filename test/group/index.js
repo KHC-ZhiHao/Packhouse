@@ -6,12 +6,11 @@ module.exports = {
         dynamoDB: 'aws@dynamoDB'
     },
     molds: {
-        isTenAndToString: {
-            check(value) {
-                return value === 10 ? true : 'Error'
-            },
-            casting(value) {
+        isTenAndToString(value) {
+            if (value === 10) {
                 return value.toString()
+            } else {
+                throw new Error('Error')
             }
         }
     },
@@ -86,12 +85,11 @@ module.exports = {
         },
         handlerCasting: {
             handler(value) {
-                this.casting('isTenAndToString', value, (e, r) => {
-                    if (e) {
-                        return this.error(e)
-                    }
-                    this.success(r)
-                })
+                try {
+                    this.success(this.casting('isTenAndToString', value))
+                } catch (e) {
+                    this.error(e)
+                }
             }
         },
         utilsTest: {
@@ -122,7 +120,7 @@ module.exports = {
     lines: {
         math: {
             molds: ['number'],
-            frame(include) {
+            frame({ include }) {
                 include('sum').tool('sum')
             },
             input(value) {

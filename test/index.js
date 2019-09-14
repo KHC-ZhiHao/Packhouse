@@ -135,285 +135,285 @@ describe('#Packhouse', () => {
         expect(isRun).to.equal(true)
     })
 
-    // it('use mold', function() {
-    //     let isRun = false
-    //     this.packhouse
-    //         .tool('demoGroup', 'moldAbeTest')
-    //         .pack('string')
-    //         .pack(undefined)
-    //         .action((e, r) => {
-    //             isRun = r
-    //         })
-    //     expect(isRun).to.equal(true)
-    // })
+    it('use mold', function() {
+        let isRun = false
+        this.packhouse
+            .tool('demoGroup', 'moldAbeTest')
+            .pack('string')
+            .pack(undefined)
+            .action((e, r) => {
+                isRun = r
+            })
+        expect(isRun).to.equal(true)
+    })
 
-    // it('casting', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'moldCasting')
-    //         .action(5.487, (e, r) => {
-    //             expect(r).to.equal(5)
-    //             done()
-    //         })
-    // })
+    it('casting', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldCasting')
+            .action(5.487, (e, r) => {
+                expect(r).to.equal(5)
+                done()
+            })
+    })
 
-    // it('custom mold', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'customMold')
-    //         .action(10, (e, r) => {
-    //             expect(r).to.equal('10')
-    //             done()
-    //         })
-    // })
+    it('custom mold', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'customMold')
+            .action(10, (e, r) => {
+                expect(r).to.equal('10')
+                done()
+            })
+    })
 
-    // it('mold error', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'customMold')
-    //         .action(123, (e, r) => {
-    //             expect(e).to.equal('Error')
-    //             done()
-    //         })
-    // })
+    it('mold error', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'customMold')
+            .action(123, (e, r) => {
+                expect(e.message).to.equal('Error')
+                done()
+            })
+    })
 
-    // it('store', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'storeTest')
-    //         .action((e, r) => {
-    //             expect(r).to.equal('test')
-    //             done()
-    //         })
-    // })
+    it('store', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'storeTest')
+            .action((e, r) => {
+                expect(r).to.equal('test')
+                done()
+            })
+    })
 
-    // it('include', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'includeTest')
-    //         .action(5, 10, (e, r) => {
-    //             expect(r).to.equal(15)
-    //             done()
-    //         })
-    // })
+    it('include', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'includeTest')
+            .action(5, 10, (e, r) => {
+                expect(r).to.equal(15)
+                done()
+            })
+    })
 
-    // it('group', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'groupTest')
-    //         .action((e, r) => {
-    //             expect(r).to.equal('test')
-    //             done()
-    //         })
-    // })
+    it('group', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'groupTest')
+            .action((e, r) => {
+                expect(r).to.equal('test')
+                done()
+            })
+    })
 
-    // it('handler casting', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'handlerCasting')
-    //         .action(10, (e, r) => {
-    //             expect(r).to.equal('10')
-    //             this.packhouse
-    //                 .tool('demoGroup', 'handlerCasting')
-    //                 .action('123', (e, r) => {
-    //                     expect(e).to.equal('Error')
-    //                     done()
-    //                 })
-    //         })
-    // })
+    it('handler casting', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'handlerCasting')
+            .action(10, (e, r) => {
+                expect(r).to.equal('10')
+                this.packhouse
+                    .tool('demoGroup', 'handlerCasting')
+                    .action('123', (e, r) => {
+                        expect(e.message).to.equal('Error')
+                        done()
+                    })
+            })
+    })
 
-    // it('handler utils', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'utilsTest')
-    //         .action(10, (e, r) => {
-    //             expect(r).to.equal('number')
-    //             done()
-    //         })
-    // })
+    it('handler utils', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'utilsTest')
+            .action(10, (e, r) => {
+                expect(r).to.equal('number')
+                done()
+            })
+    })
 
-    // it('use line', function(done) {
-    //     this.packhouse
-    //         .line('demoGroup', 'math')(5)
-    //         .add(10)
-    //         .double()
-    //         .action((e, r) => {
-    //             expect(r).to.equal(30)
-    //             done()
-    //         })
-    // })
+    it('use line', function(done) {
+        this.packhouse
+            .line('demoGroup', 'math')(5)
+            .add(10)
+            .double()
+            .action((e, r) => {
+                expect(r).to.equal(30)
+                done()
+            })
+    })
 
-    // it('use line error', function(done) {
-    //     this.packhouse
-    //         .line('demoGroup', 'math')(5)
-    //         .add('10')
-    //         .double()
-    //         .action((e, r) => {
-    //             expect(typeof e).to.equal('string')
-    //             done()
-    //         })
-    // })
+    it('use line error', function(done) {
+        this.packhouse
+            .line('demoGroup', 'math')(5)
+            .add('10')
+            .double()
+            .action((e, r) => {
+                expect(typeof e.message).to.equal('string')
+                done()
+            })
+    })
 
-    // it('merger', function(done) {
-    //     this.packhouse
-    //         .tool('aws@dynamoDB', 'get')
-    //         .action('a', 'b', (e, r) => {
-    //             expect(r).to.equal('table - ab')
-    //             done()
-    //         })
-    // })
+    it('merger', function(done) {
+        this.packhouse
+            .tool('aws@dynamoDB', 'get')
+            .action('a', 'b', (e, r) => {
+                expect(r).to.equal('table - ab')
+                done()
+            })
+    })
 
-    // it('coop', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'get')
-    //         .action('b', (e, r) => {
-    //             expect(r).to.equal('table - ab')
-    //             done()
-    //         })
-    // })
+    it('coop', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'get')
+            .action('b', (e, r) => {
+                expect(r).to.equal('table - ab')
+                done()
+            })
+    })
 
-    // it('event use', function(done) {
-    //     this.packhouse.on('use', (event, { type, name, group }) => {
-    //         expect(type).to.equal('tool')
-    //         expect(name).to.equal('get')
-    //         expect(group.name).to.equal('demoGroup')
-    //         expect(group.sign).to.equal('')
-    //         this.packhouse.off('use', event.id)
-    //         done()
-    //     })
-    //     this.packhouse
-    //         .tool('demoGroup', 'get')
-    //         .action('b', (e, r) => {})
-    // })
+    it('event use', function(done) {
+        this.packhouse.on('use', (event, { type, name, group }) => {
+            expect(type).to.equal('tool')
+            expect(name).to.equal('get')
+            expect(group.name).to.equal('demoGroup')
+            expect(group.sign).to.equal('')
+            this.packhouse.off('use', event.id)
+            done()
+        })
+        this.packhouse
+            .tool('demoGroup', 'get')
+            .action('b', (e, r) => {})
+    })
 
-    // it('event run', function(done) {
-    //     let callerId = null
-    //     this.packhouse.on('run', (event, { id, caller, detail }) => {
-    //         if (detail.group.name === 'dynamoDB') {
-    //             expect(caller.id === callerId).to.equal(true)
-    //             event.off()
-    //             done()
-    //         } else {
-    //             expect(typeof id).to.equal('string')
-    //             expect(caller).to.equal(null)
-    //             callerId = id
-    //         }
-    //     })
-    //     this.packhouse
-    //         .tool('demoGroup', 'get')
-    //         .action('b', (e, r) => {})
-    // })
+    it('event run', function(done) {
+        let callerId = null
+        this.packhouse.on('run', (event, { id, caller, detail }) => {
+            if (detail.group.name === 'dynamoDB') {
+                expect(caller.id === callerId).to.equal(true)
+                event.off()
+                done()
+            } else {
+                expect(typeof id).to.equal('string')
+                expect(caller).to.equal(null)
+                callerId = id
+            }
+        })
+        this.packhouse
+            .tool('demoGroup', 'get')
+            .action('b', (e, r) => {})
+    })
 
-    // it('event done', function(done) {
-    //     this.packhouse.on('done', (event, { detail }) => {
-    //         if (detail.success === false) {
-    //             expect(typeof detail.result).to.equal('string')
-    //             event.off()
-    //             done()
-    //         }
-    //         if (detail.success === true) {
-    //             expect(detail.result).to.equal(30)
-    //         }
-    //     })
-    //     this.packhouse
-    //         .tool('demoGroup', 'sum')
-    //         .promise(10, 20)
-    //         .then(() => {
-    //             this.packhouse
-    //                 .tool('demoGroup', 'sum')
-    //                 .action('10', 20, () => {})
-    //         })
-    // })
+    it('event done', function(done) {
+        this.packhouse.on('done', (event, { detail }) => {
+            if (detail.success === false) {
+                expect(typeof detail.result.message).to.equal('string')
+                event.off()
+                done()
+            }
+            if (detail.success === true) {
+                expect(detail.result).to.equal(30)
+            }
+        })
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .promise(10, 20)
+            .then(() => {
+                this.packhouse
+                    .tool('demoGroup', 'sum')
+                    .action('10', 20, () => {})
+            })
+    })
 
-    // it('merger option', function(done) {
-    //     this.packhouse
-    //         .tool('aws@dynamoDB', 'optionTest')
-    //         .action((e, r) => {
-    //             expect(r).to.equal('test')
-    //             done()
-    //         })
-    // })
+    it('merger option', function(done) {
+        this.packhouse
+            .tool('aws@dynamoDB', 'optionTest')
+            .action((e, r) => {
+                expect(r).to.equal('test')
+                done()
+            })
+    })
 
-    // it('orderTest', function(done) {
-    //     let time = Date.now()
-    //     this.packhouse
-    //         .tool('demoGroup', 'orderTest')
-    //         .action('123', () => {
-    //             let nextTime = Date.now()
-    //             expect(nextTime - time > 50).to.equal(true)
-    //             this.packhouse
-    //                 .tool('demoGroup', 'orderTest')
-    //                 .action('123', () => {
-    //                     let newNextTime = Date.now()
-    //                     expect(newNextTime - nextTime > 50).to.equal(false)
-    //                     done()
-    //                 })
-    //         })
-    // })
+    it('orderTest', function(done) {
+        let time = Date.now()
+        this.packhouse
+            .tool('demoGroup', 'orderTest')
+            .action('123', () => {
+                let nextTime = Date.now()
+                expect(nextTime - time > 50).to.equal(true)
+                this.packhouse
+                    .tool('demoGroup', 'orderTest')
+                    .action('123', () => {
+                        let newNextTime = Date.now()
+                        expect(newNextTime - nextTime > 50).to.equal(false)
+                        done()
+                    })
+            })
+    })
 
-    // it('plugin', function(done) {
-    //     this.packhouse
-    //         .plugin({
-    //             install(packhouse) {
-    //                 expect(typeof packhouse.utils.generateId()).to.equal('string')
-    //                 done()
-    //             }
-    //         })
-    // })
+    it('plugin', function(done) {
+        this.packhouse
+            .plugin(class {
+                constructor(packhouse) {
+                    expect(typeof packhouse.utils.generateId()).to.equal('string')
+                    done()
+                }
+            })
+    })
 
-    // it('promise', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'sum')
-    //         .promise(10, 20)
-    //         .then((result) => {
-    //             expect(result).to.equal(30)
-    //             done()
-    //         })
-    // })
+    it('promise', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .promise(10, 20)
+            .then((result) => {
+                expect(result).to.equal(30)
+                done()
+            })
+    })
 
-    // it('promise error', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'sum')
-    //         .promise(10, '20')
-    //         .catch((error) => {
-    //             expect(typeof error).to.equal('string')
-    //             done()
-    //         })
-    // })
+    it('promise error', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .promise(10, '20')
+            .catch((error) => {
+                expect(typeof error.message).to.equal('string')
+                done()
+            })
+    })
 
-    // it('promise error with ng', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'sum')
-    //         .noGood(() => {})
-    //         .promise(10, '20')
-    //         .then(result => {
-    //             expect(typeof result).to.equal('string')
-    //             done()
-    //         })
-    // })
+    it('promise error with ng', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .noGood(() => {})
+            .promise(10, '20')
+            .then(result => {
+                expect(typeof result.message).to.equal('string')
+                done()
+            })
+    })
 
-    // it('promise error with ng and reject', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'sum')
-    //         .noGood(() => {}, { reject: true })
-    //         .promise(10, '20')
-    //         .catch(result => {
-    //             expect(typeof result).to.equal('string')
-    //             done()
-    //         })
-    // })
+    it('promise error with ng and reject', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .noGood(() => {}, { reject: true })
+            .promise(10, '20')
+            .catch(result => {
+                expect(typeof result.message).to.equal('string')
+                done()
+            })
+    })
 
-    // it('promise error with ng and done ng', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'sum')
-    //         .noGood((result) => {
-    //             expect(typeof result).to.equal('string')
-    //             done()
-    //         })
-    //         .promise(10, '20')
-    // })
+    it('promise error with ng and done ng', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .noGood((result) => {
+                expect(typeof result.message).to.equal('string')
+                done()
+            })
+            .promise(10, '20')
+    })
 
-    // it('promise error with ng and done always', function(done) {
-    //     this.packhouse
-    //         .tool('demoGroup', 'sum')
-    //         .always(({ result, success }) => {
-    //             expect(typeof result).to.equal('string')
-    //             expect(success).to.equal(false)
-    //             done()
-    //         })
-    //         .noGood(() => {})
-    //         .promise(10, '20')
-    // })
+    it('promise error with ng and done always', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .always(({ result, success }) => {
+                expect(typeof result.message).to.equal('string')
+                expect(success).to.equal(false)
+                done()
+            })
+            .noGood(() => {})
+            .promise(10, '20')
+    })
 })

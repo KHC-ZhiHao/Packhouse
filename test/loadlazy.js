@@ -3,16 +3,15 @@ const Packhouse = require('../src/Main')
 
 const expect = require('chai').expect
 let packhouse = new Packhouse()
-let lazyLoad = new LazyLoad({
+
+packhouse.plugin(LazyLoad, {
     group: name => require(`./group/${name}`),
     merger: sign => require(`./merger/${sign}`),
     groupOptions: {},
     mergerOptions: {}
 })
 
-packhouse.plugin(lazyLoad)
-
-describe('#Step', () => {
+describe('#Loadlazy', () => {
     it('group', function(done) {
         packhouse
             .tool('index', 'sum')

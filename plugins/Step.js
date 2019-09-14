@@ -167,8 +167,8 @@ class Flow {
 
     initContext() {
         this.context = {
-            exit: (message) => { this.finish(true, message) },
-            fail: (message) => { this.finish(false, message) },
+            exit: message => this.finish(true, message),
+            fail: message => this.finish(false, message),
             lastCall: null,
             nextCall: null
         }
@@ -269,14 +269,11 @@ class Flow {
  */
 
 class Step {
-    constructor(options) {
-        this._options = options
-    }
-
-    install(packhouse) {
-        this._core = new StepCore(packhouse, this._options)
+    constructor(packhouse, options) {
+        this.core = new StepCore(packhouse, options)
+        this.options = options
         packhouse.step = (options) => {
-            return this._core.start(options)
+            return this.core.start(options)
         }
     }
 }
