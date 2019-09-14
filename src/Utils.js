@@ -75,7 +75,7 @@ class Utils {
             return obj && obj[key] !== 'undefined' ? obj[key] : undefined
         }, target)
         if (def) {
-            return Helper.isEmpty(output) ? def : output
+            return output == null ? def : output
         }
         return output
     }

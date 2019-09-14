@@ -424,5 +424,11 @@ describe('#Packhouse', () => {
             }
         }, 'a.b')
         expect(target).to.equal(5)
+        let target2 = Packhouse.utils.peel({
+            a: {
+                b: 5
+            }
+        }, 'a.b.c', 10)
+        expect(target2).to.equal(10)
     })
 })
