@@ -101,14 +101,14 @@ class History {
             profile,
             template: this.list,
             isDone: name => this.isDone(name),
-            toJSON: beautify => this.toJSON(profile, beautify)
+            toJSON: (beautify, metadata) => this.toJSON(profile, beautify, metadata)
         }
     }
 
-    toJSON(profile, beautify) {
+    toJSON(profile, beautify, metadata = {}) {
         let data = {
-            self: this.flow.self,
             profile,
+            metadata,
             template: this.list
         }
         if (beautify) {

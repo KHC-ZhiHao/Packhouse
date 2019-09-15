@@ -6,7 +6,7 @@ module.exports = {
         if (typeof value === 'boolean') {
             return value
         } else {
-            throw new Error(`Value ${index} not a boolean(${param}).`)
+            throw new Error(`Value ${index} not a boolean(${value}).`)
         }
     },
     number(value, { extras, index }) {
@@ -16,10 +16,10 @@ module.exports = {
         if (typeof value !== 'number') {
             throw new Error(`Value ${index} not a number(${value}).`)
         }
-        if (extras.max && param > Number(extras.max)) {
+        if (extras.max && value > Number(extras.max)) {
             throw new Error(`Value ${index} less of (${extras.max}).`)
         }
-        if (extras.min && param < Number(extras.min)) {
+        if (extras.min && value < Number(extras.min)) {
             throw new Error(`Value ${index} exceed of (${extras.min}).`)
         }
         return value
@@ -31,10 +31,10 @@ module.exports = {
         if (typeof value !== 'number') {
             throw new Error(`Value ${index} not a number(${value}).`)
         }
-        if (extras.max && param > Number(extras.max)) {
+        if (extras.max && value > Number(extras.max)) {
             throw new Error(`Value ${index} less of (${extras.max}).`)
         }
-        if (extras.min && param < Number(extras.min)) {
+        if (extras.min && value < Number(extras.min)) {
             throw new Error(`Value ${index} exceed of (${extras.min}).`)
         }
         return Math.floor(value)
