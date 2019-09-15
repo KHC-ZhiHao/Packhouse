@@ -101,4 +101,33 @@ describe('#Step', () => {
                 done()
             })
     })
+
+    it('step of line', function(done) {
+        let template = [
+            function(next) {
+                packhouse
+                    .tool('demo', 'coopLine')
+                    .action('b', (e, r) => {
+                        this.result = r
+                        next()
+                    })
+            }
+        ]
+        let packhouse = new Packhouse()
+        packhouse.plugin(Step)
+        packhouse.addGroup('demo', group)
+        packhouse.merger('aws', require('./merger/aws/index.js'))
+        packhouse.step({
+            template,
+            output({ history }, success, error) {
+                console.log(history.toJSON(true))
+                expect(typeof history.toJSON(true)).to.equal('string')
+                success('123')
+            }
+        })
+            .then((result) => {
+                expect(result).to.equal('123')
+                done()
+            })
+    })
 })

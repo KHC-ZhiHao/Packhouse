@@ -19,8 +19,9 @@ class StepCore {
 }
 
 class History {
-    constructor(core) {
+    constructor(flow, core) {
         this.list = []
+        this.flow = flow
         this.index = 0
         this.startTime = Date.now()
         this.packhouse = core.packhouse
@@ -100,17 +101,20 @@ class History {
             profile,
             template: this.list,
             isDone: name => this.isDone(name),
-            toJSON: (beautify) => {
-                let data = {
-                    profile,
-                    template: this.list
-                }
-                if (beautify) {
-                    return JSON.stringify(this.inspect(data), null, 4)
-                }
-                return JSON.stringify(this.inspect(data))
-            }
+            toJSON: beautify => this.toJSON(profile, beautify)
         }
+    }
+
+    toJSON(profile, beautify) {
+        let data = {
+            self: this.flow.self,
+            profile,
+            template: this.list
+        }
+        if (beautify) {
+            return JSON.stringify(this.inspect(data), null, 4)
+        }
+        return JSON.stringify(this.inspect(data))
     }
 
     isDone(name) {
@@ -170,7 +174,7 @@ class Flow {
         this.error = error
         this.system = system
         this.success = success
-        this.history = new History(core)
+        this.history = new History(this, core)
         this.template = this.system.template.slice()
         this.initContext()
         this.initTimeout()
@@ -234,7 +238,12 @@ class Flow {
             this.history.input({ name: template.name })
             this.context.lastCall = template.name || null
             this.context.nextCall = this.template[0] ? this.template[0].name : null
-            template.call(this.self, next, this.context)
+            try {
+                template.call(this.self, next, this.context)
+            } catch (error) {
+                this.done()
+                throw new Error(error)
+            }
         }
     }
 
@@ -264,13 +273,18 @@ class Flow {
         }
         if (this.over === false) {
             this.over = true
-            this.system.output.call(this.self, context, (result) => {
+            try {
+                this.system.output.call(this.self, context, (result) => {
+                    this.done()
+                    this.success(result)
+                }, (result) => {
+                    this.done()
+                    this.error(result)
+                })
+            } catch (error) {
                 this.done()
-                this.success(result)
-            }, (result) => {
-                this.done()
-                this.error(result)
-            })
+                throw new Error(error)
+            }
         }
     }
 }

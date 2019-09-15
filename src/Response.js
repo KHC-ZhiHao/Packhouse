@@ -36,15 +36,18 @@ class Response extends Base {
     error(result) {
         if (this.over === false) {
             this.over = true
-            this.caller.emit('done', {
-                ...this.context,
-                detail: {
-                    result,
-                    success: false
-                }
-            })
+            if (this.caller.emit) {
+                this.caller.emit('done', {
+                    ...this.context,
+                    detail: {
+                        result,
+                        success: false
+                    }
+                })
+            }
             this.callAlways({
                 result,
+                context: this.context,
                 success: false
             })
             this.errorBase(result)
@@ -54,16 +57,19 @@ class Response extends Base {
     success(result) {
         if (this.over === false) {
             this.over = true
-            this.caller.emit('done', {
-                ...this.context,
-                detail: {
-                    result,
-                    success: true
-                }
-            })
+            if (this.caller.emit) {
+                this.caller.emit('done', {
+                    ...this.context,
+                    detail: {
+                        result,
+                        success: true
+                    }
+                })
+            }
             this.runWeld(result, (result) => {
                 this.callAlways({
                     result,
+                    context: this.context,
                     success: true
                 })
                 this.successBase(result)

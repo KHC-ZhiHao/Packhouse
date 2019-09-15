@@ -32,6 +32,26 @@ module.exports = {
                     .action(name, this.success)
             }
         },
+        coopLine: {
+            install({ include }) {
+                include('query').coop('dynamoDB', 'line', 'query')
+            },
+            handler(name) {
+                this.use('query')(name)
+                    .get('123')
+                    .action((err, result) => {
+                        this.success(result)
+                    })
+            }
+        },
+        toolCantReturn: {
+            install({ include }) {
+                include('query').line('math').action(() => {})
+            },
+            handler() {
+                this.success()
+            }
+        },
         moldTest: {
             molds: ['string', 'boolean', 'array', 'buffer', 'object', 'function', 'date', 'required'],
             handler() {

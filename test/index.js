@@ -246,6 +246,16 @@ describe('#Packhouse', () => {
             })
     })
 
+    it('use line no return', function(done) {
+        try {
+            this.packhouse
+                .tool('demoGroup', 'toolCantReturn')
+                .action((e, r) => {})
+        } catch (error) {
+            done()
+        }
+    })
+
     it('merger', function(done) {
         this.packhouse
             .tool('aws@dynamoDB', 'get')
@@ -260,6 +270,15 @@ describe('#Packhouse', () => {
             .tool('demoGroup', 'get')
             .action('b', (e, r) => {
                 expect(r).to.equal('table - ab')
+                done()
+            })
+    })
+
+    it('coop line', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'coopLine')
+            .action('b', (e, r) => {
+                expect(r).to.equal('table - 123b')
                 done()
             })
     })

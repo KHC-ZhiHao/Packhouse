@@ -33,7 +33,7 @@ class LambdaCore extends Base {
                 if (this.tool.used[key] instanceof Lambda) {
                     used[key] = this.tool.used[key]._core.copy(context)
                 } else {
-                    this.$devError('createLambda', 'Include must be a tool or line.')
+                    used[key] = (...args) => this.tool.used[key](context, ...args)
                 }
             }
             return this.tool[mode]({

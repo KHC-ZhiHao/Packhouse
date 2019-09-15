@@ -12,7 +12,9 @@ class Includes {
 
     coop(merger, type, name) {
         this._tool.used[this._name] = this._tool.group.callCoop(merger)[type](name)
-        return this._tool.used[this._name]
+        if (type === 'tool') {
+            return this._tool.used[this._name]
+        }
     }
 
     tool(name) {
@@ -22,7 +24,6 @@ class Includes {
 
     line(name) {
         this._tool.used[this._name] = this._tool.group.callLine(name)
-        return this._tool.used[this._name]
     }
 }
 
@@ -79,7 +80,6 @@ class Tool extends Base {
         this.emit('run', {
             ...context,
             detail: {
-                type: 'tool',
                 name: this.name,
                 args: parameters,
                 mode,

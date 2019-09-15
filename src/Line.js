@@ -1,7 +1,6 @@
 const Base = require('./Base')
 const Tool = require('./Tool')
 const Utils = require('./Utils')
-const Context = require('./Context')
 const Response = require('./Response')
 
 class Line extends Base {
@@ -28,21 +27,21 @@ class Line extends Base {
     }
 
     use() {
-        return (...args) => {
-            return (new Deploy(this, args)).conveyer
+        return (caller, ...args) => {
+            return (new Deploy(this, caller, args)).conveyer
         }
     }
 }
 
 class Deploy extends Base {
-    constructor(main, args) {
+    constructor(main, caller, args) {
         super('Deploy')
         this.flow = []
         this.main = main
         this.args = args
         this.group = this.main.group
+        this.caller = caller
         this.layout = main.options.layout
-        this.context = new Context()
         this.mainTool = undefined
         this.init()
     }
@@ -88,32 +87,19 @@ class Deploy extends Base {
         })
     }
 
-    emit(channel, data) {
-        this.group.packhouse.event.emit(channel, data)
-    }
-
     action(callback) {
-        let response = new Response.Action(this, null, this.context, callback)
-        this.process('action', response)
+        let response = new Response.Action(this, null, null, callback)
+        this.process(response)
     }
 
     promise() {
         return new Promise((resolve, reject) => {
-            let response = new Response.Promise(this, null, this.context, resolve, reject)
-            this.process('promise', response)
+            let response = new Response.Promise(this, null, null, resolve, reject)
+            this.process(response)
         })
     }
 
-    process(mode, response) {
-        this.emit('run', {
-            ...context,
-            detail: {
-                type: 'line',
-                name: this.main.name,
-                args: this.args,
-                mode
-            }
-        })
+    process(response) {
         new Process(this, response)
     }
 }
@@ -126,10 +112,14 @@ class Process extends Base {
         this.deploy = deploy
         this.error = response.exports.error
         this.success = response.exports.success
+        this.context = null
         this.deploy
             .input
             .noGood(e => this.fail(e))
-            .action(this.deploy.context, ...this.deploy.args, this.next.bind(this))
+            .always(data => { this.context = data.context })
+            .action(this.deploy.caller, ...this.deploy.args, () => {
+                this.next()
+            })
     }
 
     fail(error) {
@@ -147,7 +137,7 @@ class Process extends Base {
         if (flow) {
             flow.tool
                 .noGood(e => this.fail(e))
-                .action(this.deploy.context, ...flow.args, () => {
+                .action(this.context, ...flow.args, () => {
                     this.index += 1
                     this.next()
                 })
@@ -160,7 +150,7 @@ class Process extends Base {
         this.deploy
             .output
             .noGood(e => this.fail(e))
-            .action(this.deploy.context, this.success)
+            .action(this.context, this.success)
     }
 }
 

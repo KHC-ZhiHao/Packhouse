@@ -65,10 +65,6 @@ class PackhouseCore extends Base {
         } else {
             target = this.getGroup(group).callLine(name)
         }
-        let action = target.action
-        let promise = target.promise
-        target.action = (...args) => action(null, ...args)
-        target.promise = (...args) => promise(null, ...args)
         return target
     }
 
@@ -121,11 +117,16 @@ class Packhouse {
     }
 
     tool(groupName, name) {
-        return this._core.callTool(groupName, name)
+        let tool = this._core.callTool(groupName, name)
+        let action = tool.action
+        let promise = tool.promise
+        tool.action = (...args) => action(null, ...args)
+        tool.promise = (...args) => promise(null, ...args)
+        return tool
     }
 
     line(groupName, name) {
-        return this._core.callLine(groupName, name)
+        return (...args) => this._core.callLine(groupName, name)(null, ...args)
     }
 
     plugin(Plugin, options) {
