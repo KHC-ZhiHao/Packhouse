@@ -9,7 +9,7 @@ module.exports = {
         path: path.resolve(__dirname, './dist'),
         publicPath: '/dist/',
         filename: 'index.js',
-        globalObject: `this || (typeof window !== 'undefined' ? window : global)`
+        globalObject: 'this || (typeof window !== \'undefined\' ? window : global)'
     },
     module: {
         rules: [

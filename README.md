@@ -1,6 +1,6 @@
 <p align="center"><img src="https://khc-zhihao.github.io/MyBook/Packhouse/images/logo.png"></p>
 
-<p align="center" style="font-size:2em">Functional Programming Framework</p>
+<p align="center" style="font-size:2em">Functional Programming Design Pattern</p>
 
 <p align="center">
     <a href="https://www.npmjs.com/package/packhouse"><img src="https://img.shields.io/npm/v/packhouse.svg"></a>
@@ -27,15 +27,11 @@
 
 <br>
 
-## 函數式程式設計
+## Functional Programming
 
 雖然Packhouse不是那麼遵守函數式程式設計典範，但還是請您開始前可以閱讀下列文章了解`FP`的設計觀念。
 
 [JS函數式編程指南](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)
-
-<br>
-
-## First Function
 
 <br>
 
