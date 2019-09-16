@@ -17,7 +17,7 @@ class PackhouseCore extends Base {
         }
     }
 
-    merger(name, data, configs) {
+    merger(name, data, configs = {}) {
         if (this.modules[name]) {
             this.$devError('merger', `Name(${name}) already exists.`)
         }
@@ -30,7 +30,7 @@ class PackhouseCore extends Base {
             this.addMold(namespace + key, options.molds[key])
         }
         for (let key in options.groups) {
-            this.addGroup(namespace + key, options.groups[key], configs, namespace)
+            this.addGroup(namespace + key, options.groups[key], namespace, configs)
         }
         this.modules[name] = true
     }
@@ -38,6 +38,9 @@ class PackhouseCore extends Base {
     getGroup(name) {
         if (this.hasGroup(name) === false) {
             this.$devError('getGroup', `Group(${name}) not found.`)
+        }
+        if (typeof this.groupbox[name] === 'function') {
+            this.groupbox[name]()
         }
         return this.groupbox[name]
     }
@@ -76,14 +79,17 @@ class PackhouseCore extends Base {
         return this.getProcess('line', group, name)
     }
 
-    addGroup(name, groupOptions, configs, namespace) {
+    addGroup(name, install, namespace, configs) {
         if (typeof name !== 'string') {
             this.$devError('addGroup', `Name(${name}) not a string.`)
         }
         if (this.groupbox[name] != null) {
             this.$devError('addGroup', `Name(${name}) already exists.`)
         }
-        this.groupbox[name] = new Group(this, groupOptions, configs, { name, namespace })
+        this.groupbox[name] = () => {
+            let data = install(configs)
+            this.groupbox[name] = new Group(this, data.data, data.options, { name, namespace })
+        }
     }
 
     addMold(name, options) {
@@ -141,8 +147,12 @@ class Packhouse {
         return this._core.addMold(name, options)
     }
 
-    addGroup(name, groupOptions, configs) {
-        return this._core.addGroup(name, groupOptions, configs)
+    addGroup(name, install) {
+        return this._core.addGroup(name, install)
+    }
+
+    add(name, install) {
+        return this._core.addGroup(name, install)
     }
 
     hasMold(name) {

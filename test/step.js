@@ -59,7 +59,11 @@ describe('#Step', () => {
         ]
         let packhouse = new Packhouse()
         packhouse.plugin(Step)
-        packhouse.addGroup('demo', group)
+        packhouse.add('demo', () => {
+            return {
+                data: group
+            }
+        })
         packhouse.merger('aws', require('./merger/aws/index.js'))
         packhouse.step({
             template,
@@ -86,7 +90,11 @@ describe('#Step', () => {
         ]
         let packhouse = new Packhouse()
         packhouse.plugin(Step)
-        packhouse.addGroup('demo', group)
+        packhouse.add('demo', () => {
+            return {
+                data: group
+            }
+        })
         packhouse.merger('aws', require('./merger/aws/index.js'))
         packhouse.step({
             template,
@@ -115,12 +123,15 @@ describe('#Step', () => {
         ]
         let packhouse = new Packhouse()
         packhouse.plugin(Step)
-        packhouse.addGroup('demo', group)
+        packhouse.add('demo', () => {
+            return {
+                data: group
+            }
+        })
         packhouse.merger('aws', require('./merger/aws/index.js'))
         packhouse.step({
             template,
-            output({ history }, success, error) {
-                console.log(history.toJSON(true))
+            output({ history }, success) {
                 expect(typeof history.toJSON(true)).to.equal('string')
                 success('123')
             }

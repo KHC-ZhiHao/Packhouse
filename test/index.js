@@ -16,7 +16,14 @@ describe('#Packhouse', () => {
     })
 
     it('add Group', function() {
-        this.packhouse.addGroup('demoGroup', group, { test: 'test' })
+        this.packhouse.add('demoGroup', () => {
+            return {
+                data: group,
+                options: {
+                    test: 'test'
+                }
+            }
+        })
         expect(this.packhouse.hasGroup('demoGroup')).to.equal(true)
         expect(this.packhouse.hasGroup('demoGroup22')).to.equal(false)
     })

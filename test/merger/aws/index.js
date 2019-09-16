@@ -1,5 +1,3 @@
-let dynamoDB = require('./dynamodb')
-
 module.exports = {
     molds: {
         tableName(value) {
@@ -11,6 +9,11 @@ module.exports = {
         }
     },
     groups: {
-        dynamoDB
+        dynamoDB(options) {
+            return {
+                data: require('./dynamodb'),
+                options: options.ddb
+            }
+        }
     }
 }

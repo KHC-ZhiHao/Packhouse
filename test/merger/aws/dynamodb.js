@@ -1,6 +1,6 @@
 module.exports = {
-    install(group, { ddb }) {
-        group.ddb = ddb
+    install(group, options) {
+        group.ddb = options
     },
     tools: {
         get: {
