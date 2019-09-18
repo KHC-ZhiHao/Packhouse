@@ -45,12 +45,12 @@ class Response extends Base {
                     }
                 })
             }
+            this.errorBase(result)
             this.callAlways({
                 result,
                 context: this.context,
                 success: false
             })
-            this.errorBase(result)
         }
     }
 
@@ -67,12 +67,12 @@ class Response extends Base {
                 })
             }
             this.runWeld(result, (result) => {
+                this.successBase(result)
                 this.callAlways({
                     result,
                     context: this.context,
                     success: true
                 })
-                this.successBase(result)
             })
         }
     }
@@ -88,11 +88,11 @@ class Response extends Base {
             if (this.noGood) {
                 this.noGood(result)
             }
+            this.errorBase(result)
             this.callAlways({
                 result,
                 success: false
             })
-            this.errorBase(result)
         }
         if (weld) {
             tool = this.group.callTool(weld.tool)

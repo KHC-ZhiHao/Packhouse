@@ -238,22 +238,15 @@ class Flow {
             this.history.input({ name: template.name })
             this.context.lastCall = template.name || null
             this.context.nextCall = this.template[0] ? this.template[0].name : null
-            try {
-                template.call(this.self, next, this.context)
-            } catch (error) {
-                this.done()
-                throw new Error(error)
-            }
+            template.call(this.self, next, this.context)
         }
     }
 
     next() {
-        setTimeout(() => {
-            if (this.over === false) {
-                this.system.middle.call(this.self, this.context)
-                this.iterator()
-            }
-        }, 1)
+        if (this.over === false) {
+            this.system.middle.call(this.self, this.context)
+            this.iterator()
+        }
     }
 
     done() {

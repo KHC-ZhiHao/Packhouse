@@ -443,6 +443,17 @@ describe('#Packhouse', () => {
             .promise(10, '20')
     })
 
+    it('promise with always', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .always(({ result, success }) => {
+                expect(result).to.equal(30)
+                expect(success).to.equal(true)
+                done()
+            })
+            .promise(10, 20)
+    })
+
     it('utils : peel', function() {
         let target = Packhouse.utils.peel({
             a: {
