@@ -54,11 +54,12 @@ class Tool extends Base {
         this.store = reference.store || {}
         this.group = group
         this.options = Utils.verify(options, {
-            molds: [false, ['array'], []],
+            request: [false, ['array'], []],
             handler: [true, ['function']],
-            install: [false, ['function'], () => {}]
+            install: [false, ['function'], () => {}],
+            response: [false, ['string'], null]
         })
-        this.moldsJSON = JSON.stringify(this.options.molds)
+        this.requestJSON = JSON.stringify(this.options.request)
     }
 
     install() {
@@ -83,17 +84,18 @@ class Tool extends Base {
                 name: this.name,
                 args: parameters,
                 mode,
-                molds: this.moldsJSON,
+                request: this.requestJSON,
+                response: this.options.response,
                 group: {
                     name: this.group.name,
                     sign: this.group.sign
                 }
             }
         })
-        // mold
-        let length = this.options.molds.length
+        // request
+        let length = this.options.request.length
         for (let i = 0; i < length; i++) {
-            let mold = this.options.molds[i]
+            let mold = this.options.request[i]
             if (mold == null) {
                 continue
             }

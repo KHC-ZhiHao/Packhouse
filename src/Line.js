@@ -1,7 +1,6 @@
 const Base = require('./Base')
 const Tool = require('./Tool')
 const Utils = require('./Utils')
-const Response = require('./Response')
 
 class Line extends Base {
     constructor(group, options, name) {
@@ -11,9 +10,10 @@ class Line extends Base {
         this.options = Utils.verify(options, {
             input: [true, ['function']],
             frame: [false, ['function'], () => {}],
-            molds: [false, ['array'], []],
             output: [true, ['function']],
-            layout: [true, ['object']]
+            layout: [true, ['object']],
+            request: [false, ['array'], []],
+            response: [false, ['string'], null]
         })
         this.layoutKeys = Object.keys(this.options.layout)
         this.checkPrivateKey()
@@ -48,12 +48,13 @@ class Deploy extends Base {
 
     init() {
         this.input = this.createTool('input', {
-            molds: this.main.options.molds,
+            request: this.main.options.request,
             handler: this.main.options.input,
             install: system => this.main.options.frame(system)
         })
         this.output = this.createTool('output', {
-            handler: this.main.options.output
+            handler: this.main.options.output,
+            response: this.main.options.response
         })
         this.initConveyer()
     }
@@ -88,30 +89,30 @@ class Deploy extends Base {
     }
 
     action(callback) {
-        let response = new Response.Action(this, null, null, callback)
-        this.process(response)
+        let error = error => callback(error, null)
+        let success = result => callback(null, result)
+        this.process(success, error)
     }
 
     promise() {
         return new Promise((resolve, reject) => {
-            let response = new Response.Promise(this, null, null, resolve, reject)
-            this.process(response)
+            this.process(resolve, reject)
         })
     }
 
-    process(response) {
-        new Process(this, response)
+    process(success, error) {
+        new Process(this, success, error)
     }
 }
 
 class Process extends Base {
-    constructor(deploy, response) {
+    constructor(deploy, success, error) {
         super('Process')
         this.stop = false
         this.index = 0
         this.deploy = deploy
-        this.error = response.exports.error
-        this.success = response.exports.success
+        this.error = error
+        this.success = success
         this.context = null
         this.deploy
             .input

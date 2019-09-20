@@ -4,7 +4,7 @@ module.exports = {
     },
     tools: {
         get: {
-            molds: ['tableName', 'string'],
+            request: ['tableName', 'string'],
             handler(tableName, name) {
                 this.success(tableName + name)
             }
@@ -20,7 +20,7 @@ module.exports = {
     },
     lines: {
         query: {
-            molds: ['string'],
+            request: ['string'],
             frame({ include }) {
                 include('get').tool('get')
             },

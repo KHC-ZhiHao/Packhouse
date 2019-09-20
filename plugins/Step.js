@@ -90,9 +90,12 @@ class History {
         return output
     }
 
-    exports() {
+    exports(fail, message, timeout) {
         let now = Date.now()
         let profile = {
+            fail,
+            message,
+            timeout,
             startTime: this.startTime,
             finishTime: now,
             totalTime: now - this.startTime
@@ -183,8 +186,8 @@ class Flow {
 
     initContext() {
         this.context = {
-            exit: message => this.finish(true, message),
-            fail: message => this.finish(false, message),
+            exit: message => this.finish(false, message),
+            fail: message => this.finish(true, message),
             lastCall: null,
             nextCall: null
         }
@@ -199,7 +202,7 @@ class Flow {
 
     timeoutHandler() {
         if (this.over === false) {
-            let history = this.history.exports()
+            let history = this.history.exports(true, 'timeout', true)
             let context = {
                 history,
                 timeout: true
@@ -256,28 +259,23 @@ class Flow {
         }
     }
 
-    finish(success, message) {
-        let history = this.history.exports()
+    finish(fail, message) {
+        let history = this.history.exports(fail, message, false)
         let context = {
-            success,
+            fail,
             message,
             history,
             timeout: false
         }
         if (this.over === false) {
             this.over = true
-            try {
-                this.system.output.call(this.self, context, (result) => {
-                    this.done()
-                    this.success(result)
-                }, (result) => {
-                    this.done()
-                    this.error(result)
-                })
-            } catch (error) {
+            this.system.output.call(this.self, context, (result) => {
                 this.done()
-                throw new Error(error)
-            }
+                this.success(result)
+            }, (result) => {
+                this.done()
+                this.error(result)
+            })
         }
     }
 }

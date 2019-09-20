@@ -16,13 +16,20 @@ module.exports = {
     },
     tools: {
         sum: {
-            molds: ['number', 'number'],
+            request: ['number', 'number'],
+            handler(value1, value2) {
+                this.success(value1 + value2)
+            }
+        },
+        responseTest: {
+            request: ['number', 'number'],
+            response: 'int',
             handler(value1, value2) {
                 this.success(value1 + value2)
             }
         },
         get: {
-            molds: ['string'],
+            request: ['string'],
             install({ include }) {
                 include('get').coop('dynamoDB', 'tool', 'get').pack('a')
             },
@@ -53,25 +60,25 @@ module.exports = {
             }
         },
         moldTest: {
-            molds: ['string', 'boolean', 'array', 'buffer', 'object', 'function', 'date', 'required'],
+            request: ['string', 'boolean', 'array', 'buffer', 'object', 'function', 'date', 'required'],
             handler() {
                 this.success(true)
             }
         },
         moldAbeTest: {
-            molds: ['string', 'string|abe'],
+            request: ['string', 'string|abe'],
             handler() {
                 this.success(true)
             }
         },
         moldCasting: {
-            molds: ['int'],
+            request: ['int'],
             handler(number) {
                 this.success(number)
             }
         },
         customMold: {
-            molds: ['isTenAndToString'],
+            request: ['isTenAndToString'],
             handler(string) {
                 this.success(string)
             }
@@ -138,8 +145,28 @@ module.exports = {
         }
     },
     lines: {
+        mathResponse: {
+            request: ['number'],
+            response: 'int',
+            input(value) {
+                this.store.value = value
+                this.success()
+            },
+            output() {
+                this.success(this.store.value)
+            },
+            layout: {
+                add: {
+                    request: ['number'],
+                    handler(value) {
+                        this.store.value += value
+                        this.success()
+                    }
+                }
+            }
+        },
         math: {
-            molds: ['number'],
+            request: ['number'],
             frame({ include }) {
                 include('sum').tool('sum')
             },
@@ -152,7 +179,7 @@ module.exports = {
             },
             layout: {
                 add: {
-                    molds: ['number'],
+                    request: ['number'],
                     handler(value) {
                         this.use('sum')
                             .action(this.store.value, value, () => {

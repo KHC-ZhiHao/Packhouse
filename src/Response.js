@@ -2,12 +2,12 @@ const Base = require('./Base.js')
 const Utils = require('./Utils.js')
 
 class Response extends Base {
-    constructor(caller, context, configs) {
+    constructor(tool, context, configs) {
         super('Response')
         this.over = false
+        this.tool = tool
         this.welds = null
-        this.group = caller.group
-        this.caller = caller
+        this.group = tool.group
         this.context = context
         this.exports = {
             error: this.error.bind(this),
@@ -36,15 +36,13 @@ class Response extends Base {
     error(result) {
         if (this.over === false) {
             this.over = true
-            if (this.caller.emit) {
-                this.caller.emit('done', {
-                    ...this.context,
-                    detail: {
-                        result,
-                        success: false
-                    }
-                })
-            }
+            this.tool.emit('done', {
+                ...this.context,
+                detail: {
+                    result,
+                    success: false
+                }
+            })
             this.errorBase(result)
             this.callAlways({
                 result,
@@ -56,16 +54,22 @@ class Response extends Base {
 
     success(result) {
         if (this.over === false) {
-            this.over = true
-            if (this.caller.emit) {
-                this.caller.emit('done', {
-                    ...this.context,
-                    detail: {
-                        result,
-                        success: true
-                    }
-                })
+            let response = this.tool.options.response
+            if (response) {
+                try {
+                    result = this.group.parseMold(response, result, 0)
+                } catch (error) {
+                    return this.error(error)
+                }
             }
+            this.over = true
+            this.tool.emit('done', {
+                ...this.context,
+                detail: {
+                    result,
+                    success: true
+                }
+            })
             this.runWeld(result, (result) => {
                 this.successBase(result)
                 this.callAlways({
@@ -117,8 +121,8 @@ class Response extends Base {
 }
 
 class Action extends Response {
-    constructor(caller, configs, context, callback) {
-        super(caller, context, configs)
+    constructor(tool, configs, context, callback) {
+        super(tool, context, configs)
         this.callback = callback
         if (typeof callback !== 'function') {
             this.$devError('getActionCallback', 'Action must has a callback.')
@@ -144,8 +148,8 @@ class Action extends Response {
 }
 
 class Promise extends Response {
-    constructor(caller, configs, context, resolve, reject) {
-        super(caller, context, configs)
+    constructor(tool, configs, context, resolve, reject) {
+        super(tool, context, configs)
         this.reject = reject
         this.resolve = resolve
     }

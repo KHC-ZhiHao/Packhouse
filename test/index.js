@@ -231,6 +231,25 @@ describe('#Packhouse', () => {
             })
     })
 
+    it('response', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'responseTest')
+            .action(10.1, 20.2, (error, result) => {
+                expect(result).to.equal(30)
+                done()
+            })
+    })
+
+    it('response line', function(done) {
+        this.packhouse
+            .line('demoGroup', 'mathResponse')(10)
+            .add(20.5)
+            .action((error, result) => {
+                expect(result).to.equal(30)
+                done()
+            })
+    })
+
     it('use line', function(done) {
         this.packhouse
             .line('demoGroup', 'math')(5)
