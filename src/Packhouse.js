@@ -92,8 +92,8 @@ class PackhouseCore extends Base {
         }
     }
 
-    addMold(name, options) {
-        this.moldbox.add(name, options)
+    addMold(name, handler) {
+        this.moldbox.add(name, handler)
     }
 
     hasMold(name) {
@@ -143,8 +143,8 @@ class Packhouse {
         return this._core.merger(name, options, configs)
     }
 
-    addMold(name, options) {
-        return this._core.addMold(name, options)
+    addMold(name, handler) {
+        return this._core.addMold(name, handler)
     }
 
     addGroup(name, install) {

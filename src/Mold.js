@@ -40,11 +40,11 @@ class Box extends Base {
         }
     }
 
-    add(name, callback) {
+    add(name, handler) {
         if (this.molds[name]) {
             this.$devError('add', `Name(${name}) already exists.`)
         }
-        this.molds[name] = new Mold(callback)
+        this.molds[name] = new Mold(handler)
     }
 
     cache(text) {
@@ -77,15 +77,16 @@ class Box extends Base {
 }
 
 class Mold extends Base {
-    constructor(callback) {
+    constructor(handler) {
         super('Mold')
         this.case = new MoldStore()
-        this.callback = callback
+        this.handler = handler
     }
 
-    parse(source, context) {
+    parse(source, context, message) {
         context.utils = Utils
-        return this.callback.call(this.case, source, context)
+        context.message = message
+        return this.handler.call(this.case, source, context)
     }
 }
 

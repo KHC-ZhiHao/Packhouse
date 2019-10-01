@@ -55,8 +55,8 @@ class Group extends Base {
         }
     }
 
-    parseMold(name, value, index, callback) {
-        return this.moldbox.parse(name, value, index, callback)
+    parseMold(name, value, index, message) {
+        return this.moldbox.parse(name, value, index, message)
     }
 
     getTool(name) {
