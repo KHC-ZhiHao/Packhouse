@@ -21,7 +21,7 @@ module.exports = {
     lines: {
         query: {
             request: ['string'],
-            frame({ include }) {
+            install({ include }) {
                 include('get').tool('get')
             },
             input(name) {

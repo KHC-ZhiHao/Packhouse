@@ -167,7 +167,7 @@ module.exports = {
         },
         math: {
             request: ['number'],
-            frame({ include }) {
+            install({ include }) {
                 include('sum').tool('sum')
             },
             input(value) {

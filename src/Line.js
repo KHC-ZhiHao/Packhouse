@@ -9,9 +9,9 @@ class Line extends Base {
         this.group = group
         this.options = Utils.verify(options, {
             input: [true, ['function']],
-            frame: [false, ['function'], () => {}],
             output: [true, ['function']],
             layout: [true, ['object']],
+            install: [false, ['function'], () => {}],
             request: [false, ['array'], []],
             response: [false, ['string'], null]
         })
@@ -50,7 +50,7 @@ class Deploy extends Base {
         this.input = this.createTool('input', {
             request: this.main.options.request,
             handler: this.main.options.input,
-            install: system => this.main.options.frame(system)
+            install: system => this.main.options.install(system)
         })
         this.output = this.createTool('output', {
             handler: this.main.options.output,
