@@ -21,7 +21,7 @@
 
 ## 摘要
 
-`Packhouse`是一個基於函數式程式設計(Functional Programming)的設計模式模型，核心目的為使用微服務中的微服務，提供了強大的上下文追蹤與快取系統，適用於為FaaS服務建立良好的編程環境，例如AWS Lambda，最棒的是，`Packhouse`擁有一個美麗的階梯式編寫模式。
+`Packhouse`是一個基於函數式程式設計(Functional Programming)的設計模式模型，核心目的為使用微服務中的微服務，提供了強大的上下文追蹤與快取系統，適用於為FaaS服務建立良好的編程環境，例如AWS Lambda。
 
 本庫不是那麼遵守函數式程式設計典範，但還是請您開始前可以閱讀下列文章了解Functional Programming的設計觀念。
 
@@ -31,7 +31,6 @@
 
 ## Install
 
-npm
 ```bash
 npm i packhouse --save
 ```
@@ -40,7 +39,7 @@ npm i packhouse --save
 
 ## 運行環境
 
-Node 8.1以上。
+Node 8.x以上。
 
 <br>
 
@@ -76,15 +75,15 @@ packhouse.tool('math', 'sum').action(5, 10, (error, result) => {
 })
 ```
 
-> tool是函數的基本單位，整個packhouse的系統都是圍繞著tool打轉。
+> `Tool`是函數的基本單位，整個`Packhouse`的系統都是圍繞著`Tool`打轉。
 
 ---
 
 ### Action
 
-上述的例子可以發現我們使用action調用sum這支tool，action是依照nodejs的callback設計，第一個參數為error，後者為結果，且內部函式如果沒有非同步處理，那本質上會是同步的。
+上述的例子可以發現我們使用`Action`調用sum這支`Tool`，`Action`是依照Node的callback設計，第一個參數為error，後者為結果，且內部函式如果沒有非同步處理，那本質上會是同步的。
 
-> 下列之後的例子會省略建構packhouse的動作。
+> 下列之後的例子會省略建構`Packhouse`的動作。
 
 ```js
 let group = {
@@ -109,9 +108,9 @@ packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
 
 ### Promise
 
-因為success與error可以無縫擔任resolve與reject的腳色，這讓每個tool都可以化身成promise，但promise本質上就是非同步的。
+因為success與error可以無縫擔任resolve與reject的腳色，這讓每個`Tool`都可以化身成promise。
 
-> 雖然有分同步與同步上的區分，但packhouse的原意就是將所有函式都視作非同步函數，減少開發上的擔憂。
+> 雖然有分同步與同步上的區分，但`Packhouse`的原意就是將所有函式都視作非同步函數，減少開發上的擔憂。
 
 ```js
 packhouse.tool('math', 'sum').promise(5, 10).then(r => console.log(r)) // 15
@@ -121,7 +120,7 @@ packhouse.tool('math', 'sum').promise(5, 10).then(r => console.log(r)) // 15
 
 ### Mold
 
-了解mold前，我們先看看基於typescript的函數設計：
+了解`Mold`前，我們先看看基於TypeScript的函數設計：
 
 ```ts
 // 基本函數
@@ -140,7 +139,7 @@ function greeter(person: Person) {
 }
 ```
 
-如上，mode就是負責處理參數結構，宣告模式如下：
+如上，`Mold`就是負責處理參數結構，宣告模式如下：
 
 ```js
 let group = {
@@ -159,13 +158,13 @@ packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
 })
 ```
 
-packhouse內部提供了基礎的mold，number便是其一，若想得知其他mold請參閱文檔。
+`Packhouse`內部提供了基礎的`Mold`，number便是其一，若想得知其他`Base Mold`請參閱文檔。
 
-#### 定義自己的mold
+#### 定義自己的Mold
 
-interface的實踐必須自己建立mold，可以分別建立在packhouse內成為全域的mold或只應用在group中。
+Interface的實踐必須自己建立`Mold`，可以分別建立在`Packhouse`內成為全域的`Mold`或只應用在當下的`Group`中。
 
-> 不建議直接宣告mold在全域，這是給merger的接口。
+> 不建議直接宣告`Mold`在全域，相關方法請參閱`Merger`。
 
 ```js
 let packhouse = new Packhouse()
@@ -218,7 +217,7 @@ let group = {
 }
 ```
 
-#### 使用casting在handler中做mold的驗證或轉換
+#### 使用Casting在Handler中做Mold的驗證或轉換
 
 ```js
 let group = {
@@ -237,7 +236,7 @@ let group = {
 }
 ```
 
-#### mold表示式
+#### Mold表示式
 
 javascript允許預設參數數值，意味著有些參數不是必要的，給予abe(allow be empty)可以允許參數為null或undefined。
 
@@ -254,7 +253,7 @@ let group = {
 }
 ```
 
-#### 自定義mole表示式
+#### 自定義Mold表示式
 
 ```js
 let group = {
@@ -284,7 +283,7 @@ let group = {
 
 ### 預處理
 
-tool的action和promise是一個終點，在宣告它們之前可以預先宣告一些預處理。
+`Tool`的`Action`和`Promise`是一個終點，在宣告它們之前可以預先宣告一些預處理。
 
 #### Pack
 
@@ -301,7 +300,7 @@ packhouse
 
 #### Repack
 
-pack連續宣告會一直往下處理。
+`Pack`連續宣告會一直往下處理。
 
 ```js
 packhouse
@@ -313,7 +312,7 @@ packhouse
     })
 ```
 
-repack會強制從頭開始：
+`Repack`會強制從頭開始：
 
 ```js
 packhouse
@@ -328,7 +327,7 @@ packhouse
 
 #### Weld
 
-把回傳值帶入給另一個tool，搭配pack可以建構初步的柯理化(Currying)概念。
+把回傳值帶入給另一個`Tool`，搭配`Pack`可以建構初步的柯理化(Currying)概念。
 
 ```js
 packhouse
@@ -378,8 +377,6 @@ packhouse
 
 無論成功或失敗都會執行這個callback，重複註冊會被取代。
 
-> always和finally的概念相同，它會在錯誤或成功的邏輯處理完畢後執行。
-
 ```js
 packhouse
     .tool('math', 'sum')
@@ -395,7 +392,7 @@ packhouse
 
 ### 初始化
 
-Group、Tool都有Install的階段，顧名思義就是第一次執行時會呼叫的方法。
+`Group`與`Tool`、`Line`都有`Install`的階段，顧名思義就是第一次執行時會呼叫的方法。
 
 ```js
 let group = {
@@ -415,7 +412,7 @@ let group = {
 
 #### Group
 
-Group物件可以在Install中被讀取到：
+`Group`物件可以在`Install`中被讀取到：
 
 ```js
 let group = {
@@ -434,7 +431,7 @@ let group = {
 
 #### Store
 
-Store物件會被綁定到Tool handler的this中。
+`Store`物件會被綁定到`Tool Handler`的this中。
 
 ```js
 let group = {
@@ -457,7 +454,7 @@ let group = {
 
 #### Utils
 
-Utils提供了擴充方法與通用工具，詳細方法請參閱文件。
+`Utils`提供了擴充方法與通用工具，詳細方法請參閱文件。
 
 ```js
 let group = {
@@ -476,9 +473,9 @@ let group = {
 
 #### Include
 
-引用其他tool甚至是引用其他group的方法。
+引用其他`Tool`甚至是引用其他`Group`的方法。
 
-> 深層的堆疊追蹤必須經由include引入才會被註冊至追蹤上下文中。
+> 深層的堆疊追蹤必須經由`Include`引入才會被註冊至追蹤上下文中。
 
 ```js
 let group = {
@@ -506,7 +503,7 @@ let group = {
 }
 ```
 
-#### 更多應用方法
+##### 更多應用方法
 
 ```js
 let group2 = {
@@ -562,7 +559,7 @@ packhouse.add('group2', () => {
 
 ### Line
 
-Line是上述所有方法的集大成結果，也是packhouse的柯里化模式。
+`Line`是上述所有方法的集大成結果，也是`Packhouse`的柯里化函式的標準模型。
 
 ```js
 let group = {
@@ -618,7 +615,7 @@ packhouse.line('groupName', 'math')(10).add(5).add(15).double().action((error, r
 
 ## Event與追蹤
 
-packhouse對於函式做了過分的包裝，這一切都是為了追蹤運行過程，這也造就了packhouse不適合密集計算，我得承認它在互相引用tool時非常慢(如果你介意的是豪秒間的差異的話)，有趣的是這個架構原型是用於計算數學圖形快取運算用的。
+`Packhouse`對於函式做了大量的包裝，這一切都是為了追蹤運行過程，這也造就了`Packhouse`不適合密集計算，我得承認它在互相引用`Tool`時非常慢(如果你介意的是豪秒間的差異的話)，有趣的是這個架構原型是用於計算數學圖形快取運算用的。
 
 ```js
 let Packhouse = require('packhouse')
@@ -636,7 +633,7 @@ packhouse.on('done', (event, { id, caller, detail })) => {})
 
 ### 取消監聽
 
-每次呼叫on會獲得一組id，可以藉由id來取消監聽對象：
+每次呼叫`on`會獲得一組id，可以藉由id來取消監聽對象：
 
 ```js
 let id = packhouse.on('run', () => {})
@@ -655,7 +652,7 @@ packhouse.on('run', (event) => {
 
 ## Merger與架構設計
 
-有時我們會採用repository模式來做service串接的橋樑，merger即為此而生，每當外部要引用merger時必須加上命名空間，但內部使用mold、include時不需要。
+有時我們會採用repository模式來做service串接的橋樑，`Merger`即為此而生，每當外部要引用`Merger`時必須加上命名空間，但內部使用時不需要。
 
 ```js
 let merger = {
@@ -724,7 +721,7 @@ let group = {
 
 ## 總是新的開始
 
-Nodejs的require有catch的特性，除非手動去清除它，否則它會存取上次使用過後的痕跡，這在Functional Programming是高風險的，意味著請將所有的初始化行為都編寫在install中，但這代表著實例化Packhouse後install的內容也不會重新來過，因此每次請求的過程都必須重新實例化Packhouse，以下是AWS Lambda的例子：
+Node的require有catch的特性，除非手動去清除它，否則它會存取上次使用過後的痕跡，這在Functional Programming是高風險的，意味著請將所有的初始化行為都編寫在install中，但這代表著實例化`Packhouse`後install的內容也不會重新來過，因此每次請求的過程都必須重新實例化`Packhouse`，以下是AWS Lambda的例子：
 
 ### 糟糕的做法
 
@@ -748,7 +745,6 @@ packhouse.add('db', () => {
 })
 
 exports.handler = async () => {
-    // bad :(
     packhouse.tool('db', 'get').action((() => { ... })
 }
 ```
@@ -780,7 +776,7 @@ exports.handler = async () => {
             }
         }
     })
-    // your code
+    // begin your code...
 }
 ```
 
@@ -788,7 +784,7 @@ exports.handler = async () => {
 
 ## Pulgin
 
-可以使用Pulgin來擴展Packhouse的能力。
+可以使用`Pulgin`來擴展`Packhouse`的功能。
 
 ```js
 let Packhouse = require('packhouse')
@@ -805,16 +801,14 @@ packhouse.plugin(MyFirstPulgin)
 
 ### Step
 
-如果你使用的是npm安裝，意味著你可以使用我們提供的Step插件，加入Step可以讓packhouse足以擔任框架的腳色，建構整個服務。
-
-> 同時Step也是一個標準的插件範例。
+如果你使用的是npm安裝，意味著你可以使用我們提供的`Step`插件，加入`Step`可以讓`Packhouse`足以擔任框架的腳色，建構整個服務。
 
 ```js
 let Packhouse = require('packhouse')
 let packhouse = new Packhouse()
 let step = require('packhouse/plugins/Step')
 
-// 在引用step後獲得了step的能力，宣告後本質會是一個promise。
+// 在引用step後獲得了step的方法，宣告後回傳一個promise。
 packhouse.plugin(Step)
 packhouse.step({
     output(context, success) {
