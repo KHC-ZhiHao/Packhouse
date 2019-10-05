@@ -1,57 +1,36 @@
-const Base = require('./Base')
-const Utils = require('./Utils')
-
-// key 應該加上前墜
-// mold也是
-class OrderCore extends Base {
-    constructor(options = {}) {
-        super('Order')
-        this.init()
-        this.options = Utils.verify(options, {
-            max: [false, ['number'], 100]
-        })
+class OrderCore {
+    constructor() {
+        this.caches = new Map()
     }
 
     has(key) {
         if (typeof key !== 'string') {
-            this.$devError('has', 'Key not a string.', key)
+            throw new Error('Key not a string.')
         }
-        return !!this.caches[key]
+        return this.caches.has(key)
     }
 
     get(key) {
         if (this.has(key) === false) {
-            this.$system('get', `Key(${key}) not found.`)
+            throw new Error(`Key(${key}) not found.`)
         }
-        return this.caches[key]
-    }
-
-    init() {
-        this.keys = []
-        this.caches = {}
-        this.length = 0
+        return this.caches.get(key)
     }
 
     clear() {
-        this.init()
+        this.caches.clear()
     }
 
     create(key) {
-        this.keys.push(key)
-        this.length += 1
-        this.caches[key] = new Cache()
-        if (this.length > this.options.max) {
-            this.remove(this.keys[0])
-        }
+        this.caches.set(key, new Cache())
         return this.get(key)
     }
 
     remove(key) {
         if (this.has(key)) {
-            this.length -= 1
-            delete this.caches[this.keys.shift()]
+            this.caches.delete(key)
         } else {
-            this.$devError('remove', `Key(${key}) not found.`)
+            throw new Error(`Key(${key}) not found.`)
         }
     }
 
@@ -60,9 +39,8 @@ class OrderCore extends Base {
     }
 }
 
-class CacheCore extends Base {
+class CacheCore {
     constructor(cache) {
-        super('Cache')
         this.init()
         this.buffers = []
         this.exports = cache
@@ -140,11 +118,6 @@ class Cache {
     }
 }
 
-/**
- * 管理快取的事件
- * @hideconstructor
- */
-
 class Order {
     constructor(options) {
         this._core = new OrderCore(options)
@@ -175,4 +148,10 @@ class Order {
     }
 }
 
-module.exports = Order
+class Main {
+    constructor(packhouse) {
+        packhouse.utils.order = () => new Order()
+    }
+}
+
+module.exports = Main

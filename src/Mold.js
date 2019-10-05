@@ -6,14 +6,14 @@ class MoldStore {}
 class Box extends Base {
     constructor(parent, namespace) {
         super('MoldBox')
-        this.molds = {}
-        this.caches = {}
+        this.molds = new Map()
+        this.caches = new Map()
         this.parent = parent
         this.namespace = namespace || ''
     }
 
     has(name) {
-        if (!!this.molds[name]) {
+        if (this.molds.has(name)) {
             return true
         }
         if (this.parent && this.parent.has(this.namespace + name)) {
@@ -26,11 +26,8 @@ class Box extends Base {
     }
 
     get(name) {
-        if (this.has(name) === false) {
-            this.$devError('get', `Mold(${name}) not found.`)
-        }
-        if (this.molds[name]) {
-            return this.molds[name]
+        if (this.molds.has(name)) {
+            return this.molds.get(name)
         }
         if (this.parent.has(this.namespace + name)) {
             return this.parent.get(this.namespace + name)
@@ -38,17 +35,18 @@ class Box extends Base {
         if (this.parent.has(name)) {
             return this.parent.get(name)
         }
+        this.$devError('get', `Mold(${name}) not found.`)
     }
 
     add(name, handler) {
-        if (this.molds[name]) {
+        if (this.molds.has(name)) {
             this.$devError('add', `Name(${name}) already exists.`)
         }
-        this.molds[name] = new Mold(handler)
+        this.molds.set(name, new Mold(handler))
     }
 
     cache(text) {
-        if (this.caches[text] == null) {
+        if (this.caches.has(text) === false) {
             let data = text.split('|')
             let name = data.shift()
             let extras = {}
@@ -58,9 +56,9 @@ class Box extends Base {
                     extras[key] = value === undefined ? true : value
                 }
             }
-            this.caches[text] = { name, extras }
+            this.caches.set(text, { name, extras })
         }
-        return this.caches[text]
+        return this.caches.get(text)
     }
 
     parse(text, source, index, callback) {

@@ -371,23 +371,6 @@ describe('#Packhouse', () => {
             })
     })
 
-    it('orderTest', function(done) {
-        let time = Date.now()
-        this.packhouse
-            .tool('demoGroup', 'orderTest')
-            .action('123', () => {
-                let nextTime = Date.now()
-                expect(nextTime - time > 50).to.equal(true)
-                this.packhouse
-                    .tool('demoGroup', 'orderTest')
-                    .action('123', () => {
-                        let newNextTime = Date.now()
-                        expect(newNextTime - nextTime > 50).to.equal(false)
-                        done()
-                    })
-            })
-    })
-
     it('plugin', function(done) {
         this.packhouse
             .plugin(class {
