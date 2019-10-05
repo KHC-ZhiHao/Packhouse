@@ -27,8 +27,6 @@
 
 [JS函數式編程指南](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)
 
-<br>
-
 ## Install
 
 ```bash
