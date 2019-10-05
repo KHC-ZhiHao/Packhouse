@@ -21,7 +21,7 @@
 
 ## 摘要
 
-`Packhouse`是一個基於函數式程式設計(Functional Programming)的設計模式模型，核心目的為使用微服務中的微服務，提供了強大的上下文追蹤與快取系統，適用於為FaaS服務建立良好的編程環境，例如AWS Lambda，最棒的是，`Packhouse`擁有一個美麗的階梯式編寫形式。
+`Packhouse`是一個基於函數式程式設計(Functional Programming)的設計模式模型，核心目的為使用微服務中的微服務，提供了強大的上下文追蹤與快取系統，適用於為FaaS服務建立良好的編程環境，例如AWS Lambda，最棒的是，`Packhouse`擁有一個美麗的階梯式編寫模式。
 
 本庫不是那麼遵守函數式程式設計典範，但還是請您開始前可以閱讀下列文章了解Functional Programming的設計觀念。
 
@@ -50,12 +50,13 @@ Node 8.1以上。
 
 ```js
 const Packhouse = require('packhouse')
+
 // 實例化
 let packhouse = new Packhouse()
 let group = {
     tools: {
         sum: {
-            // return適用於中斷函式，但回傳值全由this.success或this.error處理，因此group並不能使用箭頭函數。
+            // return適用於中斷函式，但回傳值全由this.success或this.error處理，因此不能使用箭頭函數。
             handler(v1, v2) {
                 this.success(v1 + v2)
             }
@@ -76,6 +77,8 @@ packhouse.tool('math', 'sum').action(5, 10, (error, result) => {
 ```
 
 > tool是函數的基本單位，整個packhouse的系統都是圍繞著tool打轉。
+
+---
 
 ### Action
 
@@ -102,6 +105,8 @@ packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
 })
 ```
 
+---
+
 ### Promise
 
 因為success與error可以無縫擔任resolve與reject的腳色，這讓每個tool都可以化身成promise，但promise本質上就是非同步的。
@@ -111,6 +116,8 @@ packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
 ```js
 packhouse.tool('math', 'sum').promise(5, 10).then(r => console.log(r)) // 15
 ```
+
+---
 
 ### Mold
 
@@ -211,7 +218,7 @@ let group = {
 }
 ```
 
-#### 應用casting在handler中做mold的驗證或轉換
+#### 使用casting在handler中做mold的驗證或轉換
 
 ```js
 let group = {
@@ -272,6 +279,8 @@ let group = {
     }
 }
 ```
+
+---
 
 ### 預處理
 
@@ -381,6 +390,8 @@ packhouse
         console.log(result) // 25
     })
 ```
+
+---
 
 ### 初始化
 
@@ -547,6 +558,8 @@ packhouse.add('group2', () => {
 })
 ```
 
+---
+
 ### Line
 
 Line是上述所有方法的集大成結果，也是packhouse的柯里化模式。
@@ -638,6 +651,8 @@ packhouse.on('run', (event) => {
 })
 ```
 
+<br>
+
 ## Merger與架構設計
 
 有時我們會採用repository模式來做service串接的橋樑，merger即為此而生，每當外部要引用merger時必須加上命名空間，但內部使用mold、include時不需要。
@@ -670,9 +685,11 @@ packhouse.tool('firstMerger@myGroup', 'myTool').action(() => {
 })
 ```
 
+<br>
+
 ## AWS錯誤處理
 
-AWS SDK的所有方法雖然都有提供promise接口，但它的promise有一些糟糕的問題，在有一定堆疊的呼叫時如果有程式碼報錯，promise或捉到catch卻不會觸發catch()。
+AWS SDK的所有方法雖然都有提供promise接口，但它的promise有一個糟糕的問題，在有一定堆疊的呼叫時如果有程式碼報錯，promise會捉到catch卻不會觸發catch()。
 
 ```js
 // 採用原生的錯誤處理來避免test失敗
@@ -695,11 +712,15 @@ let group = {
                         this.success(result)
                     }
                 })
+                // 避免如下宣告
+                client.get(params).promise()
             }
         }
     }
 }
 ```
+
+<br>
 
 ## 總是新的開始
 
@@ -732,7 +753,9 @@ exports.handler = async () => {
 }
 ```
 
-### 正確的做法
+---
+
+### 良好的做法
 
 ```js
 let AWS = requrie('aws-sdk')
@@ -767,6 +790,19 @@ exports.handler = async () => {
 
 可以使用Pulgin來擴展Packhouse的能力。
 
+```js
+let Packhouse = require('packhouse')
+let packhouse = new Packhouse()
+
+class MyFirstPulgin {
+    constructor(packhouse, options) {
+        // do something...
+    }
+}
+
+packhouse.plugin(MyFirstPulgin)
+```
+
 ### Step
 
 如果你使用的是npm安裝，意味著你可以使用我們提供的Step插件，加入Step可以讓packhouse足以擔任框架的腳色，建構整個服務。
@@ -791,12 +827,6 @@ packhouse.step({
     ]
 }).then(result => console.log(result) ) // 10
 ```
-
-<br>
-
-## 快速開始一個AWS Lambda專案
-
-### 安裝Packhouse cli
 
 <br>
 
