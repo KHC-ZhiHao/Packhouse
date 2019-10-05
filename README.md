@@ -957,7 +957,7 @@ packhouse.tool('math', 'sum').action(10, 20, (error, result) => {
 
 ### Step
 
-如果你使用的是npm安裝，意味著你可以使用我們提供的`Step`插件，加入`Step`可以讓`Packhouse`足以擔任框架的腳色，建構整個服務。
+`Step`可以讓`Packhouse`足以擔任框架的腳色，建構整個服務。
 
 ```js
 let Packhouse = require('packhouse')
@@ -967,13 +967,28 @@ let packhouse = new Packhouse()
 // 在引用step後獲得了step的方法，宣告後回傳一個promise。
 packhouse.plugin(Step)
 packhouse.step({
-    output(context, success) {
+    create: function() {
+        // 由於this是共享的，create可以協助註冊this
+        this.result = 0
+    },
+    middle: function({ exit }) {
+        // 可以在template之間設定跳出條件
+        if (this.result > 10) {
+            exit()
+        }
+    },
+    timeout: 20000, // ms
+    failReject: false, // step成功或失敗都會呼叫reslove，如果需要錯誤請宣告成true
+    output({ timeout, history }, success) {
+        console.log(timeout) // 如果是timeout則宣告成true
+        console.log(history.toJSON()) // step會協助你建立追蹤過程，並輸出詳細資料
         success(this.result)
     },
     template: [
         function() {
             this.result = 10
         }
+        // 你的邏輯
     ]
 }).then(result => console.log(result) ) // 10
 ```
