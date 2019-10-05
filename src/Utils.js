@@ -69,10 +69,6 @@ class Utils {
         return output
     }
 
-    static order(options) {
-        return new Order(options)
-    }
-
     static peel(target, path, def) {
         let output = path.split(/[.[\]'"]/g).filter(s => s !== '').reduce((obj, key) => {
             return obj && obj[key] !== 'undefined' ? obj[key] : undefined
@@ -85,5 +81,3 @@ class Utils {
 }
 
 module.exports = Utils
-
-const Order = require('./Order')

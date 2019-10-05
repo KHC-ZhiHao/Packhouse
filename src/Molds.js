@@ -1,4 +1,18 @@
 module.exports = {
+    type(value, { extras, index, utils, message = '' }) {
+        if (value == null && extras.abe === true) {
+            return value
+        }
+        if (extras.is == null) {
+            throw new Error(`Type mold must have 'is' params.`)
+        }
+        let type = extras.is
+        if (utils.getType(value) === type) {
+            return value
+        } else {
+            throw new Error(`${message}Parameter ${index} not a ${type}.`)
+        }
+    },
     boolean(value, { extras, index, message = '' }) {
         if (value == null && extras.abe === true) {
             return value

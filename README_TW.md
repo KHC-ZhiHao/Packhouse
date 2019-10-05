@@ -158,7 +158,7 @@ packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
 })
 ```
 
-`Packhouse`內部提供了基礎的`Mold`，number便是其一，若想得知其他`Base Mold`請參閱文檔。
+`Packhouse`內部提供了基礎的`Mold`，詳情請參閱文件。
 
 #### 定義自己的Mold
 
@@ -454,7 +454,7 @@ let group = {
 
 #### Utils
 
-`Utils`提供了擴充方法與通用工具，詳細方法請參閱文件。
+`Utils`提供了擴充方法與通用工具。
 
 ```js
 let group = {
@@ -664,10 +664,12 @@ let merger = {
     groups: {
         myGroup() {
             return {
-                tools: {
-                    myTool: {
-                        handler() {
-                            // do something...
+                data: {
+                    tools: {
+                        myTool: {
+                            handler() {
+                                // do something...
+                            }
                         }
                     }
                 }
@@ -799,14 +801,59 @@ class MyFirstPulgin {
 packhouse.plugin(MyFirstPulgin)
 ```
 
+### Order
+
+`Order`是一個對付短暫同時間的相同條件密集請求時的快取物件，在第一次請求的結果回來前，之後的所有請求都會等待第一次的請求回傳的結果。
+
+> 在Functional Programming常見對同一筆條件送出好幾次請求，因為我們必須把每次請求當作是一個新的服務，就算鍵值相同，但這也意味著不必要的效能浪費。
+
+```js
+let Packhouse = require('packhouse')
+let Order = require('packhouse/plugins/Order')
+let packhouse = new Packhouse()
+
+packhouse.plugin(Order)
+
+let group = {
+    tools: {
+        sum: {
+            install({ store, utils }) {
+                // order會被綁訂在utils上
+                store.order = utils.order()
+            },
+            handler(v1, v2) {
+                // key, { success, error }, callback
+                this.store
+                    .order
+                    .use(v1 + '+' + v2, this, (error, success) => {
+                        success(v1 + v2)
+                    })
+            }
+        }
+    }
+}
+
+packhouse.add('math', () => {
+    return {
+        data: group
+    }
+})
+
+packhouse.tool('math', 'sum').action(10, 20, (error, result) => {
+    console.log(result) // 30
+})
+```
+
+---
+
 ### Step
 
 如果你使用的是npm安裝，意味著你可以使用我們提供的`Step`插件，加入`Step`可以讓`Packhouse`足以擔任框架的腳色，建構整個服務。
 
 ```js
 let Packhouse = require('packhouse')
+let Step = require('packhouse/plugins/Step')
 let packhouse = new Packhouse()
-let step = require('packhouse/plugins/Step')
 
 // 在引用step後獲得了step的方法，宣告後回傳一個promise。
 packhouse.plugin(Step)
@@ -821,6 +868,12 @@ packhouse.step({
     ]
 }).then(result => console.log(result) ) // 10
 ```
+
+<br>
+
+## 範例
+
+
 
 <br>
 
