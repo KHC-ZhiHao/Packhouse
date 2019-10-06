@@ -441,9 +441,9 @@ packhouse
 
 ```js
 let group = {
-    // options唯一對外交換資料的接口
+    // options是對外交換資料的接口
     install(group, options) {
-        // ...
+        console.log(options.demo) // hello
     },
     tools: {
         myTool: {
@@ -453,6 +453,15 @@ let group = {
         }
     }
 }
+
+packhouse.add('demo', () => {
+    return {
+        data: group,
+        options: {
+            demo: 'hello'
+        }
+    }
+})
 ```
 
 #### Group
@@ -461,7 +470,7 @@ let group = {
 
 ```js
 let group = {
-    install(group) {
+    install(group, { demo }) {
         group.name = '123'
     },
     tools: {
