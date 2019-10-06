@@ -9,8 +9,7 @@ class StepCore {
             middle: [false, ['function'], () => {}],
             output: [true, ['function']],
             timeout: [false, ['number'], null],
-            template: [true, ['array']],
-            failReject: [false, ['boolean', false]]
+            template: [true, ['array']]
         })
         return new Promise((resolve, reject) => {
             new Flow(this, system, resolve, reject)
@@ -27,7 +26,7 @@ class History {
         this.packhouse = core.packhouse
     }
 
-    inspect(target, used = []) {
+    inspect(target, lite, used = []) {
         if (target == null) {
             return null
         }
@@ -43,7 +42,7 @@ class History {
                         type: 'CircularStructureObject'
                     }
                 } else {
-                    output[key] = this.inspect(aims, newUsed)
+                    output[key] = this.inspect(aims, lite, newUsed)
                 }
             } else {
                 if (type === 'function') {
@@ -154,8 +153,8 @@ class History {
             } else {
                 log = data.logs[id]
             }
-            log.result = detail.result
             log.success = detail.success
+            log.resultType = this.packhouse.utils.getType(detail.result)
             log.finishTime = Date.now()
             log.totalTime = logs[id].finishTime - logs[id].startTime
         })
@@ -219,7 +218,7 @@ class Flow {
     }
 
     start() {
-        this.system.create.call(this.self, this.template)
+        this.system.create.call(this.self, this.core.packhouse)
         this.iterator()
     }
 
@@ -285,15 +284,9 @@ class Flow {
     }
 }
 
-/**
- * Step function can contorl flow
- * @hideconstructor
- */
-
 class Step {
     constructor(packhouse) {
         this.core = new StepCore(packhouse)
-        this.options = options
         packhouse.step = (options) => {
             return this.core.start(options)
         }

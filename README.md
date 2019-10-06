@@ -13,6 +13,7 @@
     <a href="https://standardjs.com/">
         <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard Code Style"  style="max-width:100%;">
     </a>
+    <a href="https://lgtm.com/projects/g/KHC-ZhiHao/Packhouse/context:javascript"><img alt="Language grade: JavaScript" src="https://img.shields.io/lgtm/grade/javascript/g/KHC-ZhiHao/Packhouse.svg?logo=lgtm&logoWidth=18"/></a>
     <a href="https://github.com/KHC-ZhiHao/Packhouse"><img src="https://img.shields.io/github/stars/KHC-ZhiHao/Packhouse.svg?style=social"></a>
     <br>
 </p>
@@ -22,6 +23,8 @@
 ## 摘要
 
 `Packhouse`是一個基於函數式程式設計(Functional Programming)的設計模式模型，核心目的為使用微服務中的微服務，提供了強大的上下文追蹤與快取系統，適用於為FaaS服務建立良好的編程環境，例如AWS Lambda。
+
+整個架構是為[Serverless Framework](https://serverless.com/)所設計的，有興趣的你可以了解看看，但`Packhouse`並沒有強制必須於哪個環境下運作，它甚至可以在瀏覽器執行。
 
 本庫不是那麼遵守函數式程式設計典範，但還是請您開始前可以閱讀下列文章了解Functional Programming的設計觀念。
 
@@ -64,6 +67,8 @@ Nodejs 8.x以上。
 * [總是新的開始](#總是新的開始)
 
 * [Pulgin](#Pulgin)
+
+* [Example](#Example)
 
 * [版本迭代](#版本迭代)
 
@@ -993,26 +998,45 @@ packhouse.step({
         // 由於this是共享的，create可以協助註冊this
         this.result = 0
     },
-    middle: function({ exit }) {
+    middle: function({ exit, fail }) {
         // 可以在template之間設定跳出條件
         if (this.result > 10) {
             exit()
         }
     },
-    timeout: 20000, // ms
-    failReject: false, // step成功或失敗都會呼叫reslove，如果需要錯誤請宣告成true
-    output({ timeout, history }, success) {
+    timeout: 25000, // ms
+    output({ timeout, history, fail, message }, success) {
+        console.log(fail) // 如果宣告過fail則為true
+        console.log(message) // exit或fail夾帶的message
         console.log(timeout) // 如果是timeout則宣告成true
         console.log(history.toJSON()) // step會協助你建立追蹤過程，並輸出詳細資料
         success(this.result)
     },
     template: [
-        function() {
+        function(next, { exit, fail }) {
             this.result = 10
+            next()
         }
         // 你的邏輯
     ]
-}).then(result => console.log(result) ) // 10
+}).then(result => console.log(result)) // 10
+```
+
+---
+
+## Example
+
+本示例中示範了`Packhouse`是如何把複雜的"取得經緯度附近的台灣氣象開放資料"梳理至容易閱讀的過程，並完整的歸納`Group`與`Merger`等模式，真正的商業邏輯遠比這複雜的多。
+
+你可以clone整個專案，並打包example資料夾成zip並上傳到AWS Lambda，貼上以下event且把運行時間調至30秒後調用：
+
+> 記得install node_modules
+
+```json
+{
+  "latitude": 25.0419392,
+  "longitude": 121.5459295
+}
 ```
 
 ---
