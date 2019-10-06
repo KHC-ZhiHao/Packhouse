@@ -15,6 +15,7 @@ describe('#Step', () => {
         packhouse.plugin(Step)
         packhouse.step({
             template,
+            timeout: 10000,
             output(context, success) {
                 success('123')
             }

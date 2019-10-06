@@ -197,7 +197,9 @@ class Flow {
         if (this.system.timeout == null) {
             return null
         }
-        this.timeout = setTimeout(() => this.timeoutHandler(), this.system.timeout)
+        this.timeout = setTimeout(() => {
+            this.timeoutHandler()
+        }, this.system.timeout)
     }
 
     timeoutHandler() {
@@ -207,6 +209,7 @@ class Flow {
                 history,
                 timeout: true
             }
+            this.over = true
             this.system.output.call(this.self, context, (result) => {
                 this.done()
                 this.success(result)
@@ -257,12 +260,9 @@ class Flow {
     }
 
     done() {
-        if (this.over) {
-            return null
-        }
-        this.over = true
         if (this.timeout) {
             clearTimeout(this.timeout)
+            this.timeout = null
         }
     }
 
