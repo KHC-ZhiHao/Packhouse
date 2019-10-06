@@ -88,22 +88,17 @@ class Response extends Base {
         }
         let tool = null
         let weld = this.welds.shift()
-        let noGood = (result) => {
-            if (this.noGood) {
-                this.noGood(result)
-            }
-            this.errorBase(result)
-            this.callAlways({
-                result,
-                success: false
-            })
-        }
         if (weld) {
             tool = this.group.callTool(weld.tool)
             weld.pack(result, tool.pack.bind(tool))
             tool.action(this.context, (error, result) => {
                 if (error) {
-                    noGood(error)
+                    this.errorBase(error)
+                    this.callAlways({
+                        result: error,
+                        context: this.context,
+                        success: false
+                    })
                 } else {
                     this.runWeld(result, callback)
                 }

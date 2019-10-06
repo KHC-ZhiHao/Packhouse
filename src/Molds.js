@@ -107,14 +107,18 @@ module.exports = {
         if (value == null && extras.abe === true) {
             return value
         }
+        if (!(typeof value).match(/string|number/)) {
+            throw new Error(`${message}Parameter ${index} not a string or number(${value}).`)
+        }
         let date = new Date(value)
-        if (!isNaN(date.getTime())) {
-            return (new Date(value)).getTime()
+        let time = date.getTime()
+        if (!isNaN(time)) {
+            return time
         } else {
             throw new Error(`${message}Parameter ${index} not a date(${value}).`)
         }
     },
-    required(value, { index }) {
+    required(value, { index, message = '' }) {
         if (value != null) {
             return value
         } else {

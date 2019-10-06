@@ -45,6 +45,14 @@ describe('#Packhouse', () => {
         expect(isRun).to.equal(true)
     })
 
+    it('action no callback', function() {
+        expect(() => {
+            this.packhouse
+                .tool('demoGroup', 'sum')
+                .action(10, 20)
+        }).to.throw(Error)
+    })
+
     it('use tool promise', function(done) {
         this.packhouse
             .tool('demoGroup', 'sum')
@@ -124,11 +132,26 @@ describe('#Packhouse', () => {
             })
     })
 
+    it('weld of error with no good', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'sum')
+            .pack(10, 20)
+            .weld('sum', (result, pack) => pack(result, '10'))
+            .noGood((e) => {
+                expect(typeof e.message).to.equal('string')
+                done()
+            })
+            .action((r) => {})
+    })
+
     it('use mold', function() {
         let isRun = false
         this.packhouse
             .tool('demoGroup', 'moldTest')
+            .pack('type')
+            .pack(1234)
             .pack('string')
+            .pack(4567)
             .pack(true)
             .pack([])
             .pack(Buffer.from([]))
@@ -142,16 +165,120 @@ describe('#Packhouse', () => {
         expect(isRun).to.equal(true)
     })
 
-    it('use mold', function() {
+    it('use mold and null', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldTestAndNull')
+            .pack(1234, '1234')
+            .action((e, r) => {
+                expect(r).to.equal(true)
+                done()
+            })
+    })
+
+    it('use mold and response', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldTestAndResponse')
+            .pack(1234)
+            .action((e, r) => {
+                expect(r).to.equal(1234)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldTestAndResponse')
+            .pack('1234')
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+                done()
+            })
+    })
+
+    it('use mold type error', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldAbeTest')
+            .pack(123)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldAbeTest')
+            .pack(null, true)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldAbeTest')
+            .pack(null, null, 123)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldAbeTest')
+            .pack(null, null, null, true)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldAbeTest')
+            .pack(null, null, null, null, true)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldAbeTest')
+            .pack(null, null, null, null, null, true)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldAbeTest')
+            .pack(null, null, null, null, null, null, true)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldAbeTest')
+            .pack(null, null, null, null, null, null, null, true)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+                done()
+            })
+    })
+
+    it('use mold for abe', function() {
         let isRun = false
         this.packhouse
             .tool('demoGroup', 'moldAbeTest')
-            .pack('string')
             .pack(undefined)
+            .pack(null)
+            .pack(null)
+            .pack(null)
+            .pack(null)
+            .pack(null)
+            .pack(null)
+            .pack(null)
             .action((e, r) => {
                 isRun = r
             })
         expect(isRun).to.equal(true)
+    })
+
+    it('use mold type error', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldTypeTest')
+            .pack(4567)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+                done()
+            })
+    })
+
+    it('use mold type abe', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldTypeTest')
+            .pack('1234', null)
+            .action((e, r) => {
+                expect(r).to.equal(true)
+                done()
+            })
     })
 
     it('casting', function(done) {
@@ -469,5 +596,24 @@ describe('#Packhouse', () => {
             }
         }, 'a.b.c', 10)
         expect(target2).to.equal(10)
+    })
+})
+
+describe('#Other', () => {
+    it('system error', function() {
+        let Base = require('../src/Base')
+        let base = new Base('Test')
+        expect(() => {
+            base.$systemError('Test', 'Test')
+        }).to.throw(Error)
+        expect(() => {
+            base.$systemError('Test', 'Test', 'Test')
+        }).to.throw(Error)
+        expect(() => {
+            base.$devError('Test', 'Test', 'Test')
+        }).to.throw(Error)
+        expect(() => {
+            base.$devError('Test', 'Test')
+        }).to.throw(Error)
     })
 })

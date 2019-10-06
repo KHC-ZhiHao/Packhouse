@@ -60,13 +60,31 @@ module.exports = {
             }
         },
         moldTest: {
-            request: ['string', 'boolean', 'array', 'buffer', 'object', 'function', 'date', 'required'],
+            request: ['type|is:string', 'type|is:number', 'string', 'number', 'boolean', 'array', 'buffer', 'object', 'function', 'date', 'required'],
+            handler() {
+                this.success(true)
+            }
+        },
+        moldTestAndNull: {
+            request: [null, 'string'],
+            handler() {
+                this.success(true)
+            }
+        },
+        moldTestAndResponse: {
+            response: 'number',
+            handler(value) {
+                this.success(value)
+            }
+        },
+        moldTypeTest: {
+            request: ['type|is:string', 'type|abe'],
             handler() {
                 this.success(true)
             }
         },
         moldAbeTest: {
-            request: ['string', 'string|abe'],
+            request: ['string|abe', 'number|abe', 'boolean|abe', 'array|abe', 'buffer|abe', 'object|abe', 'function|abe', 'date|abe'],
             handler() {
                 this.success(true)
             }
@@ -139,6 +157,34 @@ module.exports = {
                     .action((error, success) => {
                         setTimeout(() => {
                             success(name)
+                        }, 100)
+                    })
+            }
+        },
+        orderTestForUse: {
+            install({ store, utils }) {
+                store.order = utils.order()
+            },
+            handler(name) {
+                this.store
+                    .order
+                    .use(name, this, (error, success) => {
+                        setTimeout(() => {
+                            success(name)
+                        }, 100)
+                    })
+            }
+        },
+        orderTestForUseAndError: {
+            install({ store, utils }) {
+                store.order = utils.order()
+            },
+            handler(name) {
+                this.store
+                    .order
+                    .use(name, this, (error) => {
+                        setTimeout(() => {
+                            error(name)
                         }, 100)
                     })
             }

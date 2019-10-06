@@ -13,7 +13,7 @@ describe('#Order', () => {
             }
         })
     })
-    it('orderTest', function(done) {
+    it('Normal', function(done) {
         let time = Date.now()
         this.packhouse
             .tool('demoGroup', 'orderTest')
@@ -22,6 +22,55 @@ describe('#Order', () => {
                 expect(nextTime - time > 50).to.equal(true)
                 this.packhouse
                     .tool('demoGroup', 'orderTest')
+                    .action('123', () => {
+                        let newNextTime = Date.now()
+                        expect(newNextTime - nextTime > 50).to.equal(false)
+                        done()
+                    })
+            })
+    })
+    it('Remove', function(done) {
+        let time = Date.now()
+        let tool = this.packhouse.tool('demoGroup', 'orderTest')
+        tool.action('1234', () => {
+            let nextTime = Date.now()
+            expect(nextTime - time > 50).to.equal(true)
+            tool._core.tool.store.order.remove('1234')
+            this.packhouse
+                .tool('demoGroup', 'orderTest')
+                .action('1234', () => {
+                    let newNextTime = Date.now()
+                    expect(newNextTime - nextTime > 50).to.equal(true)
+                    done()
+                })
+        })
+    })
+    it('Use', function(done) {
+        let time = Date.now()
+        this.packhouse
+            .tool('demoGroup', 'orderTestForUse')
+            .action('123', () => {
+                let nextTime = Date.now()
+                expect(nextTime - time > 50).to.equal(true)
+                this.packhouse
+                    .tool('demoGroup', 'orderTestForUse')
+                    .action('123', () => {
+                        let newNextTime = Date.now()
+                        expect(newNextTime - nextTime > 50).to.equal(false)
+                        done()
+                    })
+            })
+    })
+    it('UseError', function(done) {
+        let time = Date.now()
+        this.packhouse
+            .tool('demoGroup', 'orderTestForUseAndError')
+            .action('123', (error) => {
+                let nextTime = Date.now()
+                expect(nextTime - time > 50).to.equal(true)
+                expect(error).to.equal('123')
+                this.packhouse
+                    .tool('demoGroup', 'orderTestForUseAndError')
                     .action('123', () => {
                         let newNextTime = Date.now()
                         expect(newNextTime - nextTime > 50).to.equal(false)
