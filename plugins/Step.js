@@ -18,12 +18,12 @@ class StepCore {
 }
 
 class History {
-    constructor(flow, core) {
+    constructor(flow, { packhouse }) {
         this.list = []
         this.flow = flow
         this.index = 0
         this.startTime = Date.now()
-        this.packhouse = core.packhouse
+        this.packhouse = packhouse
     }
 
     inspect(target, lite, used = []) {
@@ -197,7 +197,9 @@ class Flow {
         if (this.system.timeout == null) {
             return null
         }
-        this.timeout = setTimeout(() => this.timeoutHandler(), this.system.timeout)
+        this.timeout = setTimeout(() => {
+            this.timeoutHandler()
+        }, this.system.timeout)
     }
 
     timeoutHandler() {
@@ -207,6 +209,7 @@ class Flow {
                 history,
                 timeout: true
             }
+            this.over = true
             this.system.output.call(this.self, context, (result) => {
                 this.done()
                 this.success(result)
@@ -257,9 +260,9 @@ class Flow {
     }
 
     done() {
-        this.over = true
         if (this.timeout) {
             clearTimeout(this.timeout)
+            this.timeout = null
         }
     }
 
