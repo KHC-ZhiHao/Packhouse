@@ -18,12 +18,12 @@ class StepCore {
 }
 
 class History {
-    constructor(flow, core) {
+    constructor(flow, { packhouse }) {
         this.list = []
         this.flow = flow
         this.index = 0
         this.startTime = Date.now()
-        this.packhouse = core.packhouse
+        this.packhouse = packhouse
     }
 
     inspect(target, lite, used = []) {

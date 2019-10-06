@@ -45,6 +45,30 @@ describe('#Step', () => {
             })
     })
 
+    it('success & error', function(done) {
+        let template = [
+            function(next) {
+                next()
+            }
+        ]
+        let packhouse = new Packhouse()
+        packhouse.plugin(Step)
+        packhouse.step({
+            template,
+            output(context, success, error) {
+                success('123')
+                error('123')
+            }
+        })
+            .then((result) => {
+                expect(result).to.equal('123')
+                done()
+            })
+            .catch(() => {
+                done('error')
+            })
+    })
+
     it('repeat next', function(done) {
         let template = [
             function(next) {
