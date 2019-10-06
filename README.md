@@ -23,7 +23,7 @@
 
 `Packhouse`是一個基於函數式程式設計(Functional Programming)的設計模式模型，核心目的為使用微服務中的微服務，提供了強大的上下文追蹤與快取系統，適用於為FaaS服務建立良好的編程環境，例如AWS Lambda。
 
-`Packhouse`不是那麼遵守函數式程式設計典範，但還是請您開始前可以閱讀下列文章了解Functional Programming的設計觀念。
+本庫不是那麼遵守函數式程式設計典範，但還是請您開始前可以閱讀下列文章了解Functional Programming的設計觀念。
 
 [JS函數式編程指南](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)
 
@@ -37,7 +37,7 @@ npm i packhouse --save
 
 ## 運行環境
 
-Node 8.x以上。
+Nodejs 8.x以上。
 
 ---
 

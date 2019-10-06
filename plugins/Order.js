@@ -116,8 +116,8 @@ class Cache {
 }
 
 class Order {
-    constructor(options) {
-        this._core = new OrderCore(options)
+    constructor() {
+        this._core = new OrderCore()
     }
 
     has(key) {

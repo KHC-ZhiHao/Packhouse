@@ -291,8 +291,8 @@ class Flow {
  */
 
 class Step {
-    constructor(packhouse, options) {
-        this.core = new StepCore(packhouse, options)
+    constructor(packhouse) {
+        this.core = new StepCore(packhouse)
         this.options = options
         packhouse.step = (options) => {
             return this.core.start(options)
