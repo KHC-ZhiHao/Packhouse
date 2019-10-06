@@ -39,7 +39,7 @@ module.exports = {
         return value
     },
     int(value, { extras, message = '' }) {
-        if (value == null && system.extras.abe === true) {
+        if (value == null && extras.abe === true) {
             return value
         }
         if (typeof value !== 'number') {

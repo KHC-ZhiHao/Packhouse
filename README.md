@@ -23,7 +23,7 @@
 
 `Packhouse`是一個基於函數式程式設計(Functional Programming)的設計模式模型，核心目的為使用微服務中的微服務，提供了強大的上下文追蹤與快取系統，適用於為FaaS服務建立良好的編程環境，例如AWS Lambda。
 
-本庫不是那麼遵守函數式程式設計典範，但還是請您開始前可以閱讀下列文章了解Functional Programming的設計觀念。
+`Packhouse`不是那麼遵守函數式程式設計典範，但還是請您開始前可以閱讀下列文章了解Functional Programming的設計觀念。
 
 [JS函數式編程指南](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)
 
@@ -42,6 +42,30 @@ Node 8.x以上。
 ---
 
 ## 開始
+
+* [第一支函數](###第一支函數)
+
+* [Mold](###Mold)
+
+* [預處理](###預處理)
+
+* [初始化](###初始化)
+
+* [Utils](###Utils)
+
+* [Include](###Include)
+
+* [Line](###Line)
+
+* [Event與追蹤](##Event與追蹤)
+
+* [Merger](##Merger)
+
+* [總是新的開始](##總是新的開始)
+
+* [Pulgin](##Pulgin)
+
+* [版本迭代](##版本迭代)
 
 ### 第一支函數
 
@@ -75,9 +99,7 @@ packhouse.tool('math', 'sum').action(5, 10, (error, result) => {
 
 > `Tool`是函數的基本單位，整個`Packhouse`的系統都是圍繞著`Tool`打轉。
 
----
-
-### Action
+#### Action
 
 上述的例子可以發現我們使用`Action`調用sum這支`Tool`，`Action`是依照Node的callback設計，第一個參數為error，後者為結果，且內部函式如果沒有非同步處理，那本質上會是同步的。
 
@@ -102,9 +124,7 @@ packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
 })
 ```
 
----
-
-### Promise
+#### Promise
 
 因為success與error可以無縫擔任resolve與reject的腳色，這讓每個`Tool`都可以化身成promise。
 
@@ -472,7 +492,9 @@ let group = {
 }
 ```
 
-#### Utils
+---
+
+### Utils
 
 `Utils`提供了擴充方法與通用工具。
 
@@ -482,7 +504,7 @@ let packhouse = new Packhouse()
 console.log(packhouse.utils.generateId()) // uuid
 ```
 
-##### 在Handler中使用Utils
+#### 在Handler中使用Utils
 
 ```js
 let group = {
@@ -499,7 +521,7 @@ let group = {
 }
 ```
 
-##### 在Mold中使用Utils
+#### 在Mold中使用Utils
 
 ```js
 let group = {
@@ -511,9 +533,9 @@ let group = {
 }
 ```
 
-##### 可用方法
+#### 可用方法
 
-###### getType
+##### getType
 
 ```js
 packhouse.utils.getType([]) // array
@@ -526,7 +548,7 @@ packhouse.utils.getType(Buffer.from('123')) // buffer
 packhouse.utils.getType(new Error()) // error
 ```
 
-###### verify
+##### verify
 
 ```js
 let options = {
@@ -542,7 +564,7 @@ console.log(data.a) // 5
 console.log(data.c) // 0
 ```
 
-###### generateId
+##### generateId
 
 產生一組仿uuid隨機字串。
 
@@ -550,7 +572,7 @@ console.log(data.c) // 0
 let id = packhouse.utils.generateId()
 ```
 
-###### arrayCopy
+##### arrayCopy
 
 基本上就是array.slice()的功能，不過比較快。
 
@@ -558,7 +580,7 @@ let id = packhouse.utils.generateId()
 let newArray = packhouse.utils.arrayCopy([])
 ```
 
-###### peel
+##### peel
 
 可以獲得指定的路徑對象的值，找不到回傳undefined。
 
@@ -573,7 +595,9 @@ let a = {
 console.log(packhouse.utils.peel(a, 'b.c.d')) // 5
 ```
 
-#### Include
+---
+
+### Include
 
 引用其他`Tool`甚至是引用其他`Group`的方法。
 
@@ -605,7 +629,7 @@ let group = {
 }
 ```
 
-##### 更多應用方法
+#### 更多應用方法
 
 ```js
 let group2 = {
@@ -757,7 +781,7 @@ packhouse.on('run', (event) => {
 
 ---
 
-## Merger與架構設計
+## Merger
 
 有時我們會採用repository模式來做service串接的橋樑，`Merger`即為此而生，每當外部要引用`Merger`時必須加上命名空間，但內部使用時不需要。
 

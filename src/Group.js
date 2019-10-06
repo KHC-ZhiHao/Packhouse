@@ -86,16 +86,10 @@ class Group extends Base {
     }
 
     addTool(name, options) {
-        if (this.hasTool(name)) {
-            this.$devError('addTool', `Name(${name}) already exists.`)
-        }
         this.toolbox[name] = new Tool(this, options, name)
     }
 
     addLine(name, options) {
-        if (this.hasLine(name)) {
-            this.$devError('addLine', `Name(${name}) already exists.`)
-        }
         this.linebox[name] = new Line(this, options, name)
     }
 
@@ -109,10 +103,6 @@ class Group extends Base {
 
     hasLine(name) {
         return !!this.linebox[name]
-    }
-
-    hasMold(name) {
-        return this.moldbox.has(name)
     }
 }
 

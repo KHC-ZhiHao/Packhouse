@@ -101,6 +101,7 @@ class History {
             totalTime: now - this.startTime
         }
         return {
+            _core: this,
             profile,
             template: this.list,
             isDone: name => this.isDone(name),
@@ -232,24 +233,28 @@ class Flow {
                 if (this.over) {
                     throw new Error('Packhouse Step : Already exit or fail.')
                 }
-                next = () => {
-                    throw new Error('Packhouse Step : Already exit or fail.')
-                }
                 this.history.output()
                 this.next()
             }
             this.history.input({ name: template.name })
             this.context.lastCall = template.name || null
             this.context.nextCall = this.template[0] ? this.template[0].name : null
-            template.call(this.self, next, this.context)
+            template.call(this.self, () => {
+                next()
+                next = () => {
+                    throw new Error('Packhouse Step : Next called multiple times.')
+                }
+            }, this.context)
         }
     }
 
     next() {
-        if (this.over === false) {
-            this.system.middle.call(this.self, this.context)
-            this.iterator()
-        }
+        setTimeout(() => {
+            if (this.over === false) {
+                this.system.middle.call(this.self, this.context)
+                this.iterator()
+            }
+        }, 1)
     }
 
     done() {

@@ -11,9 +11,6 @@ class OrderCore {
     }
 
     get(key) {
-        if (this.has(key) === false) {
-            throw new Error(`Key(${key}) not found.`)
-        }
         return this.caches.get(key)
     }
 

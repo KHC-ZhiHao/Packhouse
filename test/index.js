@@ -7,7 +7,7 @@ describe('#Packhouse', () => {
         this.packhouse = new Packhouse()
     })
 
-    it('Group Format', function() {
+    it('group format', function() {
         let group = Packhouse.groupFormat({
             lines: '123'
         })
@@ -15,7 +15,7 @@ describe('#Packhouse', () => {
         expect(group.lines).to.equal('123')
     })
 
-    it('add Group', function() {
+    it('add group', function() {
         this.packhouse.add('demoGroup', () => {
             return {
                 data: group,
@@ -28,10 +28,34 @@ describe('#Packhouse', () => {
         expect(this.packhouse.hasGroup('demoGroup22')).to.equal(false)
     })
 
-    it('add Merger', function() {
+    it('not found group check', function() {
+        expect(() => {
+            this.packhouse.addGroup(123, {})
+        }).to.throw(Error)
+        expect(() => {
+            this.packhouse.addGroup('demoGroup', {})
+        }).to.throw(Error)
+        expect(() => {
+            this.packhouse.line('demoGroupp', 'summ')()
+        }).to.throw(Error)
+        expect(() => {
+            this.packhouse.tool('demoGroup', 'summ')
+        }).to.throw(Error)
+        expect(() => {
+            this.packhouse.line('demoGroup', 'summ')()
+        }).to.throw(Error)
+    })
+
+    it('add merger', function() {
         this.packhouse.merger('aws', merger, { ddb: 'test' })
         expect(this.packhouse.hasGroup('aws@dynamoDB')).to.equal(true)
         expect(this.packhouse.hasGroup('aws@dynamoDB2')).to.equal(false)
+    })
+
+    it('add merger already exists', function() {
+        expect(() => {
+            this.packhouse.merger('aws', merger, { ddb: 'test' })
+        }).to.throw(Error)
     })
 
     it('use tool', function() {
@@ -75,6 +99,14 @@ describe('#Packhouse', () => {
             })
     })
 
+    it('no good not callback', function() {
+        expect(() => {
+            this.packhouse
+                .tool('demoGroup', 'sum')
+                .noGood('123')
+        }).to.throw(Error)
+    })
+
     it('always', function(done) {
         this.packhouse
             .tool('demoGroup', 'sum')
@@ -96,6 +128,14 @@ describe('#Packhouse', () => {
                 done()
             })
             .action('', '', () => {})
+    })
+
+    it('always not callback', function() {
+        expect(() => {
+            this.packhouse
+                .tool('demoGroup', 'sum')
+                .always('123')
+        }).to.throw(Error)
     })
 
     it('repack', function(done) {
@@ -142,6 +182,41 @@ describe('#Packhouse', () => {
                 done()
             })
             .action((r) => {})
+    })
+
+    it('add mold', function() {
+        this.packhouse.addMold('test', function(value) {
+            return value
+        })
+        expect(this.packhouse.hasMold('test')).to.equal(true)
+        expect(this.packhouse.hasMold('testt')).to.equal(false)
+        expect(() => {
+            this.packhouse.addMold('test', function(value) {
+                return value
+            })
+        }).to.throw(Error)
+    })
+
+    it('not found mold', function(done) {
+        let packhouse = new Packhouse()
+        packhouse.add('test', () => {
+            return {
+                data: {
+                    tools: {
+                        test: {
+                            request: ['aaaaa'],
+                            handler() {
+                                this.success()
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        packhouse.tool('test', 'test').action((e) => {
+            expect(e.message).to.equal(`(☉д⊙)!! PackHouse::MoldBox => get -> Mold(aaaaa) not found.`)
+            done()
+        })
     })
 
     it('use mold', function() {
@@ -243,11 +318,72 @@ describe('#Packhouse', () => {
             })
     })
 
+    it('use mold date', function() {
+        this.packhouse
+            .tool('demoGroup', 'moldTestForDate')
+            .pack('fkwopfkopwe')
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldTestForDate')
+            .pack(true)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+    })
+
+    it('use mold required', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldTestForRequired')
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+                done()
+            })
+    })
+
+    it('use mold number', function() {
+        this.packhouse
+            .tool('demoGroup', 'moldTestForInt')
+            .pack(9)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldTestForInt')
+            .pack(21)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+    })
+
+    it('use mold int', function() {
+        this.packhouse
+            .tool('demoGroup', 'moldTestForNumber')
+            .pack(9)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldTestForNumber')
+            .pack(21)
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+        this.packhouse
+            .tool('demoGroup', 'moldTestForNumber')
+            .pack('15')
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+            })
+    })
+
     it('use mold for abe', function() {
         let isRun = false
         this.packhouse
             .tool('demoGroup', 'moldAbeTest')
             .pack(undefined)
+            .pack(null)
             .pack(null)
             .pack(null)
             .pack(null)
@@ -277,6 +413,16 @@ describe('#Packhouse', () => {
             .pack('1234', null)
             .action((e, r) => {
                 expect(r).to.equal(true)
+                done()
+            })
+    })
+
+    it('use mold type no is', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldTypeTest')
+            .pack('1234', '1234')
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
                 done()
             })
     })
@@ -377,6 +523,54 @@ describe('#Packhouse', () => {
             })
     })
 
+    it('line layout can\'t action', function() {
+        let packhouse = new Packhouse()
+        packhouse.addGroup('test', () => {
+            return {
+                data: {
+                    lines: {
+                        test: {
+                            input() {},
+                            output() {},
+                            layout: {
+                                action: {
+                                    handler() {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        expect(() => {
+            packhouse.line('test', 'test')().action(() => {})
+        }).to.throw(Error)
+    })
+
+    it('line layout can\'t promise', function() {
+        let packhouse = new Packhouse()
+        packhouse.addGroup('test', () => {
+            return {
+                data: {
+                    lines: {
+                        test: {
+                            input() {},
+                            output() {},
+                            layout: {
+                                promise: {
+                                    handler() {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
+        expect(() => {
+            packhouse.line('test', 'test')().action(() => {})
+        }).to.throw(Error)
+    })
+
     it('use line', function(done) {
         this.packhouse
             .line('demoGroup', 'math')(5)
@@ -388,12 +582,67 @@ describe('#Packhouse', () => {
             })
     })
 
+    it('use line mold error', function(done) {
+        this.packhouse
+            .line('demoGroup', 'math')('110')
+            .add(10)
+            .double()
+            .action((e, r) => {
+                expect(e instanceof Error).to.equal(true)
+                done()
+            })
+    })
+
+    it('use line output error', function(done) {
+        this.packhouse
+            .line('demoGroup', 'outputError')()
+            .action((e, r) => {
+                expect(e).to.equal('test')
+                done()
+            })
+    })
+
+    it('use line layout error', function(done) {
+        this.packhouse
+            .line('demoGroup', 'math')(10)
+            .setError('error')
+            .add(10)
+            .action((e, r) => {
+                expect(e).to.equal('error')
+                done()
+            })
+    })
+
+    it('use line promise', function(done) {
+        this.packhouse
+            .line('demoGroup', 'math')(5)
+            .add(10)
+            .double()
+            .promise()
+            .then((reslut) => {
+                expect(reslut).to.equal(30)
+                done()
+            })
+    })
+
     it('use line error', function(done) {
         this.packhouse
             .line('demoGroup', 'math')(5)
             .add('10')
             .double()
             .action((e, r) => {
+                expect(typeof e.message).to.equal('string')
+                done()
+            })
+    })
+
+    it('use line error promise', function(done) {
+        this.packhouse
+            .line('demoGroup', 'math')(5)
+            .add('10')
+            .double()
+            .promise()
+            .catch((e) => {
                 expect(typeof e.message).to.equal('string')
                 done()
             })
@@ -448,6 +697,16 @@ describe('#Packhouse', () => {
         this.packhouse
             .tool('demoGroup', 'get')
             .action('b', (e, r) => {})
+    })
+
+    it('event error', function() {
+        let packhouse = new Packhouse()
+        expect(() => {
+            packhouse.on('run', '123')
+        }).to.throw(Error)
+        expect(() => {
+            packhouse.off('run', '12131')
+        }).to.throw(Error)
     })
 
     it('event run', function(done) {
@@ -582,20 +841,67 @@ describe('#Packhouse', () => {
             })
             .promise(10, 20)
     })
+})
 
+describe('#Utils', () => {
     it('utils : peel', function() {
-        let target = Packhouse.utils.peel({
+        var test = {
             a: {
-                b: 5
+                c: 5
             }
-        }, 'a.b')
-        expect(target).to.equal(5)
-        let target2 = Packhouse.utils.peel({
-            a: {
-                b: 5
-            }
-        }, 'a.b.c', 10)
-        expect(target2).to.equal(10)
+        }
+        expect(Packhouse.utils.peel(test, 'a.c')).to.equal(5)
+        expect(Packhouse.utils.peel(test, 'a.b.e.e')).to.equal(undefined)
+        expect(Packhouse.utils.peel(test, 'a.b.e.e', '*')).to.equal('*')
+    })
+
+    it('utils : verify', function() {
+        let options = {
+            a: 5,
+            b: '7'
+        }
+        let reslut = Packhouse.utils.verify(options, {
+            a: [true, ['number']],
+            b: [true, ['string']]
+        })
+        expect(reslut.a).to.equal(5)
+        expect(reslut.b).to.equal('7')
+        expect(() => {
+            Packhouse.utils.verify(options, {
+                a: [true, ['number']],
+                b: [true, ['string']],
+                c: [true, ['string']]
+            })
+        }).to.throw(Error)
+        expect(() => {
+            Packhouse.utils.verify(options, {
+                a: [123, ['number']]
+            })
+        }).to.throw(Error)
+        expect(() => {
+            Packhouse.utils.verify(options, {
+                a: [true, 123]
+            })
+        }).to.throw(Error)
+        expect(() => {
+            Packhouse.utils.verify(options, {
+                a: [true, ['string']]
+            })
+        }).to.throw(Error)
+    })
+
+    it('getType', function() {
+        expect(Packhouse.utils.getType('')).to.equal('string')
+        expect(Packhouse.utils.getType(true)).to.equal('boolean')
+        expect(Packhouse.utils.getType([])).to.equal('array')
+        expect(Packhouse.utils.getType(null)).to.equal('empty')
+        expect(Packhouse.utils.getType(undefined)).to.equal('empty')
+        expect(Packhouse.utils.getType({})).to.equal('object')
+        expect(Packhouse.utils.getType(new Promise(() => {}))).to.equal('promise')
+        expect(Packhouse.utils.getType(/www/)).to.equal('regexp')
+        expect(Packhouse.utils.getType(Buffer.from([]))).to.equal('buffer')
+        expect(Packhouse.utils.getType(Number('AAAA'))).to.equal('NaN')
+        expect(Packhouse.utils.getType(new Error('123'))).to.equal('error')
     })
 })
 

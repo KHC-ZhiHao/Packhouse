@@ -65,6 +65,30 @@ module.exports = {
                 this.success(true)
             }
         },
+        moldTestForDate: {
+            request: ['date'],
+            handler() {
+                this.success(true)
+            }
+        },
+        moldTestForRequired: {
+            request: ['required'],
+            handler() {
+                this.success(true)
+            }
+        },
+        moldTestForNumber: {
+            request: ['number|min:10|max:20'],
+            handler() {
+                this.success(true)
+            }
+        },
+        moldTestForInt: {
+            request: ['int|min:10|max:20'],
+            handler() {
+                this.success(true)
+            }
+        },
         moldTestAndNull: {
             request: [null, 'string'],
             handler() {
@@ -84,7 +108,7 @@ module.exports = {
             }
         },
         moldAbeTest: {
-            request: ['string|abe', 'number|abe', 'boolean|abe', 'array|abe', 'buffer|abe', 'object|abe', 'function|abe', 'date|abe'],
+            request: ['string|abe', 'number|abe', 'boolean|abe', 'int|abe', 'array|abe', 'buffer|abe', 'object|abe', 'function|abe', 'date|abe'],
             handler() {
                 this.success(true)
             }
@@ -175,6 +199,18 @@ module.exports = {
                     })
             }
         },
+        orderTestLite: {
+            install({ store, utils }) {
+                store.order = utils.order()
+            },
+            handler(name) {
+                this.store
+                    .order
+                    .use(name, this, (error, success) => {
+                        success(name)
+                    })
+            }
+        },
         orderTestForUseAndError: {
             install({ store, utils }) {
                 store.order = utils.order()
@@ -191,6 +227,15 @@ module.exports = {
         }
     },
     lines: {
+        outputError: {
+            input() {
+                this.success()
+            },
+            output() {
+                this.error('test')
+            },
+            layout: {}
+        },
         mathResponse: {
             request: ['number'],
             response: 'int',
@@ -238,6 +283,11 @@ module.exports = {
                     handler() {
                         this.store.value *= 2
                         this.success()
+                    }
+                },
+                setError: {
+                    handler(value) {
+                        this.error(value)
                     }
                 }
             }

@@ -36,6 +36,9 @@ describe('#Order', () => {
             let nextTime = Date.now()
             expect(nextTime - time > 50).to.equal(true)
             tool._core.tool.store.order.remove('1234')
+            expect(() => {
+                tool._core.tool.store.order.remove('12344')
+            }).to.throw(Error)
             this.packhouse
                 .tool('demoGroup', 'orderTest')
                 .action('1234', () => {
@@ -43,6 +46,19 @@ describe('#Order', () => {
                     expect(newNextTime - nextTime > 50).to.equal(true)
                     done()
                 })
+        })
+    })
+    it('Has', function(done) {
+        let tool = this.packhouse.tool('demoGroup', 'orderTestLite')
+        tool.action('1234', () => {
+            expect(tool._core.tool.store.order.has('1234')).to.equal(true)
+            expect(tool._core.tool.store.order.has('12344')).to.equal(false)
+            expect(() => {
+                tool._core.tool.store.order.has(1234)
+            }).to.throw(Error)
+            tool._core.tool.store.order.clear()
+            expect(tool._core.tool.store.order.has('1234')).to.equal(false)
+            done()
         })
     })
     it('Use', function(done) {

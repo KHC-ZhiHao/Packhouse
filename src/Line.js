@@ -131,9 +131,6 @@ class Process extends Base {
     }
 
     next() {
-        if (this.stop === true) {
-            return null
-        }
         let flow = this.deploy.flow[this.index]
         if (flow) {
             flow.tool
