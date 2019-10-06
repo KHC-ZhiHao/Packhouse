@@ -257,6 +257,9 @@ class Flow {
     }
 
     done() {
+        if (this.over) {
+            return null
+        }
         this.over = true
         if (this.timeout) {
             clearTimeout(this.timeout)
