@@ -20,15 +20,17 @@
 
 <br>
 
-## 摘要
+## Summary
 
-`Packhouse`是一個基於函數式程式設計(Functional Programming)的設計模式模型，核心目的為使用微服務中的微服務，提供了強大的上下文追蹤與快取系統，適用於為FaaS服務建立良好的編程環境，例如AWS Lambda。
+`Packhouse` is model based on Functional Programming. The goal is to use microservices in microservices, this library provides  powerful tracking and caching systems to build a good programming environment for FaaS services, such as AWS Lambda.
 
-整個架構是為[Serverless Framework](https://serverless.com/)所設計的，有興趣的你可以了解看看，但`Packhouse`並沒有強制必須於哪個環境下運作，它甚至可以在瀏覽器執行。
+The software architecture is designed for the [Serverless Framework](https://serverless.com/), but `Packhouse` doesn't enforce the operating environment, it can even be executed in the browser.
 
-本庫不是那麼遵守函數式程式設計典範，但還是請您開始前可以閱讀下列文章了解Functional Programming的設計觀念。
+This library does not fully follow the Functional Programming design paradigm, but please read the following article to understand the design concept of Functional Programming before you start.
 
-[JS函數式編程指南](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)
+[JS函數式編程指南(ZH)](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)
+
+[中文讀我](./README_TW.md)
 
 ## Install
 
@@ -38,21 +40,21 @@ npm i packhouse --save
 
 ---
 
-## 運行環境
+## Operating environment
 
-Nodejs 8.x以上。
+Node.js 8.x or higher is required.
 
 ---
 
-## 開始
+## Table of contents
 
-* [第一支函數](#第一支函數)
+* [First Function](#First&nbsp;Function)
 
 * [Mold](#Mold)
 
-* [預處理](#預處理)
+* [Preprocessing](#Preprocessing)
 
-* [初始化](#初始化)
+* [Install](#Install)
 
 * [Utils](#Utils)
 
@@ -60,29 +62,31 @@ Nodejs 8.x以上。
 
 * [Line](#Line)
 
-* [Event與追蹤](#Event與追蹤)
+* [Event and tracking](#Event&nbsp;and&nbsp;tracking)
 
 * [Merger](#Merger)
 
-* [總是新的開始](#總是新的開始)
+* [Always new start](#Always&nbsp;new&nbsp;start)
 
 * [Pulgin](#Pulgin)
 
 * [Example](#Example)
 
-* [版本迭代](#版本迭代)
+* [Version iteration](#Version&nbsp;iteration)
 
-### 第一支函數
+---
+
+## First Function
 
 ```js
 const Packhouse = require('packhouse')
-
-// 實例化
+/*
+    Return applies to the interrupt function, but the return value is handled by this.success or this.error, so the arrow function cannot be used.
+*/
 let packhouse = new Packhouse()
 let group = {
     tools: {
         sum: {
-            // return適用於中斷函式，但回傳值全由this.success或this.error處理，因此不能使用箭頭函數。
             handler(v1, v2) {
                 this.success(v1 + v2)
             }
@@ -90,7 +94,7 @@ let group = {
     }
 }
 
-// 加入group是用lazy的模式
+// Add group is use lazy loaded.
 packhouse.add('math', () => {
     return {
         data: group
@@ -102,13 +106,11 @@ packhouse.tool('math', 'sum').action(5, 10, (error, result) => {
 })
 ```
 
-> `Tool`是函數的基本單位，整個`Packhouse`的系統都是圍繞著`Tool`打轉。
+> `Tool` is the basic unit of the function, and the entire `Packhouse` system is based on the `Tool` construction.
 
-#### Action
+### Action
 
-上述的例子可以發現我們使用`Action`調用sum這支`Tool`，`Action`是依照Node的callback設計，第一個參數為error，後者為結果，且內部函式如果沒有非同步處理，那本質上會是同步的。
-
-> 下列之後的例子會省略建構`Packhouse`的動作。
+The above example can be found that we use `Action` to call sum `Tool`, `Action` is Node callback design, the first parameter is error, next is result, if the internal function is not asynchronous, then it will be synchronous.
 
 ```js
 let group = {
@@ -116,7 +118,7 @@ let group = {
         sum: {
             handler(v1, v2) {
                 if (typeof v1 + typeof v2 !== 'numbernumber') {
-                    // 使用return中斷程式執行
+                    // Use the return interrupt program to execute.
                     return this.error('Param not a number.')
                 }
                 this.success(v1 + v2)
@@ -129,11 +131,11 @@ packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
 })
 ```
 
-#### Promise
+### Promise
 
-因為success與error可以無縫擔任resolve與reject的腳色，這讓每個`Tool`都可以化身成promise。
+Because success and error can be resolve and reject, which allows each of the `Tool` can to be promise.
 
-> 雖然有分同步與同步上的區分，但`Packhouse`的原意就是將所有函式都視作非同步函數，減少開發上的擔憂。
+> Although have two difference mode asynchronous and synchronous, the original meaning of `Packhouse` is to treat all functions as asynchronous.
 
 ```js
 packhouse.tool('math', 'sum').promise(5, 10).then(r => console.log(r)) // 15
@@ -141,17 +143,17 @@ packhouse.tool('math', 'sum').promise(5, 10).then(r => console.log(r)) // 15
 
 ---
 
-### Mold
+## Mold
 
-了解`Mold`前，我們先看看基於TypeScript的函數設計：
+Read `Mold` before, let's take a look at the design of the TypeScript:
 
 ```ts
-// 基本函數
+// Basic function
 function sum(v1: number, v2: number): number {
     return v1 + v2;
 }
 
-// 基於interface
+// Interface based
 interface Person {
     firstName: string;
     lastName: string;
@@ -162,7 +164,7 @@ function greeter(person: Person) {
 }
 ```
 
-如上，`Mold`就是負責處理參數結構，宣告模式如下：
+As above, `Mold` is responsible for processing the parameter structure, and the writing is as follows:
 
 ```js
 let group = {
@@ -181,14 +183,15 @@ packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
 })
 ```
 
-`Packhouse`內部提供了基礎的`Mold`，如下：
+`Packhouse` provides the basic `Mold` as follows:
 
 ```js
 let group = {
     tools: {
         sum: {
             request: [
-                'type|is:string|abe', // type是參照units.getType，因此一定要搭配is參數
+                // Type is reference to units.getType, so be sure to match "is" parameter.
+                'type|is:string|abe',
                 'boolean|abe',
                 'number|max:0|min:0|abe',
                 'int|max:0|min:0|abe',
@@ -197,7 +200,8 @@ let group = {
                 'buffer|abe',
                 'object|abe',
                 'function|abe',
-                'date|abe', // 符合new Date規格的形式
+                // In accordance with the format of Date.
+                'date|abe',
                 'required'
             ]
         }
@@ -205,37 +209,37 @@ let group = {
 }
 ```
 
-#### 定義自己的Mold
+### Define your own Mold
 
-Interface的實踐必須自己建立`Mold`，可以分別建立在`Packhouse`內成為全域的`Mold`或只應用在當下的`Group`中。
+The practice of Interface must be built alone `Mold`, which can be declaration in `Packhouse` to become the global `Mold` or only in the current `Group`.
 
-> 不建議直接宣告`Mold`在全域，相關方法請參閱`Merger`。
+> It is not recommended to directly declaration `Mold` in the whole domain. For related methods, please refer to `Merger`.。
 
 ```js
 let packhouse = new Packhouse()
-// 宣告在packhouse中
+// Declaration in Packhouse.
 packhouse.addMold('person', function(value, { index }) {
     if (typeof value === 'object' && typeof value.firstName === 'string' && typeof value.lastName === 'string') {
-        // mold的計算是基於同步的，它會將回傳的值放入tool對應的param中，意味著mold也可以作為資料轉換層
+        // The computed of mold is based on synchronization, it will put the returned value into the param corresponding to the tool, which means that mold can also be used as the data conversion layer.
         return {
             firstName: value.firstName,
             lastName: value.lastName
         }
     }
-    // 如果資料錯誤，使用throw關鍵字
+    // If the data is wrong, use the throw keyword.
     throw new Error(`Parameter ${index} validate error.`)
 })
 
-// 宣告在group
+// Declaration in group.
 let group = {
     molds: {
         person(value, { index }) {
-            // 定義如上相同的handler
+            // Define the same handler as above.
         }
     },
     tools: {
         greeter: {
-            // 如果group中有相同命名的mold則以group優先
+            // If group has the same named mold, use group first.
             request: ['person'],
             handler(person) {
                 this.success('Hello, ' + person.firstName + ' ' + person.lastName)
@@ -245,9 +249,7 @@ let group = {
 }
 ```
 
-#### 使用null忽略驗證
-
-如果想跳過參數驗證可以使用null忽略驗證該參數。
+### Use null to ignore validation
 
 ```js
 let group = {
@@ -262,7 +264,7 @@ let group = {
 }
 ```
 
-#### 使用Casting在Handler中做Mold的驗證或轉換
+### Use the casting to verify or convert the mold in the handler
 
 ```js
 let group = {
@@ -281,9 +283,9 @@ let group = {
 }
 ```
 
-#### Mold表示式
+### Mold expression
 
-javascript允許預設參數數值，意味著有些參數不是必要的，給予abe(allow be empty)可以允許參數為null或undefined。
+Javascript allows you to preset parameter values, meaning that some parameters not a required, can giving abe(allow be empty) allows the parameter to be null or undefined.
 
 ```js
 let group = {
@@ -298,7 +300,7 @@ let group = {
 }
 ```
 
-#### 自定義Mold表示式
+### Custom mold expression
 
 ```js
 let group = {
@@ -326,13 +328,13 @@ let group = {
 
 ---
 
-### 預處理
+## Preprocessing
 
-`Tool`的`Action`和`Promise`是一個終點，在宣告它們之前可以預先宣告一些預處理。
+The `Action` and `Promise` of `Tool` are an ending, and some pre-processing can be before invoke them.
 
-#### Pack
+### Pack
 
-預先加入參數。
+Add parameters in advance.
 
 ```js
 packhouse
@@ -343,9 +345,9 @@ packhouse
     })
 ```
 
-#### Repack
+### Repack
 
-`Pack`連續宣告會一直往下處理。
+`Pack` continuous used will continue processed.
 
 ```js
 packhouse
@@ -357,7 +359,7 @@ packhouse
     })
 ```
 
-`Repack`會強制從頭開始：
+`Repack` will back to origin:
 
 ```js
 packhouse
@@ -370,9 +372,9 @@ packhouse
     })
 ```
 
-#### Weld
+### Weld
 
-把回傳值帶入給另一個`Tool`，搭配`Pack`可以建構初步的柯理化(Currying)概念。
+Bring the return value to another `Tool`, with `Pack` can to initial currying concept.
 
 ```js
 packhouse
@@ -384,22 +386,24 @@ packhouse
     })
 ```
 
-#### NoGood
+### NoGood
 
-如果失敗不執行成功的callback，重複註冊會被取代。
+It is failure callback.
+
+> repeated registration will be replaced
 
 ```js
-// 如果宣告noGood，action callback的error會被捨去
+// If noGood is declared, the error of the action callback will be discarded.
 packhouse
     .tool('math', 'sum')
     .noGood(error => {
         console.log(error) // Parameter 1 not a number(10).
     })
     .action(5, '10', (result) => {
-        // 不會被執行
+        // no work
     })
 
-// 如果是promise會被宣告reslove，這是需要注意的。
+// If the promise is to be declared reslove, this is something to be aware of.
 packhouse
     .tool('math', 'sum')
     .noGood(error => {
@@ -407,7 +411,7 @@ packhouse
     })
     .promise(5, '10')
 
-// 如果promise希望noGood同時被宣告且回傳reject，需在第二個參數賦予如下:
+// If the promise wants noGood to be declared at the same time and the use rejected, the second parameter as follows:
 packhouse
     .tool('math', 'sum')
     .noGood(error => {
@@ -418,9 +422,11 @@ packhouse
     .promise(5, '10')
 ```
 
-#### Always
+### Always
 
-無論成功或失敗都會執行這個callback，重複註冊會被取代。
+This callback will be executed regardless of success or failure.
+
+> Repeated registration will be replaced.
 
 ```js
 packhouse
@@ -435,13 +441,13 @@ packhouse
 
 ---
 
-### 初始化
+## Install
 
-`Group`與`Tool`、`Line`都有`Install`的階段，顧名思義就是第一次執行時會呼叫的方法。
+`Group` and `Tool`, `Line` have the stage of `Install`, as the name suggests is the method that will be called when the first execution.
 
 ```js
 let group = {
-    // options是對外交換資料的接口
+    // Options is the interface for exchanging data.
     install(group, options) {
         console.log(options.demo) // hello
     },
@@ -464,9 +470,9 @@ packhouse.add('demo', () => {
 })
 ```
 
-#### Group
+### Group
 
-`Group`物件可以在`Install`中被讀取到：
+The `Group` object can be read in `Install`:
 
 ```js
 let group = {
@@ -483,9 +489,9 @@ let group = {
 }
 ```
 
-#### Store
+### Store
 
-`Store`物件會被綁定到`Tool Handler`的this中。
+The `Store` object will be bound to this in the `Tool Handler`.
 
 ```js
 let group = {
@@ -495,7 +501,7 @@ let group = {
     tools: {
         myTool: {
             install({ store, group }) {
-                // 這是tool與group交易資料的模式
+                // This is tool and group transaction data.
                 store.name = group.name
             },
             handler() {
@@ -508,9 +514,9 @@ let group = {
 
 ---
 
-### Utils
+## Utils
 
-`Utils`提供了擴充方法與通用工具。
+`Utils` provides extensions and generics methods.
 
 ```js
 let Packhouse = require('packhouse')
@@ -518,7 +524,7 @@ let packhouse = new Packhouse()
 console.log(packhouse.utils.generateId()) // uuid
 ```
 
-#### 在Handler中使用Utils
+### Use utils in handler
 
 ```js
 let group = {
@@ -535,7 +541,7 @@ let group = {
 }
 ```
 
-#### 在Mold中使用Utils
+### Use utils in mold
 
 ```js
 let group = {
@@ -547,9 +553,9 @@ let group = {
 }
 ```
 
-#### 可用方法
+### Methods
 
-##### getType
+#### getType
 
 ```js
 packhouse.utils.getType([]) // array
@@ -562,7 +568,7 @@ packhouse.utils.getType(Buffer.from('123')) // buffer
 packhouse.utils.getType(new Error()) // error
 ```
 
-##### verify
+#### verify
 
 ```js
 let options = {
@@ -578,25 +584,25 @@ console.log(data.a) // 5
 console.log(data.c) // 0
 ```
 
-##### generateId
+#### generateId
 
-產生一組仿uuid隨機字串。
+Generate a similar uuid random strings.
 
 ```js
 let id = packhouse.utils.generateId()
 ```
 
-##### arrayCopy
+#### arrayCopy
 
-基本上就是array.slice()的功能，不過比較快。
+Basically it is the function of array.slice(), but it to faster.
 
 ```js
 let newArray = packhouse.utils.arrayCopy([])
 ```
 
-##### peel
+#### peel
 
-可以獲得指定的路徑對象的值，找不到回傳undefined。
+The value of the specified path object is available, if not found return undefined.
 
 ```js
 let a = {
@@ -611,11 +617,11 @@ console.log(packhouse.utils.peel(a, 'b.c.d')) // 5
 
 ---
 
-### Include
+## Include
 
-引用其他`Tool`甚至是引用其他`Group`的方法。
+Use other `Tool` and even with other `Group` methods.
 
-> 深層的堆疊追蹤必須經由`Include`引入才會被註冊至追蹤上下文中。
+> Deep tiered traces registered context Must be via include.
 
 ```js
 let group = {
@@ -627,11 +633,11 @@ let group = {
         },
         sumAndDouble: {
             install({ include }) {
-                // 先命名key，在選擇對象
+                // First give name, and select the object.
                 include('sum').tool('sum')
             },
             handler(v1, v2) {
-                // 使用use關鍵字使用tool
+                // Use "use" keyword invoke tool.
                 this.use('sum')
                     .noGood(this.error)
                     .action(result => {
@@ -643,7 +649,7 @@ let group = {
 }
 ```
 
-#### 更多應用方法
+### More include methods
 
 ```js
 let group2 = {
@@ -656,7 +662,7 @@ let group2 = {
     }
 }
 let group = {
-    // mergers是一個重命名引用接口，主要在這加入需要的group。
+    // Merges is a renamed reference interface, which is mainly used to join the required groups.
     mergers: {
         'useGroup': 'group2'
     },
@@ -668,11 +674,11 @@ let group = {
         },
         sumAndDouble: {
             install({ include }) {
-                // 對tool進行預處理
+                // Preprocessing the tool.
                 include('sum').tool('sum').pack(10)
-                // 引用line，line不會回傳任何值，因此無法預處理
+                // Use line,line does not return any value, so it cannot be preprocessed.
                 include('math').line('math')
-                // 使用coop引用其他group
+                // Use coop to import other groups.
                 include('sum2').coop('useGroup', 'tool', 'sum').pack(10)
             },
             handler() {
@@ -697,9 +703,9 @@ packhouse.add('group2', () => {
 
 ---
 
-### Line
+## Line
 
-`Line`是上述所有方法的集大成結果，也是`Packhouse`的柯里化函式的標準模型。
+`Line` is the result of the set of all the above knowledge, and is the standard model of the Curry Function of `Packhouse`.
 
 ```js
 let group = {
@@ -715,20 +721,19 @@ let group = {
             request: ['number'],
             response: 'number',
             install({ include }) {
-                // 從input到output所有的tool會共享this狀態
+                // From input to output share "this" state.
                 include('sum').tool('sum')
             },
             input(value) {
-                // 在line模式下除了output外的success不會影響輸出值，而是直接藉由store傳遞上下文
+                // Success in the Line except for output does not transfer value, but passes directly through the store.
                 this.store.value = value
                 this.success()
             },
             output() {
-                // 當line執行action或promise時會拋出結果
                 this.success(this.store.value)
             },
             layout: {
-                // layout基本上是一組簡單的tool群組
+                // Layout is a simple tool groups.
                 add: {
                     request: ['number'],
                     handler(value) {
@@ -758,34 +763,34 @@ packhouse.line('groupName', 'math')(10).add(5).add(15).double().action((error, r
 
 ---
 
-## Event與追蹤
+## Event and tracking
 
-`Packhouse`對於函式做了大量的包裝，這一切都是為了追蹤運行過程，這也造就了`Packhouse`不適合密集計算，我得承認它在互相引用`Tool`時非常慢(如果你介意的是豪秒間的差異的話)，有趣的是這個架構原型是用於計算數學圖形快取運算用的。
+`Packhouse` does a lot of wrapping for the function, all in order to track the running process, which also make `Packhouse` not suitable for intensive calculations, I have to admit that it is very slow when to `Tool` invoke `Tool`, if you mind The difference between the millisecond.
 
 ```js
 let Packhouse = require('packhouse')
 let packhouse = new Packhouse()
 
-// 每當只用group時被觸發
+// Triggered whenever only group is used.
 packhouse.on('run', (event, { type, name, group })) => {})
 
-// 每當運行tool時被觸發，可以藉由當下id與caller來得知呼叫的上下文。
+// Whenever the tool is triggered, the context of the call can be known by the current id and caller.
 packhouse.on('run', (event, { id, caller, detail })) => {})
 
-// 每當tool結束時被觸發
+// Triggered when the end tool ending.
 packhouse.on('done', (event, { id, caller, detail })) => {})
 ```
 
-### 取消監聽
+### Off listener
 
-每次呼叫`on`會獲得一組id，可以藉由id來取消監聽對象：
+Each call to `on` will get a id, which can be off listener by:
 
 ```js
 let id = packhouse.on('run', () => {})
 packhouse.off('run', id)
 ```
 
-也可以藉由callback的第一個參數來取消監聽：
+Also possible to cancel the listen by the first argument of the callback:
 
 ```js
 packhouse.on('run', (event) => {
@@ -797,7 +802,7 @@ packhouse.on('run', (event) => {
 
 ## Merger
 
-有時我們會採用repository模式來做service串接的橋樑，`Merger`即為此而生，每當外部要引用`Merger`時必須加上命名空間，但內部使用時不需要。
+Sometimes we will use the repository to packed service. The `Merger` is born for this. Whenever the external reference to `Merger` is required, the namespace must be added, but it is not needed for internal use.
 
 ```js
 let merger = {
@@ -822,7 +827,7 @@ let merger = {
         }
     }
 }
-// 將獲取以@區隔的命名空間
+// Namespace separated by @.
 packhouse.merger('firstMerger', merger)
 packhouse.tool('firstMerger@myGroup', 'myTool').action(() => {
     // ...
@@ -831,12 +836,12 @@ packhouse.tool('firstMerger@myGroup', 'myTool').action(() => {
 
 ---
 
-## AWS錯誤處理
+## AWS error handling
 
-AWS SDK的所有方法雖然都有提供promise接口，但它的promise有一個糟糕的問題，在有一定堆疊的呼叫時如果有程式碼報錯，promise會捉到catch卻不會觸發catch()。
+Although all methods of the AWS SDK provide a promise interface, its has a bad problem. If there is a code error when certain stack call, the promise will catch the error but not trigger catch().
 
 ```js
-// 採用原生的錯誤處理來避免test失敗
+// Use native error handling to avoid test failure.
 let AWS = require('aws-sdk')
 let client = new AWS.DynamoDB.DocumentClient()
 let group = {
@@ -856,7 +861,7 @@ let group = {
                         this.success(result)
                     }
                 })
-                // 避免如下宣告
+                // Avoid the following announcement:
                 client.get(params).promise()
             }
         }
@@ -866,11 +871,11 @@ let group = {
 
 ---
 
-## 總是新的開始
+## Always new start
 
-Node的require有catch的特性，除非手動去清除它，否則它會存取上次使用過後的痕跡，這在Functional Programming是高風險的，意味著請將所有的初始化行為都編寫在install中，但這代表著實例化`Packhouse`後install的內容也不會重新來過，因此每次請求的過程都必須重新實例化`Packhouse`，以下是AWS Lambda的例子：
+Node's require method has a catch feature, unless you manually clear it, it will cache the last use. This is high-risk in Functional Programming. Please initialization behaviors are written in install, but the means that of the install will not be re-worked after instantiating `Packhouse`, so each request process must re-instantiate `Packhouse`. Here is an example of AWS Lambda:
 
-### 糟糕的做法
+### Bad pattern
 
 ```js
 let AWS = requrie('aws-sdk')
@@ -898,7 +903,7 @@ exports.handler = async () => {
 
 ---
 
-### 良好的做法
+### Good pattern
 
 ```js
 let AWS = requrie('aws-sdk')
@@ -931,7 +936,7 @@ exports.handler = async () => {
 
 ## Pulgin
 
-可以使用`Pulgin`來擴展`Packhouse`的功能。
+You can use `Pulgin` to extend the method of `Packhouse`.
 
 ```js
 let Packhouse = require('packhouse')
@@ -948,9 +953,11 @@ packhouse.plugin(MyFirstPulgin)
 
 ### Order
 
-`Order`是一個對付短暫同時間的相同條件密集請求時的快取物件，在第一次請求的結果回來前，之後的所有請求都會等待第一次的請求回傳的結果。
+`Order` is a cache object that deals with the same conditional intensive request for a short period of time.
 
-> 在Functional Programming常見對同一筆條件送出好幾次請求，因為我們必須把每次請求當作是一個新的服務，就算鍵值相同，但這也意味著不必要的效能浪費。
+Before the result of the first request comes back, all subsequent requests will wait for the result of the first request backhaul.
+
+> In Functional Programming, it is common to send several requests to the same condition, because we have to treat each request as a new service, even if the key values are the same, but this means unnecessary performance waste.
 
 ```js
 let Packhouse = require('packhouse')
@@ -963,7 +970,7 @@ let group = {
     tools: {
         sum: {
             install({ store, utils }) {
-                // order會被綁訂在utils上
+                // order bound on utils.
                 store.order = utils.order()
             },
             handler(v1, v2) {
@@ -993,32 +1000,32 @@ packhouse.tool('math', 'sum').action(10, 20, (error, result) => {
 
 ### Step
 
-`Step`可以讓`Packhouse`足以擔任框架的腳色，建構整個服務。
+`Step` can make `Packhouse` to serve as the frameworke and construct the entire service.
 
 ```js
 let Packhouse = require('packhouse')
 let Step = require('packhouse/plugins/Step')
 let packhouse = new Packhouse()
 
-// 在引用step後獲得了step的方法，宣告後回傳一個promise。
+// After the step is used, can use step method in packhouse, and a promise is returned after the announcement.
 packhouse.plugin(Step)
 packhouse.step({
     create: function() {
-        // 由於this是共享的，create可以協助註冊this
+        // Since this is shared, create can support register this.
         this.result = 0
     },
     middle: function({ exit, fail }) {
-        // 可以在template之間設定跳出條件
+        // You can set the jump condition between templates.
         if (this.result > 10) {
             exit()
         }
     },
     timeout: 25000, // ms
     output({ timeout, history, fail, message }, success) {
-        console.log(fail) // 如果宣告過fail則為true
-        console.log(message) // exit或fail夾帶的message
-        console.log(timeout) // 如果是timeout則宣告成true
-        console.log(history.toJSON()) // step會協助你建立追蹤過程，並輸出詳細資料
+        console.log(fail) // True if fail is declared.
+        console.log(message) // Exit or fail to carry the message.
+        console.log(timeout) // If it is timeout, it will be true.
+        console.log(history.toJSON()) // Step will help you build the tracking process and output details.
         success(this.result)
     },
     template: [
@@ -1026,7 +1033,7 @@ packhouse.step({
             this.result = 10
             next()
         }
-        // 你的邏輯
+        // Your logic.
     ]
 }).then(result => console.log(result)) // 10
 ```
@@ -1035,11 +1042,11 @@ packhouse.step({
 
 ## Example
 
-本示例中示範了`Packhouse`是如何把複雜的"取得經緯度附近的台灣氣象開放資料"梳理至容易閱讀的過程，並完整的歸納`Group`與`Merger`等模式，真正的商業邏輯遠比這複雜的多。
+This example how `Packhouse` combs the complex "Taiwan meteorological open data near latitude and longitude" to an easy-to-read process, and fully summarizes the models `Group` and `Merger`. However real business logic is complex more than this.
 
-你可以clone整個專案，並打包example資料夾成zip並上傳到AWS Lambda，貼上以下event且把運行時間調至30秒後調用：
+You can clone this project and package example folder to zip and upload it to AWS Lambda, Paste the following event and set timeout to 30 seconds with calling before:
 
-> 記得install node_modules
+> Remember install node_modules
 
 ```json
 {
@@ -1050,11 +1057,11 @@ packhouse.step({
 
 ---
 
-## 版本迭代
+## Version iteration
 
-1.1.6與1.1.7發生了重大變革，大幅降低了使用所需的知識門檻與正規化模組，但相對的兩版本的相容性趨近於０。
+The re-examination of the architecture between 1.1.6 and 1.1.7 is therefore quite different.
 
-關於1.1.6版文件如下：
+The file about 1.1.6 is as follows:
 
 [Guide](https://khc-zhihao.github.io/MyBook/Packhouse/static/)
 
