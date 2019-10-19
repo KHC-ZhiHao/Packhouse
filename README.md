@@ -32,6 +32,8 @@ This library does not fully follow the Functional Programming design paradigm, b
 
 [中文讀我](./README_TW.md)
 
+> 我英文能力不太靠譜，如果有錯誤請協助修正，感謝。
+
 ## Install
 
 ```bash
@@ -40,13 +42,13 @@ npm i packhouse --save
 
 ---
 
-## Operating environment
+## Operating Environment
 
 Node.js 8.x or higher is required.
 
 ---
 
-## Table of contents
+## Table Of Contents
 
 * [First Function](#First-Function)
 
@@ -62,17 +64,29 @@ Node.js 8.x or higher is required.
 
 * [Line](#Line)
 
+<<<<<<< HEAD
 * [Event and tracking](#Event-and-tracking)
 
 * [Merger](#Merger)
 
 * [Always new start](#Always-new-start)
+=======
+* [Event And Track](#Event-And-Track)
+
+* [Merger](#Merger)
+
+* [Always Restart](#Always-Restart)
+>>>>>>> b3d79a7b900b8495c65500d09bc9cfdf25774698
 
 * [Pulgin](#Pulgin)
 
 * [Example](#Example)
 
+<<<<<<< HEAD
 * [Version iteration](#Version-iteration)
+=======
+* [Version Iteration](#Version-Iteration)
+>>>>>>> b3d79a7b900b8495c65500d09bc9cfdf25774698
 
 ---
 
@@ -249,7 +263,7 @@ let group = {
 }
 ```
 
-### Use null to ignore validation
+### Use Null To Ignore Validation
 
 ```js
 let group = {
@@ -264,7 +278,7 @@ let group = {
 }
 ```
 
-### Use the casting to verify or convert the mold in the handler
+### Use Casting To Mold In The Handler
 
 ```js
 let group = {
@@ -283,7 +297,7 @@ let group = {
 }
 ```
 
-### Mold expression
+### Mold Expression
 
 Javascript allows you to preset parameter values, meaning that some parameters not a required, can giving abe(allow be empty) allows the parameter to be null or undefined.
 
@@ -300,7 +314,7 @@ let group = {
 }
 ```
 
-### Custom mold expression
+### Custom Mold Expression
 
 ```js
 let group = {
@@ -541,7 +555,7 @@ let group = {
 }
 ```
 
-### Use utils in mold
+### Use Utils In Mold
 
 ```js
 let group = {
@@ -649,7 +663,7 @@ let group = {
 }
 ```
 
-### More include methods
+### More Include Methods
 
 ```js
 let group2 = {
@@ -763,7 +777,7 @@ packhouse.line('groupName', 'math')(10).add(5).add(15).double().action((error, r
 
 ---
 
-## Event and tracking
+## Event And Track
 
 `Packhouse` does a lot of wrapping for the function, all in order to track the running process, which also make `Packhouse` not suitable for intensive calculations, I have to admit that it is very slow when to `Tool` invoke `Tool`, if you mind The difference between the millisecond.
 
@@ -781,7 +795,7 @@ packhouse.on('run', (event, { id, caller, detail })) => {})
 packhouse.on('done', (event, { id, caller, detail })) => {})
 ```
 
-### Off listener
+### Off Listener
 
 Each call to `on` will get a id, which can be off listener by:
 
@@ -836,7 +850,7 @@ packhouse.tool('firstMerger@myGroup', 'myTool').action(() => {
 
 ---
 
-## AWS error handling
+## AWS Promise With Error
 
 Although all methods of the AWS SDK provide a promise interface, its has a bad problem. If there is a code error when certain stack call, the promise will catch the error but not trigger catch().
 
@@ -871,11 +885,11 @@ let group = {
 
 ---
 
-## Always new start
+## Always Restart
 
 Node's require method has a catch feature, unless you manually clear it, it will cache the last use. This is high-risk in Functional Programming. Please initialization behaviors are written in install, but the means that of the install will not be re-worked after instantiating `Packhouse`, so each request process must re-instantiate `Packhouse`. Here is an example of AWS Lambda:
 
-### Bad pattern
+### Bad Pattern
 
 ```js
 let AWS = requrie('aws-sdk')
@@ -903,7 +917,7 @@ exports.handler = async () => {
 
 ---
 
-### Good pattern
+### Good Pattern
 
 ```js
 let AWS = requrie('aws-sdk')
@@ -1057,7 +1071,7 @@ You can clone this project and package example folder to zip and upload it to AW
 
 ---
 
-## Version iteration
+## Version Iteration
 
 The re-examination of the architecture between 1.1.6 and 1.1.7 is therefore quite different.
 
