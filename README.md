@@ -48,7 +48,7 @@ Node.js 8.x or higher is required.
 
 ## Table of contents
 
-* [First Function](#First&nbsp;Function)
+* [First Function](#First-Function)
 
 * [Mold](#Mold)
 
@@ -62,17 +62,17 @@ Node.js 8.x or higher is required.
 
 * [Line](#Line)
 
-* [Event and tracking](#Event&nbsp;and&nbsp;tracking)
+* [Event and tracking](#Event-and-tracking)
 
 * [Merger](#Merger)
 
-* [Always new start](#Always&nbsp;new&nbsp;start)
+* [Always new start](#Always-new-start)
 
 * [Pulgin](#Pulgin)
 
 * [Example](#Example)
 
-* [Version iteration](#Version&nbsp;iteration)
+* [Version iteration](#Version-iteration)
 
 ---
 
@@ -209,7 +209,7 @@ let group = {
 }
 ```
 
-### Define your own Mold
+### Define Your Mold
 
 The practice of Interface must be built alone `Mold`, which can be declaration in `Packhouse` to become the global `Mold` or only in the current `Group`.
 

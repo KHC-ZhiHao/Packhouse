@@ -1,8 +1,6 @@
 const Base = require('./Base')
 const Utils = require('./Utils')
 
-class MoldStore {}
-
 class Box extends Base {
     constructor(parent, namespace) {
         super('MoldBox')
@@ -77,7 +75,7 @@ class Box extends Base {
 class Mold extends Base {
     constructor(handler) {
         super('Mold')
-        this.case = new MoldStore()
+        this.case = {}
         this.handler = handler
     }
 

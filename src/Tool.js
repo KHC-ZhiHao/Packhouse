@@ -102,7 +102,11 @@ class Tool extends Base {
             try {
                 parameters[i] = this.parseMold(mold, parameters[i], i)
             } catch (error) {
-                return handler.error(error)
+                return handler.error({
+                    name: mold,
+                    type: 'mold',
+                    error
+                })
             }
         }
         // action
