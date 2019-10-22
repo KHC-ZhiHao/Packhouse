@@ -93,3 +93,5 @@ declare namespace Packhouse {
         groups?: { [key: string]: MergerGroup }
     }
 }
+
+export = Packhouse
