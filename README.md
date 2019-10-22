@@ -783,7 +783,7 @@ packhouse.on('run', (event, { id, caller, detail })) => {})
 packhouse.on('done', (event, { id, caller, detail })) => {})
 ```
 
-### Off Listener
+### Remove Listener
 
 Each call to `on` will get a id, which can be off listener by:
 
