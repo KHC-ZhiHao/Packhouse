@@ -1,12 +1,14 @@
+import { Func } from "mocha"
+
 declare namespace Packhouse {
-    interface ToolContext {
+    export interface ToolContext {
         store: {[key: string]: any}
         group: {[key: string]: any}
         utils: Utils
         include(name: string): Include
     }
     
-    interface Utils {
+    export interface Utils {
         getType(target: any): string
         verify(data: any, validate: { [key: string]: [boolean, Array<string>, any?] })
         generateId(): string
@@ -14,55 +16,62 @@ declare namespace Packhouse {
         peel(target: {[key: string]: any}, path: string, def: any): any
     }
 
-    interface Include {
+    export interface Include {
         line(name: string): void
         coop(name: string): IncludeCoop
-        tool(name: string): ToolPreProcess
+        tool(name: string): ToolProcess
     }
 
-    interface IncludeCoop {
+    export interface IncludeCoop {
         line(name: string): void
-        tool(name: string): ToolPreProcess
+        tool(name: string): ToolProcess
     }
 
-    interface ToolPreProcess {
-        weld(name: string, handler: WeldPack): ToolPreProcess
-        pack(...any: any): ToolPreProcess
-        repack(...any: any): ToolPreProcess
-        noGood(action: () => void, options?: {[key: string]: any}): ToolPreProcess
-        always(action: () => void): ToolPreProcess
+    export interface ToolProcess {
+        weld(name: string, handler: WeldPack): ToolProcess
+        pack(...any: any): ToolProcess
+        repack(...any: any): ToolProcess
+        noGood(action: () => void, options?: {[key: string]: any}): ToolProcess
+        always(action: () => void): ToolProcess
+        action(...any: any): void
+        promise(...any: any): Promise<any>
     }
 
-    interface WeldPack {
+    export interface WeldPack {
         (result: any, pack: (...any: any) => void): void
     }
 
-    interface Tool {
+    export interface Tool {
         request?: Array<string>
         response?: string
         install?(context: ToolContext): void
         handler(self: ToolHandler, ...any: any): void
     }
 
-    interface ToolHandler {
+    export interface ToolHandler {
+        use(name: string): any
         store: {[key: string]: any}
         error(data: any): void
         success(data: any): void
         casting(moldName: string, target: any): any
     }
 
-    interface Mold {
+    export interface ToolUseResponse {
+        [prop: string]: ToolUseResponse
+    }
+
+    export interface Mold {
         (value: any, context: MoldContext): any
     }
 
-    interface MoldContext {
+    export interface MoldContext {
         utils: Utils
         message: any
         index: number
         extras: {[key: string]: any}
     }
 
-    interface Line {
+    export interface Line {
         request?: Array<string>
         response?: string
         install?(context: ToolContext): void
@@ -71,11 +80,11 @@ declare namespace Packhouse {
         layout: { [key: string]: Tool }
     }
 
-    interface MergerGroup {
+    export interface MergerGroup {
         (options: any): MergerGroupResponse
     }
 
-    interface MergerGroupResponse {
+    export interface MergerGroupResponse {
         data: Group
         options?: any
     }
