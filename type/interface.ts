@@ -1,4 +1,4 @@
-export namespace Packhouse {
+declare namespace Packhouse {
     interface ToolContext {
         store: object
         group: object
