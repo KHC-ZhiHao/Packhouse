@@ -27,6 +27,9 @@ class Utils {
 
     static verify(data = {}, validates) {
         let newData = {}
+        if (Utils.getType(data) !== 'object') {
+            throw new Error('Param not a object.')
+        }
         for (let key in validates) {
             let target = data[key]
             let type = Utils.getType(target)

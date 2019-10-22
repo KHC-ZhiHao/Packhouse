@@ -10,10 +10,16 @@ class Includes {
         this._name = name
     }
 
-    coop(merger, type, name) {
-        this._tool.used[this._name] = this._tool.group.callCoop(merger)[type](name)
-        if (type === 'tool') {
-            return this._tool.used[this._name]
+    coop(merger) {
+        let coop = this._tool.group.callCoop(merger)
+        return {
+            tool: name => {
+                this._tool.used[this._name] = coop.tool(name)
+                return this._tool.used[this._name]
+            },
+            line: name => {
+                this._tool.used[this._name] = coop.line(name)
+            }
         }
     }
 

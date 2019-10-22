@@ -31,7 +31,7 @@ module.exports = {
         get: {
             request: ['string'],
             install({ include }) {
-                include('get').coop('dynamoDB', 'tool', 'get').pack('a')
+                include('get').coop('dynamoDB').tool('get').pack('a')
             },
             handler(name) {
                 this.use('get')
@@ -41,7 +41,7 @@ module.exports = {
         },
         coopLine: {
             install({ include }) {
-                include('query').coop('dynamoDB', 'line', 'query')
+                include('query').coop('dynamoDB').line('query')
             },
             handler(name) {
                 this.use('query')(name)
