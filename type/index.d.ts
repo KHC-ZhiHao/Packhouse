@@ -50,10 +50,21 @@ declare namespace Packhouse {
 
     export interface ToolHandler {
         use(name: string): any
+        tool(name: string): ToolProcess
+        line(name: string): (...any: any) => LineProcess & Response
         store: {[key: string]: any}
         error(data: any): void
         success(data: any): void
         casting(moldName: string, target: any): any
+    }
+
+    export interface LineProcess {
+        [prop: string]: () => LineProcess & Response
+    }
+
+    export interface Response {
+        action(...any: any): void
+        promise(...any: any): Promise<any>
     }
 
     export interface ToolUseResponse {

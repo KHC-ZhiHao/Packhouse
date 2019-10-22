@@ -15,6 +15,14 @@ class Handler {
         return this._used[name]
     }
 
+    line(name) {
+        return this._used[name]
+    }
+
+    tool(name) {
+        return this._used[name]
+    }
+
     casting(name, target) {
         return this._tool.parseMold(name, target, 0)
     }
