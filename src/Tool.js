@@ -117,6 +117,7 @@ class Tool extends Base {
         }
         // action
         if (response.isLive()) {
+            parameters.unshift(handler)
             this.options.handler.apply(handler, parameters)
         }
     }

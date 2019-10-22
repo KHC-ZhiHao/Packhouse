@@ -7,14 +7,6 @@ describe('#Packhouse', () => {
         this.packhouse = new Packhouse()
     })
 
-    it('group format', function() {
-        let group = Packhouse.groupFormat({
-            lines: '123'
-        })
-        expect(!!group.tools).to.equal(true)
-        expect(group.lines).to.equal('123')
-    })
-
     it('add group', function() {
         this.packhouse.add('demoGroup', () => {
             return {
