@@ -1,5 +1,3 @@
-import { Func } from "mocha"
-
 declare namespace Packhouse {
     export interface ToolContext {
         store: {[key: string]: any}
