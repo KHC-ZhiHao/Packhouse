@@ -1,7 +1,7 @@
 declare namespace Packhouse {
     interface ToolContext {
-        store: object
-        group: object
+        store: {[key: string]: any}
+        group: {[key: string]: any}
         utils: Utils
         include(name: string): Include
     }
@@ -11,7 +11,7 @@ declare namespace Packhouse {
         verify(data: any, validate: { [key: string]: [boolean, Array<string>, any?] })
         generateId(): string
         arrayCopy(array: Array<any>): Array<any>
-        peel(target: object, path: string, def: any): any
+        peel(target: {[key: string]: any}, path: string, def: any): any
     }
 
     interface Include {
@@ -29,7 +29,7 @@ declare namespace Packhouse {
         weld(name: string, handler: WeldPack): ToolPreProcess
         pack(...any: any): ToolPreProcess
         repack(...any: any): ToolPreProcess
-        noGood(action: () => void, options?: object): ToolPreProcess
+        noGood(action: () => void, options?: {[key: string]: any}): ToolPreProcess
         always(action: () => void): ToolPreProcess
     }
 
@@ -45,7 +45,7 @@ declare namespace Packhouse {
     }
 
     interface ToolHandler {
-        store: object
+        store: {[key: string]: any}
         error(data: any): void
         success(data: any): void
         casting(moldName: string, target: any): any
@@ -59,7 +59,7 @@ declare namespace Packhouse {
         utils: Utils
         message: any
         index: number
-        extras: object
+        extras: {[key: string]: any}
     }
 
     interface Line {
@@ -85,7 +85,7 @@ declare namespace Packhouse {
         lines?: { [key: string]: Line }
         molds?: { [key: string]: Mold }
         mergers?: { [key: string]: string }
-        install?(group: object, options: any): void
+        install?(group: {[key: string]: any}, options: any): void
     }
 
     export interface Merger {
