@@ -64,17 +64,29 @@ Node.js 8.x or higher is required.
 
 * [Line](#Line)
 
+<<<<<<< HEAD
+* [Event and tracking](#Event-and-tracking)
+
+* [Merger](#Merger)
+
+* [Always new start](#Always-new-start)
+=======
 * [Event And Track](#Event-And-Track)
 
 * [Merger](#Merger)
 
 * [Always Restart](#Always-Restart)
+>>>>>>> b3d79a7b900b8495c65500d09bc9cfdf25774698
 
 * [Pulgin](#Pulgin)
 
 * [Example](#Example)
 
+<<<<<<< HEAD
+* [Version iteration](#Version-iteration)
+=======
 * [Version Iteration](#Version-Iteration)
+>>>>>>> b3d79a7b900b8495c65500d09bc9cfdf25774698
 
 ---
 

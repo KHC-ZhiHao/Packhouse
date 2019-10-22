@@ -25,12 +25,15 @@ class Utils {
         return type
     }
 
-    static verify(data = {}, validates) {
+    static verify(data = {}, validate) {
         let newData = {}
-        for (let key in validates) {
+        if (Utils.getType(data) !== 'object') {
+            throw new Error('Param not a object.')
+        }
+        for (let key in validate) {
             let target = data[key]
             let type = Utils.getType(target)
-            let [required, types, defaultValue] = validates[key]
+            let [required, types, defaultValue] = validate[key]
             if (Utils.getType(required) !== 'boolean') {
                 throw new Error('Required must be a boolean')
             }
@@ -60,11 +63,11 @@ class Utils {
         })
     }
 
-    static arrayCopy(target) {
-        var i = target.length
+    static arrayCopy(array) {
+        var i = array.length
         var output = []
         while (i--) {
-            output[i] = target[i]
+            output[i] = array[i]
         }
         return output
     }

@@ -10,10 +10,16 @@ class Includes {
         this._name = name
     }
 
-    coop(merger, type, name) {
-        this._tool.used[this._name] = this._tool.group.callCoop(merger)[type](name)
-        if (type === 'tool') {
-            return this._tool.used[this._name]
+    coop(merger) {
+        let coop = this._tool.group.callCoop(merger)
+        return {
+            tool: name => {
+                this._tool.used[this._name] = coop.tool(name)
+                return this._tool.used[this._name]
+            },
+            line: name => {
+                this._tool.used[this._name] = coop.line(name)
+            }
         }
     }
 
@@ -102,11 +108,16 @@ class Tool extends Base {
             try {
                 parameters[i] = this.parseMold(mold, parameters[i], i)
             } catch (error) {
-                return handler.error(error)
+                return handler.error({
+                    name: mold,
+                    type: 'mold',
+                    error
+                })
             }
         }
         // action
         if (response.isLive()) {
+            parameters.unshift(handler)
             this.options.handler.apply(handler, parameters)
         }
     }

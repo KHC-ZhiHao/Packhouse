@@ -7,14 +7,6 @@ describe('#Packhouse', () => {
         this.packhouse = new Packhouse()
     })
 
-    it('group format', function() {
-        let group = Packhouse.groupFormat({
-            lines: '123'
-        })
-        expect(!!group.tools).to.equal(true)
-        expect(group.lines).to.equal('123')
-    })
-
     it('add group', function() {
         this.packhouse.add('demoGroup', () => {
             return {
@@ -91,7 +83,7 @@ describe('#Packhouse', () => {
         this.packhouse
             .tool('demoGroup', 'sum')
             .noGood(e => {
-                expect(typeof e.message).to.equal('string')
+                expect(typeof e.error.message).to.equal('string')
                 done()
             })
             .action('', '', () => {
@@ -167,7 +159,7 @@ describe('#Packhouse', () => {
             .pack(10, 20)
             .weld('sum', (result, pack) => pack(result, '10'))
             .action((e, r) => {
-                expect(typeof e.message).to.equal('string')
+                expect(typeof e.error.message).to.equal('string')
                 done()
             })
     })
@@ -178,7 +170,7 @@ describe('#Packhouse', () => {
             .pack(10, 20)
             .weld('sum', (result, pack) => pack(result, '10'))
             .noGood((e) => {
-                expect(typeof e.message).to.equal('string')
+                expect(typeof e.error.message).to.equal('string')
                 done()
             })
             .action((r) => {})
@@ -214,7 +206,7 @@ describe('#Packhouse', () => {
             }
         })
         packhouse.tool('test', 'test').action((e) => {
-            expect(e.message).to.equal(`(☉д⊙)!! PackHouse::MoldBox => get -> Mold(aaaaa) not found.`)
+            expect(e.error.message).to.equal(`(☉д⊙)!! PackHouse::MoldBox => get -> Mold(aaaaa) not found.`)
             done()
         })
     })
@@ -271,49 +263,49 @@ describe('#Packhouse', () => {
             .tool('demoGroup', 'moldAbeTest')
             .pack(123)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldAbeTest')
             .pack(null, true)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldAbeTest')
             .pack(null, null, 123)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldAbeTest')
             .pack(null, null, null, true)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldAbeTest')
             .pack(null, null, null, null, true)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldAbeTest')
             .pack(null, null, null, null, null, true)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldAbeTest')
             .pack(null, null, null, null, null, null, true)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldAbeTest')
             .pack(null, null, null, null, null, null, null, true)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
                 done()
             })
     })
@@ -323,13 +315,13 @@ describe('#Packhouse', () => {
             .tool('demoGroup', 'moldTestForDate')
             .pack('fkwopfkopwe')
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldTestForDate')
             .pack(true)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
     })
 
@@ -337,7 +329,7 @@ describe('#Packhouse', () => {
         this.packhouse
             .tool('demoGroup', 'moldTestForRequired')
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
                 done()
             })
     })
@@ -347,13 +339,13 @@ describe('#Packhouse', () => {
             .tool('demoGroup', 'moldTestForInt')
             .pack(9)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldTestForInt')
             .pack(21)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
     })
 
@@ -362,19 +354,19 @@ describe('#Packhouse', () => {
             .tool('demoGroup', 'moldTestForNumber')
             .pack(9)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldTestForNumber')
             .pack(21)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
             .tool('demoGroup', 'moldTestForNumber')
             .pack('15')
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
             })
     })
 
@@ -402,7 +394,7 @@ describe('#Packhouse', () => {
             .tool('demoGroup', 'moldTypeTest')
             .pack(4567)
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
                 done()
             })
     })
@@ -422,7 +414,7 @@ describe('#Packhouse', () => {
             .tool('demoGroup', 'moldTypeTest')
             .pack('1234', '1234')
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
                 done()
             })
     })
@@ -449,7 +441,7 @@ describe('#Packhouse', () => {
         this.packhouse
             .tool('demoGroup', 'customMold')
             .action(123, (e, r) => {
-                expect(e.message).to.equal('Error')
+                expect(e.error.message).to.equal('Error')
                 done()
             })
     })
@@ -588,7 +580,7 @@ describe('#Packhouse', () => {
             .add(10)
             .double()
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
                 done()
             })
     })
@@ -631,7 +623,7 @@ describe('#Packhouse', () => {
             .add('10')
             .double()
             .action((e, r) => {
-                expect(typeof e.message).to.equal('string')
+                expect(typeof e.error.message).to.equal('string')
                 done()
             })
     })
@@ -643,7 +635,7 @@ describe('#Packhouse', () => {
             .double()
             .promise()
             .catch((e) => {
-                expect(typeof e.message).to.equal('string')
+                expect(typeof e.error.message).to.equal('string')
                 done()
             })
     })
@@ -730,7 +722,7 @@ describe('#Packhouse', () => {
     it('event done', function(done) {
         this.packhouse.on('done', (event, { detail }) => {
             if (detail.success === false) {
-                expect(typeof detail.result.message).to.equal('string')
+                expect(typeof detail.result.error.message).to.equal('string')
                 event.off()
                 done()
             }
@@ -782,7 +774,7 @@ describe('#Packhouse', () => {
             .tool('demoGroup', 'sum')
             .promise(10, '20')
             .catch((error) => {
-                expect(typeof error.message).to.equal('string')
+                expect(typeof error.error.message).to.equal('string')
                 done()
             })
     })
@@ -793,7 +785,7 @@ describe('#Packhouse', () => {
             .noGood(() => {})
             .promise(10, '20')
             .then(result => {
-                expect(typeof result.message).to.equal('string')
+                expect(typeof result.error.message).to.equal('string')
                 done()
             })
     })
@@ -804,7 +796,7 @@ describe('#Packhouse', () => {
             .noGood(() => {}, { reject: true })
             .promise(10, '20')
             .catch(result => {
-                expect(typeof result.message).to.equal('string')
+                expect(typeof result.error.message).to.equal('string')
                 done()
             })
     })
@@ -813,7 +805,7 @@ describe('#Packhouse', () => {
         this.packhouse
             .tool('demoGroup', 'sum')
             .noGood((result) => {
-                expect(typeof result.message).to.equal('string')
+                expect(typeof result.error.message).to.equal('string')
                 done()
             })
             .promise(10, '20')
@@ -823,7 +815,7 @@ describe('#Packhouse', () => {
         this.packhouse
             .tool('demoGroup', 'sum')
             .always(({ result, success }) => {
-                expect(typeof result.message).to.equal('string')
+                expect(typeof result.error.message).to.equal('string')
                 expect(success).to.equal(false)
                 done()
             })

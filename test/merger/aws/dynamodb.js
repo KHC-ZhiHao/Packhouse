@@ -5,16 +5,16 @@ module.exports = {
     tools: {
         get: {
             request: ['tableName', 'string'],
-            handler(tableName, name) {
-                this.success(tableName + name)
+            handler(self, tableName, name) {
+                self.success(tableName + name)
             }
         },
         optionTest: {
             install({ store, group }) {
                 store.ddb = group.ddb
             },
-            handler() {
-                this.success(this.store.ddb)
+            handler(self) {
+                self.success(self.store.ddb)
             }
         }
     },
@@ -24,20 +24,20 @@ module.exports = {
             install({ include }) {
                 include('get').tool('get')
             },
-            input(name) {
-                this.store.name = name
-                this.success()
+            input(self, name) {
+                self.store.name = name
+                self.success()
             },
-            output() {
-                this.success(this.store.result)
+            output(self) {
+                self.success(self.store.result)
             },
             layout: {
                 get: {
-                    handler(tableName) {
-                        this.use('get')
-                            .action(tableName, this.store.name, (err, result) => {
-                                this.store.result = result
-                                this.success()
+                    handler(self, tableName) {
+                        self.use('get')
+                            .action(tableName, self.store.name, (err, result) => {
+                                self.store.result = result
+                                self.success()
                             })
                     }
                 }

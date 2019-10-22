@@ -17,37 +17,37 @@ module.exports = {
     tools: {
         sum: {
             request: ['number', 'number'],
-            handler(value1, value2) {
-                this.success(value1 + value2)
+            handler(self, value1, value2) {
+                self.success(value1 + value2)
             }
         },
         responseTest: {
             request: ['number', 'number'],
             response: 'int',
-            handler(value1, value2) {
-                this.success(value1 + value2)
+            handler(self, value1, value2) {
+                self.success(value1 + value2)
             }
         },
         get: {
             request: ['string'],
             install({ include }) {
-                include('get').coop('dynamoDB', 'tool', 'get').pack('a')
+                include('get').coop('dynamoDB').tool('get').pack('a')
             },
-            handler(name) {
-                this.use('get')
-                    .noGood(this.error)
-                    .action(name, this.success)
+            handler(self, name) {
+                self.use('get')
+                    .noGood(self.error)
+                    .action(name, self.success)
             }
         },
         coopLine: {
             install({ include }) {
-                include('query').coop('dynamoDB', 'line', 'query')
+                include('query').coop('dynamoDB').line('query')
             },
-            handler(name) {
-                this.use('query')(name)
+            handler(self, name) {
+                self.use('query')(name)
                     .get('123')
                     .action((err, result) => {
-                        this.success(result)
+                        self.success(result)
                     })
             }
         },
@@ -55,92 +55,92 @@ module.exports = {
             install({ include }) {
                 include('query').line('math').action(() => {})
             },
-            handler() {
-                this.success()
+            handler(self) {
+                self.success()
             }
         },
         moldTest: {
             request: ['type|is:string', 'type|is:number', 'string', 'number', 'boolean', 'array', 'buffer', 'object', 'function', 'date', 'required'],
-            handler() {
-                this.success(true)
+            handler(self) {
+                self.success(true)
             }
         },
         moldTestForDate: {
             request: ['date'],
-            handler() {
-                this.success(true)
+            handler(self) {
+                self.success(true)
             }
         },
         moldTestForRequired: {
             request: ['required'],
-            handler() {
-                this.success(true)
+            handler(self) {
+                self.success(true)
             }
         },
         moldTestForNumber: {
             request: ['number|min:10|max:20'],
-            handler() {
-                this.success(true)
+            handler(self) {
+                self.success(true)
             }
         },
         moldTestForInt: {
             request: ['int|min:10|max:20'],
-            handler() {
-                this.success(true)
+            handler(self) {
+                self.success(true)
             }
         },
         moldTestAndNull: {
             request: [null, 'string'],
-            handler() {
-                this.success(true)
+            handler(self) {
+                self.success(true)
             }
         },
         moldTestAndResponse: {
             response: 'number',
-            handler(value) {
-                this.success(value)
+            handler(self, value) {
+                self.success(value)
             }
         },
         moldTypeTest: {
             request: ['type|is:string', 'type|abe'],
-            handler() {
-                this.success(true)
+            handler(self) {
+                self.success(true)
             }
         },
         moldAbeTest: {
             request: ['string|abe', 'number|abe', 'boolean|abe', 'int|abe', 'array|abe', 'buffer|abe', 'object|abe', 'function|abe', 'date|abe'],
-            handler() {
-                this.success(true)
+            handler(self) {
+                self.success(true)
             }
         },
         moldCasting: {
             request: ['int'],
-            handler(number) {
-                this.success(number)
+            handler(self, number) {
+                self.success(number)
             }
         },
         customMold: {
             request: ['isTenAndToString'],
-            handler(string) {
-                this.success(string)
+            handler(self, string) {
+                self.success(string)
             }
         },
         storeTest: {
             install({ store }) {
                 store.result = 'test'
             },
-            handler() {
-                this.success(this.store.result)
+            handler(self) {
+                self.success(self.store.result)
             }
         },
         includeTest: {
             install({ include }) {
                 include('sum').tool('sum')
             },
-            handler(value1, value2) {
-                this.use('sum')
+            handler(self, value1, value2) {
+                self.use('sum')
                     .action(value1, value2, (e, r) => {
-                        this.success(r)
+                        self.success(r)
                     })
             }
         },
@@ -148,16 +148,16 @@ module.exports = {
             install({ store, group }) {
                 store.test = group.test
             },
-            handler() {
-                this.success(this.store.test)
+            handler(self) {
+                self.success(self.store.test)
             }
         },
         handlerCasting: {
-            handler(value) {
+            handler(self, value) {
                 try {
-                    this.success(this.casting('isTenAndToString', value))
+                    self.success(self.casting('isTenAndToString', value))
                 } catch (e) {
-                    this.error(e)
+                    self.error(e)
                 }
             }
         },
@@ -165,19 +165,19 @@ module.exports = {
             install({ store, utils }) {
                 store.getType = utils.getType
             },
-            handler(value) {
-                this.success(this.store.getType(value))
+            handler(self, value) {
+                self.success(self.store.getType(value))
             }
         },
         orderTest: {
             install({ store, utils }) {
                 store.order = utils.order()
             },
-            handler(name) {
-                this.store
+            handler(self, name) {
+                self.store
                     .order
                     .getOrCreat(name)
-                    .buffer(this)
+                    .buffer(self)
                     .action((error, success) => {
                         setTimeout(() => {
                             success(name)
@@ -189,10 +189,10 @@ module.exports = {
             install({ store, utils }) {
                 store.order = utils.order()
             },
-            handler(name) {
-                this.store
+            handler(self, name) {
+                self.store
                     .order
-                    .use(name, this, (error, success) => {
+                    .use(name, self, (error, success) => {
                         setTimeout(() => {
                             success(name)
                         }, 100)
@@ -203,10 +203,10 @@ module.exports = {
             install({ store, utils }) {
                 store.order = utils.order()
             },
-            handler(name) {
-                this.store
+            handler(self, name) {
+                self.store
                     .order
-                    .use(name, this, (error, success) => {
+                    .use(name, self, (error, success) => {
                         success(name)
                     })
             }
@@ -215,10 +215,10 @@ module.exports = {
             install({ store, utils }) {
                 store.order = utils.order()
             },
-            handler(name) {
-                this.store
+            handler(self, name) {
+                self.store
                     .order
-                    .use(name, this, (error) => {
+                    .use(name, self, (error) => {
                         setTimeout(() => {
                             error(name)
                         }, 100)
@@ -228,30 +228,30 @@ module.exports = {
     },
     lines: {
         outputError: {
-            input() {
-                this.success()
+            input(self) {
+                self.success()
             },
-            output() {
-                this.error('test')
+            output(self) {
+                self.error('test')
             },
             layout: {}
         },
         mathResponse: {
             request: ['number'],
             response: 'int',
-            input(value) {
-                this.store.value = value
-                this.success()
+            input(self, value) {
+                self.store.value = value
+                self.success()
             },
-            output() {
-                this.success(this.store.value)
+            output(self) {
+                self.success(self.store.value)
             },
             layout: {
                 add: {
                     request: ['number'],
-                    handler(value) {
-                        this.store.value += value
-                        this.success()
+                    handler(self, value) {
+                        self.store.value += value
+                        self.success()
                     }
                 }
             }
@@ -261,33 +261,33 @@ module.exports = {
             install({ include }) {
                 include('sum').tool('sum')
             },
-            input(value) {
-                this.store.value = value
-                this.success()
+            input(self, value) {
+                self.store.value = value
+                self.success()
             },
-            output() {
-                this.success(this.store.value)
+            output(self) {
+                self.success(self.store.value)
             },
             layout: {
                 add: {
                     request: ['number'],
-                    handler(value) {
-                        this.use('sum')
-                            .action(this.store.value, value, () => {
-                                this.store.value += value
-                                this.success()
+                    handler(self, value) {
+                        self.use('sum')
+                            .action(self.store.value, value, () => {
+                                self.store.value += value
+                                self.success()
                             })
                     }
                 },
                 double: {
-                    handler() {
-                        this.store.value *= 2
-                        this.success()
+                    handler(self) {
+                        self.store.value *= 2
+                        self.success()
                     }
                 },
                 setError: {
-                    handler(value) {
-                        this.error(value)
+                    handler(self, value) {
+                        self.error(value)
                     }
                 }
             }

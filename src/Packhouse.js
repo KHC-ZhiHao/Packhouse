@@ -165,14 +165,5 @@ class Packhouse {
 }
 
 Packhouse.utils = Utils
-Packhouse.groupFormat = (data) => {
-    return Object.assign({
-        tools: {},
-        lines: {},
-        molds: {},
-        mergers: {},
-        install: () => {}
-    }, data)
-}
 
 module.exports = Packhouse
