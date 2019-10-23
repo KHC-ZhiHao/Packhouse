@@ -82,13 +82,17 @@ class Tool extends Base {
     }
 
     call({ parameters, used, mode, context, response }) {
+        let args = []
         let handler = new ToolHandler(this, used, context, response)
+        for (let i = 1; i < parameters.length; i++) {
+            args.push(Utils.getType(parameters[i]))
+        }
         // event
         this.emit('run', {
             ...context,
             detail: {
                 name: this.name,
-                args: parameters,
+                args,
                 mode,
                 request: this.requestJSON,
                 response: this.options.response,

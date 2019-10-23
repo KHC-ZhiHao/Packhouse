@@ -12,6 +12,7 @@ declare namespace Packhouse {
         generateId(): string
         arrayCopy(array: Array<any>): Array<any>
         peel(target: {[key: string]: any}, path: string, def: any): any
+        [key: string]: any
     }
 
     export interface Include {
@@ -52,12 +53,12 @@ declare namespace Packhouse {
         line(name: string): (...any: any) => LineProcess & Response
         store: {[key: string]: any}
         error(data: any): void
-        success(data: any): void
+        success(data?: any): void
         casting(moldName: string, target: any): any
     }
 
     export interface LineProcess {
-        [prop: string]: () => LineProcess & Response
+        [prop: string]: (...any: any) => LineProcess & Response
     }
 
     export interface Response {
