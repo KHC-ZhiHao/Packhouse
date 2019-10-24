@@ -1,21 +1,22 @@
-const Packhouse = require('packhouse')
-
-const group = Packhouse.groupFormat({
+const group = {
+    tools: {},
+    molds: {},
+    lines: {},
     mergers: {
         weather: 'OpenData@weather',
         rainfall: 'OpenData@rainfall'
     }
-})
+}
 
 group.tools.getWeather = {
     request: ['number', 'number'],
     install({ include }) {
         include('getData').coop('weather', 'tool', 'getLocalByNearGeo')
     },
-    handler(longitude, latitude) {
-        this.use('getData')
-            .noGood(this.error)
-            .action(longitude, latitude, this.success)
+    handler(self, longitude, latitude) {
+        self.use('getData')
+            .noGood(self.error)
+            .action(longitude, latitude, self.success)
     }
 }
 
@@ -24,10 +25,10 @@ group.tools.getRainfall = {
     install({ include }) {
         include('getData').coop('rainfall', 'tool', 'getLocalByNearGeo')
     },
-    handler(longitude, latitude) {
-        this.use('getData')
-            .noGood(this.error)
-            .action(longitude, latitude, this.success)
+    handler(self, longitude, latitude) {
+        self.use('getData')
+            .noGood(self.error)
+            .action(longitude, latitude, self.success)
     }
 }
 

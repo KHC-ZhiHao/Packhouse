@@ -1,11 +1,12 @@
 const request = require('request')
-const Packhouse = require('packhouse')
-
-const group = Packhouse.groupFormat({
+const group = {
+    tools: {},
+    molds: {},
+    lines: {},
     install(group, { baseUrl }) {
         group.baseUrl = baseUrl
     }
-})
+}
 
 // ===================
 //
@@ -56,11 +57,11 @@ group.tools.getData = {
         store.order = utils.order()
         store.baseUrl = group.baseUrl
     },
-    handler() {
-        this.store
+    handler(self) {
+        self.store
             .order
-            .use('cache', this, (error, success) => {
-                request.get(this.store.baseUrl, (err, response, body) => {
+            .use('cache', self, (error, success) => {
+                request.get(self.store.baseUrl, (err, response, body) => {
                     if (err) {
                         error(err)
                     } else {
@@ -77,11 +78,11 @@ group.tools.getLocalByNearGeo = {
     install({ include }) {
         include('getData').tool('getData')
     },
-    handler(longitude, latitude) {
+    handler(self, longitude, latitude) {
         let target = null
         let minDistance = -1000000
-        this.use('getData')
-            .noGood(this.error)
+        self.use('getData')
+            .noGood(self.error)
             .action(data => {
                 let items = data.cwbopendata.location
                 for (let item of items) {
@@ -93,7 +94,7 @@ group.tools.getLocalByNearGeo = {
                         minDistance = distance
                     }
                 }
-                this.success(target)
+                self.success(target)
             })
     }
 }
