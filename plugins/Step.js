@@ -210,7 +210,7 @@ class Flow {
                 timeout: true
             }
             this.over = true
-            this.system.output.call(this.self, context, (result) => {
+            this.system.output.call(this.self, this.self, context, (result) => {
                 this.done()
                 this.success(result)
             }, (result) => {
@@ -221,7 +221,7 @@ class Flow {
     }
 
     start() {
-        this.system.create.call(this.self, this.core.packhouse)
+        this.system.create.call(this.self, this.self, this.core.packhouse)
         this.iterator()
     }
 
@@ -241,7 +241,7 @@ class Flow {
             this.history.input({ name: template.name })
             this.context.lastCall = template.name || null
             this.context.nextCall = this.template[0] ? this.template[0].name : null
-            template.call(this.self, () => {
+            template.call(this.self, this.self, () => {
                 next()
                 next = () => {
                     throw new Error('Packhouse Step : Next called multiple times.')
@@ -253,7 +253,7 @@ class Flow {
     next() {
         setTimeout(() => {
             if (this.over === false) {
-                this.system.middle.call(this.self, this.context)
+                this.system.middle.call(this.self, this.self, this.context)
                 this.iterator()
             }
         }, 1)
@@ -276,7 +276,7 @@ class Flow {
         }
         if (this.over === false) {
             this.over = true
-            this.system.output.call(this.self, context, (result) => {
+            this.system.output.call(this.self, this.self, context, (result) => {
                 this.done()
                 this.success(result)
             }, (result) => {

@@ -7,7 +7,7 @@ describe('#Order', () => {
     before(function() {
         this.packhouse = new Packhouse()
         this.packhouse.plugin(Order)
-        this.packhouse.add('demoGroup', () => {
+        this.packhouse.addGroup('demoGroup', () => {
             return {
                 data: group
             }

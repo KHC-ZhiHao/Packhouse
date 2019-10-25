@@ -111,6 +111,26 @@ declare namespace Packhouse {
         molds?: { [key: string]: Mold }
         groups?: { [key: string]: MergerGroup }
     }
+
+    export interface Event {
+        id: string
+        off(): void
+    }
+
+    export interface Main {
+        utils: Utils
+        on(name: string, callback: (event: Event, ...any: any) => void): Event
+        off(name: stinrg, id: string): void
+        tool(group: string, name: string): ToolProcess
+        line(group: string, name: string): (...any: any) => LineProcess & Response
+        plugin(plugin: class, options?: any): void
+        merger(name: string, data: Merger, configs?: any)
+        addMold(name: string, handler:Mold)
+        addGroup(name: string, group: Group)
+        hasMold(name: string): boolean
+        hasGroup(name: string): boolean
+        [key: string]: any
+    }
 }
 
 export = Packhouse

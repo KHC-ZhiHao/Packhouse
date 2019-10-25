@@ -139,8 +139,8 @@ class Packhouse {
         new Plugin(this, options)
     }
 
-    merger(name, options, configs) {
-        return this._core.merger(name, options, configs)
+    merger(name, data, configs) {
+        return this._core.merger(name, data, configs)
     }
 
     addMold(name, handler) {
@@ -148,10 +148,6 @@ class Packhouse {
     }
 
     addGroup(name, install) {
-        return this._core.addGroup(name, install)
-    }
-
-    add(name, install) {
         return this._core.addGroup(name, install)
     }
 

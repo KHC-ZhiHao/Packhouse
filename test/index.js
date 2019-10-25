@@ -8,7 +8,7 @@ describe('#Packhouse', () => {
     })
 
     it('add group', function() {
-        this.packhouse.add('demoGroup', () => {
+        this.packhouse.addGroup('demoGroup', () => {
             return {
                 data: group,
                 options: {
@@ -191,7 +191,7 @@ describe('#Packhouse', () => {
 
     it('not found mold', function(done) {
         let packhouse = new Packhouse()
-        packhouse.add('test', () => {
+        packhouse.addGroup('test', () => {
             return {
                 data: {
                     tools: {

@@ -7,7 +7,7 @@ const group = require('./group')
 describe('#Step', () => {
     it('success', function(done) {
         let template = [
-            function(next) {
+            function(self, next) {
                 next()
             }
         ]
@@ -16,7 +16,7 @@ describe('#Step', () => {
         packhouse.step({
             template,
             timeout: 10000,
-            output(context, success) {
+            output(self, context, success) {
                 success('123')
             }
         })
@@ -28,7 +28,7 @@ describe('#Step', () => {
 
     it('error', function(done) {
         let template = [
-            function(next) {
+            function(self, next) {
                 next()
             }
         ]
@@ -36,7 +36,7 @@ describe('#Step', () => {
         packhouse.plugin(Step)
         packhouse.step({
             template,
-            output(context, success, error) {
+            output(self, context, success, error) {
                 error('123')
             }
         })
@@ -48,7 +48,7 @@ describe('#Step', () => {
 
     it('success & error', function(done) {
         let template = [
-            function(next) {
+            function(self, next) {
                 next()
             }
         ]
@@ -56,7 +56,7 @@ describe('#Step', () => {
         packhouse.plugin(Step)
         packhouse.step({
             template,
-            output(context, success, error) {
+            output(self, context, success, error) {
                 success('123')
                 error('123')
             }
@@ -72,7 +72,7 @@ describe('#Step', () => {
 
     it('repeat next', function(done) {
         let template = [
-            function(next) {
+            function(self, next) {
                 next()
                 next()
             }
@@ -81,7 +81,7 @@ describe('#Step', () => {
         packhouse.plugin(Step)
         packhouse.step({
             template,
-            output(context, success) {
+            output(self, context, success) {
                 success('123')
             }
         })
@@ -100,7 +100,7 @@ describe('#Step', () => {
         packhouse.step({
             template,
             timeout: 10,
-            output({ timeout }, success) {
+            output(self, { timeout }, success) {
                 expect(timeout).to.equal(true)
                 success()
             }
@@ -117,7 +117,7 @@ describe('#Step', () => {
         packhouse.step({
             template,
             timeout: 10,
-            output({ timeout }, success, error) {
+            output(self, { timeout }, success, error) {
                 expect(timeout).to.equal(true)
                 error()
             }
@@ -127,12 +127,12 @@ describe('#Step', () => {
 
     it('history', function(done) {
         let template = [
-            function test(next) {
+            function test(self, next) {
                 packhouse.tool('demo', 'includeTest').action(10, 20, () => {
                     next()
                 })
             },
-            function(next) {
+            function(self, next) {
                 packhouse.tool('demo', 'get').action(123, () => {
                     next()
                 })
@@ -140,7 +140,7 @@ describe('#Step', () => {
         ]
         let packhouse = new Packhouse()
         packhouse.plugin(Step)
-        packhouse.add('demo', () => {
+        packhouse.addGroup('demo', () => {
             return {
                 data: group
             }
@@ -148,7 +148,7 @@ describe('#Step', () => {
         packhouse.merger('aws', require('./merger/aws/index.js'))
         packhouse.step({
             template,
-            output({ history }, success, error) {
+            output(self, { history }, success, error) {
                 expect(typeof history.toJSON()).to.equal('string')
                 expect(typeof history.toJSON(true)).to.equal('string')
                 expect(history.isDone('test')).to.equal(true)
@@ -164,7 +164,7 @@ describe('#Step', () => {
 
     it('history error', function(done) {
         let template = [
-            function(next) {
+            function(self, next) {
                 packhouse
                     .tool('demo', 'get')
                     .action(123, () => {
@@ -174,7 +174,7 @@ describe('#Step', () => {
         ]
         let packhouse = new Packhouse()
         packhouse.plugin(Step)
-        packhouse.add('demo', () => {
+        packhouse.addGroup('demo', () => {
             return {
                 data: group
             }
@@ -182,7 +182,7 @@ describe('#Step', () => {
         packhouse.merger('aws', require('./merger/aws/index.js'))
         packhouse.step({
             template,
-            output({ history }, success, error) {
+            output(self, { history }, success, error) {
                 let key = Object.keys(history.template[0].logs)[0]
                 expect(history.template[0].logs[key].resultType).to.equal('object')
                 success('123')
@@ -196,7 +196,7 @@ describe('#Step', () => {
 
     it('step of line', function(done) {
         let template = [
-            function(next) {
+            function(self, next) {
                 packhouse
                     .tool('demo', 'coopLine')
                     .action('b', (e, r) => {
@@ -207,7 +207,7 @@ describe('#Step', () => {
         ]
         let packhouse = new Packhouse()
         packhouse.plugin(Step)
-        packhouse.add('demo', () => {
+        packhouse.addGroup('demo', () => {
             return {
                 data: group
             }
@@ -215,7 +215,7 @@ describe('#Step', () => {
         packhouse.merger('aws', require('./merger/aws/index.js'))
         packhouse.step({
             template,
-            output({ history }, success) {
+            output(self, { history }, success) {
                 expect(typeof history.toJSON(true)).to.equal('string')
                 success('123')
             }
@@ -228,7 +228,7 @@ describe('#Step', () => {
 
     it('fail', function(done) {
         let template = [
-            function(next, { fail }) {
+            function(self, next, { fail }) {
                 fail('fail')
             }
         ]
@@ -236,7 +236,7 @@ describe('#Step', () => {
         packhouse.plugin(Step)
         packhouse.step({
             template,
-            output({ fail }, success) {
+            output(self, { fail }, success) {
                 expect(fail).to.equal(true)
                 success()
             }
@@ -245,7 +245,7 @@ describe('#Step', () => {
 
     it('fail with next', function(done) {
         let template = [
-            function(next, { fail }) {
+            function(self, next, { fail }) {
                 fail('fail')
                 next()
             }
@@ -254,7 +254,7 @@ describe('#Step', () => {
         packhouse.plugin(Step)
         packhouse.step({
             template,
-            output({ fail }) {
+            output(self, { fail }) {
                 expect(fail).to.equal(true)
             }
         }).catch((e) => {
@@ -265,7 +265,7 @@ describe('#Step', () => {
 
     it('inspect', function(done) {
         let template = [
-            function(next) {
+            function(self, next) {
                 next()
             }
         ]
@@ -277,7 +277,7 @@ describe('#Step', () => {
         packhouse.plugin(Step)
         packhouse.step({
             template,
-            output({ history }, success) {
+            output(self, { history }, success) {
                 expect(typeof history._core.inspect({
                     fun: function() {},
                     buf: Buffer.from([]),
