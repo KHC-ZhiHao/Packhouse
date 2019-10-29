@@ -253,7 +253,7 @@ describe('#Packhouse', () => {
             .tool('demoGroup', 'moldTestAndResponse')
             .pack('1234')
             .action((e, r) => {
-                expect(e instanceof Error).to.equal(true)
+                expect(e.error instanceof Error).to.equal(true)
                 done()
             })
     })
