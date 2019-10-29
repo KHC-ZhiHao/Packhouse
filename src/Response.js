@@ -59,7 +59,12 @@ class Response extends Base {
                 try {
                     result = this.group.parseMold(response, result, 0, 'Response::')
                 } catch (error) {
-                    return this.error(error)
+                    return this.error({
+                        name: response,
+                        type: 'mold',
+                        mode: 'response',
+                        error
+                    })
                 }
             }
             this.over = true

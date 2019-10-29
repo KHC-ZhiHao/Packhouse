@@ -115,6 +115,7 @@ class Tool extends Base {
                 return handler.error({
                     name: mold,
                     type: 'mold',
+                    mode: 'request',
                     error
                 })
             }
