@@ -51,6 +51,7 @@ declare namespace Packhouse {
         use(name: string): any
         tool(name: string): ToolProcess
         line(name: string): (...any: any) => LineProcess & Response
+        utils: Utils
         store: {[key: string]: any}
         error(data: any): void
         success(data?: any): void
@@ -120,10 +121,10 @@ declare namespace Packhouse {
     export interface Main {
         utils: Utils
         on(name: string, callback: (event: Event, ...any: any) => void): Event
-        off(name: stinrg, id: string): void
+        off(name: string, id: string): void
         tool(group: string, name: string): ToolProcess
         line(group: string, name: string): (...any: any) => LineProcess & Response
-        plugin(plugin: class, options?: any): void
+        plugin(plugin: any, options?: any): void
         merger(name: string, data: Merger, configs?: any)
         addMold(name: string, handler:Mold)
         addGroup(name: string, group: Group)

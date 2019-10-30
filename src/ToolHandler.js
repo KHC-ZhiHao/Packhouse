@@ -1,7 +1,10 @@
+const Utils = require('./Utils')
+
 class Handler {
     constructor(tool, used, context, response) {
         this._used = used
         this._tool = tool
+        this.utils = Utils
         this.context = context
         this.error = reslut => response.error(reslut)
         this.success = reslut => response.success(reslut)
