@@ -1,3 +1,6 @@
+type SystemMold = 'type' | 'boolean' | 'number' | 'int' | 'string' | 'array' | 'buffer' | 'object' | 'function' | 'date' | 'request' | String
+type GetTypeResult = 'string' | 'undefined' | 'object' | 'boolean' | 'number' | 'bigint' | 'symbol' | 'function' | 'array' | 'empty' | 'NaN' | 'regexp' | 'promise' | 'buffer' | 'error'
+
 declare namespace Packhouse {
     export interface ToolContext {
         store: {[key: string]: any}
@@ -7,8 +10,8 @@ declare namespace Packhouse {
     }
     
     export interface Utils {
-        getType(target: any): string
-        verify(data: any, validate: { [key: string]: [boolean, Array<string>, any?] })
+        getType(target: any): GetTypeResult
+        verify(data: any, validate: { [key: string]: [boolean, Array<GetTypeResult>, any?] })
         generateId(): string
         arrayCopy(array: Array<any>): Array<any>
         peel(target: {[key: string]: any}, path: string, def: any): any
@@ -41,8 +44,8 @@ declare namespace Packhouse {
     }
 
     export interface Tool {
-        request?: Array<string>
-        response?: string
+        request?: Array<SystemMold>
+        response?: SystemMold
         install?(context: ToolContext): void
         handler(self: ToolHandler, ...any: any): void
     }
@@ -83,8 +86,8 @@ declare namespace Packhouse {
     }
 
     export interface Line {
-        request?: Array<string>
-        response?: string
+        request?: Array<SystemMold>
+        response?: SystemMold
         install?(context: ToolContext): void
         input(self: ToolHandler, ...any: any): void
         output(self: ToolHandler): void
