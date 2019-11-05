@@ -108,6 +108,13 @@ class PackhouseCore extends Base {
 class Packhouse {
     constructor() {
         this._core = new PackhouseCore()
+        this._plugins = {
+            classes: [],
+            process: []
+        }
+        for (let [Plugin, options] of Packhouse._plugins) {
+            this.plugin(Plugin, options)
+        }
     }
 
     get utils() {
@@ -136,7 +143,13 @@ class Packhouse {
     }
 
     plugin(Plugin, options) {
-        new Plugin(this, options)
+        if (this._plugins.classes.includes(Plugin) === false) {
+            this._plugins.classes.push(Plugin)
+            this._plugins.process.push({
+                options,
+                instance: new Plugin(this, options)
+            })
+        }
     }
 
     merger(name, data, configs) {
@@ -160,6 +173,13 @@ class Packhouse {
     }
 }
 
+Packhouse._plugins = []
+
 Packhouse.utils = Utils
+Packhouse.plugin = function(Plugin, options) {
+    if (Packhouse._plugins.includes(Plugin) === false) {
+        Packhouse._plugins.push([Plugin, options])
+    }
+}
 
 module.exports = Packhouse

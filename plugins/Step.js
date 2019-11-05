@@ -179,6 +179,12 @@ class Flow {
         this.success = success
         this.history = new History(this, core)
         this.template = this.system.template.slice()
+        this.nextProcess = () => {
+            if (this.over === false) {
+                this.system.middle.call(this.self, this.self, this.context)
+                this.iterator()
+            }
+        }
         this.initContext()
         this.initTimeout()
         this.start()
@@ -251,12 +257,11 @@ class Flow {
     }
 
     next() {
-        setTimeout(() => {
-            if (this.over === false) {
-                this.system.middle.call(this.self, this.self, this.context)
-                this.iterator()
-            }
-        }, 1)
+        if (process && process.nextTick) {
+            process.nextTick(this.nextProcess)
+        } else {
+            setTimeout(this.nextProcess, 1)
+        }
     }
 
     done() {

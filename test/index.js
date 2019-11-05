@@ -759,6 +759,28 @@ describe('#Packhouse', () => {
             })
     })
 
+    it('plugin', function(done) {
+        this.packhouse
+            .plugin(class {
+                constructor(packhouse) {
+                    expect(typeof packhouse.utils.generateId()).to.equal('string')
+                    done()
+                }
+            })
+    })
+
+    it('global', function(done) {
+        Packhouse
+            .plugin(class {
+                constructor(packhouse) {
+                    expect(typeof packhouse.utils.generateId()).to.equal('string')
+                    Packhouse._plugins = []
+                    done()
+                }
+            })
+        new Packhouse()
+    })
+
     it('promise', function(done) {
         this.packhouse
             .tool('demoGroup', 'sum')
