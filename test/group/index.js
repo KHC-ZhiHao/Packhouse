@@ -224,6 +224,28 @@ module.exports = {
                         }, 100)
                     })
             }
+        },
+        includeExpression: {
+            install({ include }) {
+                include('get').tool('dynamoDB/get').pack('a')
+            },
+            handler(self, name) {
+                self.use('get')
+                    .noGood(self.error)
+                    .action(name, self.success)
+            }
+        },
+        includeExpressionLine: {
+            install({ include }) {
+                include('query').line('dynamoDB/query')
+            },
+            handler(self, name) {
+                self.use('query')(name)
+                    .get('123')
+                    .action((err, result) => {
+                        self.success(result)
+                    })
+            }
         }
     },
     lines: {

@@ -69,6 +69,30 @@ describe('#Packhouse', () => {
         }).to.throw(Error)
     })
 
+    it('expression', function(done) {
+        this.packhouse
+            .tool('demoGroup/sum')
+            .action(10, 20, (err, result) => {
+                expect(result).to.equal(30)
+                done()
+            })
+    })
+    it('expression by include', function(done) {
+        this.packhouse
+            .tool('demoGroup/includeExpression')
+            .action('123', (err, result) => {
+                expect(result).to.equal('table - a123')
+                done()
+            })
+    })
+    it('expression by include of line', function(done) {
+        this.packhouse
+            .tool('demoGroup/includeExpressionLine')
+            .action('123', (err, result) => {
+                expect(result).to.equal('table - 123123')
+                done()
+            })
+    })
     it('use tool promise', function(done) {
         this.packhouse
             .tool('demoGroup', 'sum')

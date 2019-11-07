@@ -4,6 +4,17 @@ const Lambda = require('./Lambda')
 const Response = require('./Response')
 const ToolHandler = require('./ToolHandler')
 
+function mergerParse(name) {
+    let match = name.match('/')
+    if (match) {
+        return {
+            group: name.slice(0, match.index),
+            name: name.slice(match.index + 1)
+        }
+    }
+    return null
+}
+
 class Includes {
     constructor(tool, name) {
         this._tool = tool
@@ -24,12 +35,22 @@ class Includes {
     }
 
     tool(name) {
-        this._tool.used[this._name] = this._tool.group.callTool(name)
-        return this._tool.used[this._name]
+        let merger = mergerParse(name)
+        if (merger) {
+            return this.coop(merger.group).tool(merger.name)
+        } else {
+            this._tool.used[this._name] = this._tool.group.callTool(name)
+            return this._tool.used[this._name]
+        }
     }
 
     line(name) {
-        this._tool.used[this._name] = this._tool.group.callLine(name)
+        let merger = mergerParse(name)
+        if (merger) {
+            this.coop(merger.group).line(merger.name)
+        } else {
+            this._tool.used[this._name] = this._tool.group.callLine(name)
+        }
     }
 }
 

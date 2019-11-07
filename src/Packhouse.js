@@ -130,6 +130,11 @@ class Packhouse {
     }
 
     tool(groupName, name) {
+        if (name == null) {
+            let parse = groupName.split('/')
+            groupName = parse[0]
+            name = parse[1]
+        }
         let tool = this._core.callTool(groupName, name)
         let action = tool.action
         let promise = tool.promise
@@ -139,6 +144,11 @@ class Packhouse {
     }
 
     line(groupName, name) {
+        if (name == null) {
+            let parse = groupName.split('/')
+            groupName = parse[0]
+            name = parse[1]
+        }
         return (...args) => this._core.callLine(groupName, name)(null, ...args)
     }
 

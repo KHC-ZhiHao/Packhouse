@@ -1,3 +1,4 @@
+type EventName = 'use' | 'done' | 'run' | String
 type SystemMold = 'type' | 'boolean' | 'number' | 'int' | 'string' | 'array' | 'buffer' | 'object' | 'function' | 'date' | 'request' | String
 type GetTypeResult = 'string' | 'undefined' | 'object' | 'boolean' | 'number' | 'bigint' | 'symbol' | 'function' | 'array' | 'empty' | 'NaN' | 'regexp' | 'promise' | 'buffer' | 'error'
 
@@ -121,12 +122,10 @@ declare namespace Packhouse {
         off(): void
     }
 
-    export interface Main {
+    export interface MainBase {
         utils: Utils
-        on(name: string, callback: (event: Event, ...any: any) => void): Event
-        off(name: string, id: string): void
-        tool(group: string, name: string): ToolProcess
-        line(group: string, name: string): (...any: any) => LineProcess & Response
+        on(name: EventName, callback: (event: Event, ...any: any) => void): Event
+        off(name: EventName, id: string): void
         plugin(plugin: any, options?: any): void
         merger(name: string, data: Merger, configs?: any)
         addMold(name: string, handler:Mold)
@@ -135,6 +134,9 @@ declare namespace Packhouse {
         hasGroup(name: string): boolean
         [key: string]: any
     }
-}
 
-export = Packhouse
+    export interface Main extends MainBase {
+        tool(group: string, name: string): ToolProcess
+        line(group: string, name: string): (...any: any) => LineProcess & Response
+    }
+}
