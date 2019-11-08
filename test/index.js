@@ -281,6 +281,25 @@ describe('#Packhouse', () => {
                 done()
             })
     })
+    it('use mode verify options', function(done) {
+        let params = {
+            name: '123'
+        }
+        let errorParams = {
+            name: 456
+        }
+        this.packhouse
+            .tool('demoGroup/moldVerifyOptions')
+            .action(params, (err, result) => {
+                expect(Array.isArray(result.array)).to.equal(true)
+                this.packhouse
+                    .tool('demoGroup/moldVerifyOptions')
+                    .action(errorParams, (err) => {
+                        expect(err.error instanceof Error).to.equal(true)
+                        done()
+                    })
+            })
+    })
 
     it('use mold type error', function(done) {
         this.packhouse

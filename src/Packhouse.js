@@ -23,8 +23,8 @@ class PackhouseCore extends Base {
         }
         let namespace = name + '@'
         let options = Utils.verify(data, {
-            molds: [false, ['object'], {}],
-            groups: [false, ['object'], {}]
+            molds: [false, ['object'], () => {}],
+            groups: [false, ['object'], () => {}]
         })
         for (let key in options.molds) {
             this.addMold(namespace + key, options.molds[key])

@@ -12,6 +12,10 @@ module.exports = {
             } else {
                 throw new Error('Error')
             }
+        },
+        verifyOptions: {
+            name: [true, ['string']],
+            array: [false, ['array'], () => []],
         }
     },
     tools: {
@@ -19,6 +23,12 @@ module.exports = {
             request: ['number', 'number'],
             handler(self, value1, value2) {
                 self.success(value1 + value2)
+            }
+        },
+        moldVerifyOptions: {
+            request: ['verifyOptions'],
+            handler(self, object) {
+                self.success(object)
             }
         },
         responseTest: {

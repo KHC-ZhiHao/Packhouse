@@ -9,9 +9,13 @@ export interface ToolContext {
     include(name: string): Include
 }
 
+export interface VerifyOptions {
+    [key: string]: [boolean, Array<GetTypeResult>, any?]
+}
+
 export interface Utils {
     getType(target: any): GetTypeResult
-    verify(data: any, validate: { [key: string]: [boolean, Array<GetTypeResult>, any?] })
+    verify(data: any, validate: VerifyOptions)
     generateId(): string
     arrayCopy(array: Array<any>): Array<any>
     peel(target: {[key: string]: any}, path: string, def: any): any
@@ -106,7 +110,7 @@ export interface MergerGroupResponse {
 export interface Group {
     tools?: { [key: string]: Tool }
     lines?: { [key: string]: Line }
-    molds?: { [key: string]: Mold }
+    molds?: { [key: string]: Mold | VerifyOptions }
     mergers?: { [key: string]: string }
     install?(group: {[key: string]: any}, options: any): void
 }

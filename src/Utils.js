@@ -35,18 +35,25 @@ class Utils {
             let type = Utils.getType(target)
             let [required, types, defaultValue] = validate[key]
             if (Utils.getType(required) !== 'boolean') {
-                throw new Error('Required must be a boolean')
+                throw new Error('Required must be a boolean.')
             }
             if (Utils.getType(types) !== 'array') {
-                throw new Error('Types must be a array')
+                throw new Error('Types must be a array.')
             }
             if (required && target == null) {
-                throw new Error(`Key(${key}) is required`)
+                throw new Error(`Key(${key}) is required.`)
             }
             if (types && target != null && !types.includes(type)) {
-                throw new Error(`Type(${key}::${type}) error, need ${types.join(' or ')}`)
+                throw new Error(`Type(${key}:${type}) error, need ${types.join(' or ')}.`)
             }
-            newData[key] = target === undefined ? defaultValue : target
+            if (target === undefined) {
+                if (defaultValue != null && typeof defaultValue === 'object') {
+                    throw new Error(`Default value can't be a object, try use function return value.`)
+                }
+                newData[key] = typeof defaultValue === 'function' ? defaultValue() : defaultValue
+            } else {
+                newData[key] = target
+            }
         }
         return newData
     }

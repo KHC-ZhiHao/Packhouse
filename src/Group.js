@@ -17,11 +17,11 @@ class Group extends Base {
         this.moldbox = new Mold(packhouse.moldbox, this.namespace)
         this.packhouse = packhouse
         this.options = Utils.verify(data, {
-            tools: [false, ['object'], {}],
-            lines: [false, ['object'], {}],
-            molds: [false, ['object'], {}],
-            mergers: [false, ['object'], {}],
-            install: [false, ['function'], () => {}]
+            tools: [false, ['object'], () => {}],
+            lines: [false, ['object'], () => {}],
+            molds: [false, ['object'], () => {}],
+            mergers: [false, ['object'], () => {}],
+            install: [false, ['function'], () => () => {}]
         })
         this.init()
         this.options.install.call(this.store, this.store, configs)

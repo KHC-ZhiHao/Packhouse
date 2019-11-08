@@ -5,8 +5,8 @@ class StepCore {
 
     start(options) {
         let system = this.packhouse.utils.verify(options, {
-            create: [false, ['function'], () => {}],
-            middle: [false, ['function'], () => {}],
+            create: [false, ['function'], () => () => {}],
+            middle: [false, ['function'], () => () => {}],
             output: [true, ['function']],
             timeout: [false, ['number'], null],
             template: [true, ['array']]

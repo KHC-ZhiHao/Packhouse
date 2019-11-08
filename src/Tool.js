@@ -81,9 +81,9 @@ class Tool extends Base {
         this.store = reference.store || {}
         this.group = group
         this.options = Utils.verify(options, {
-            request: [false, ['array'], []],
+            request: [false, ['array'], () => []],
             handler: [true, ['function']],
-            install: [false, ['function'], () => {}],
+            install: [false, ['function'], () => () => {}],
             response: [false, ['string'], null]
         })
         this.requestJSON = JSON.stringify(this.options.request)
