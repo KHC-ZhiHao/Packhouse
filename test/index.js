@@ -1,4 +1,4 @@
-const Packhouse = require('../src/Main')
+const Packhouse = require('../src/Packhouse')
 const expect = require('chai').expect
 const group = require('./group')
 const merger = require('./merger/aws/index')

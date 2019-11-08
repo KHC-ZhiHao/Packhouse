@@ -184,7 +184,6 @@ class Packhouse {
 }
 
 Packhouse._plugins = []
-
 Packhouse.utils = Utils
 Packhouse.plugin = function(Plugin, options) {
     if (Packhouse._plugins.includes(Plugin) === false) {
