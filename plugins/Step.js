@@ -227,7 +227,7 @@ class Flow {
     }
 
     start() {
-        this.system.create.call(this.self, this.self, this.core.packhouse)
+        this.system.create.call(this.self, this.self, this.context, this.core.packhouse)
         this.iterator()
     }
 
