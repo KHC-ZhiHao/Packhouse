@@ -1,5 +1,5 @@
 const Order = require('../plugins/Order')
-const Packhouse = require('../src/Main')
+const Packhouse = require('../src/Packhouse')
 const group = require('./group')
 const expect = require('chai').expect
 

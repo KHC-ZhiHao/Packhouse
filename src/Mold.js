@@ -76,7 +76,17 @@ class Mold extends Base {
     constructor(handler) {
         super('Mold')
         this.case = {}
-        this.handler = handler
+        if (typeof handler === 'function') {
+            this.handler = handler
+        } else {
+            this.handler = (value, { index }) => {
+                try {
+                    return Utils.verify(value, handler)
+                } catch (error) {
+                    throw new Error(`Parameter ${index} verification error, ${error.message}`)
+                }
+            }
+        }
     }
 
     parse(source, context, message) {

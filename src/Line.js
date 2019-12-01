@@ -11,8 +11,8 @@ class Line extends Base {
             input: [true, ['function']],
             output: [true, ['function']],
             layout: [true, ['object']],
-            install: [false, ['function'], () => {}],
-            request: [false, ['array'], []],
+            install: [false, ['function'], () => () => {}],
+            request: [false, ['array'], () => []],
             response: [false, ['string'], null]
         })
         this.layoutKeys = Object.keys(this.options.layout)

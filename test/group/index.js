@@ -12,6 +12,10 @@ module.exports = {
             } else {
                 throw new Error('Error')
             }
+        },
+        verifyOptions: {
+            name: [true, ['string']],
+            array: [false, ['array'], () => []],
         }
     },
     tools: {
@@ -19,6 +23,12 @@ module.exports = {
             request: ['number', 'number'],
             handler(self, value1, value2) {
                 self.success(value1 + value2)
+            }
+        },
+        moldVerifyOptions: {
+            request: ['verifyOptions'],
+            handler(self, object) {
+                self.success(object)
             }
         },
         responseTest: {
@@ -222,6 +232,28 @@ module.exports = {
                         setTimeout(() => {
                             error(name)
                         }, 100)
+                    })
+            }
+        },
+        includeExpression: {
+            install({ include }) {
+                include('get').tool('dynamoDB/get').pack('a')
+            },
+            handler(self, name) {
+                self.use('get')
+                    .noGood(self.error)
+                    .action(name, self.success)
+            }
+        },
+        includeExpressionLine: {
+            install({ include }) {
+                include('query').line('dynamoDB/query')
+            },
+            handler(self, name) {
+                self.use('query')(name)
+                    .get('123')
+                    .action((err, result) => {
+                        self.success(result)
                     })
             }
         }

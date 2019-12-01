@@ -1,4 +1,4 @@
-const Packhouse = require('../src/Main')
+const Packhouse = require('../src/Packhouse')
 const expect = require('chai').expect
 const group = require('./group')
 const merger = require('./merger/aws/index')
@@ -69,6 +69,30 @@ describe('#Packhouse', () => {
         }).to.throw(Error)
     })
 
+    it('expression', function(done) {
+        this.packhouse
+            .tool('demoGroup/sum')
+            .action(10, 20, (err, result) => {
+                expect(result).to.equal(30)
+                done()
+            })
+    })
+    it('expression by include', function(done) {
+        this.packhouse
+            .tool('demoGroup/includeExpression')
+            .action('123', (err, result) => {
+                expect(result).to.equal('table - a123')
+                done()
+            })
+    })
+    it('expression by include of line', function(done) {
+        this.packhouse
+            .tool('demoGroup/includeExpressionLine')
+            .action('123', (err, result) => {
+                expect(result).to.equal('table - 123123')
+                done()
+            })
+    })
     it('use tool promise', function(done) {
         this.packhouse
             .tool('demoGroup', 'sum')
@@ -255,6 +279,25 @@ describe('#Packhouse', () => {
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
                 done()
+            })
+    })
+    it('use mode verify options', function(done) {
+        let params = {
+            name: '123'
+        }
+        let errorParams = {
+            name: 456
+        }
+        this.packhouse
+            .tool('demoGroup/moldVerifyOptions')
+            .action(params, (err, result) => {
+                expect(Array.isArray(result.array)).to.equal(true)
+                this.packhouse
+                    .tool('demoGroup/moldVerifyOptions')
+                    .action(errorParams, (err) => {
+                        expect(err.error instanceof Error).to.equal(true)
+                        done()
+                    })
             })
     })
 
@@ -757,6 +800,28 @@ describe('#Packhouse', () => {
                     done()
                 }
             })
+    })
+
+    it('plugin', function(done) {
+        this.packhouse
+            .plugin(class {
+                constructor(packhouse) {
+                    expect(typeof packhouse.utils.generateId()).to.equal('string')
+                    done()
+                }
+            })
+    })
+
+    it('global', function(done) {
+        Packhouse
+            .plugin(class {
+                constructor(packhouse) {
+                    expect(typeof packhouse.utils.generateId()).to.equal('string')
+                    Packhouse._plugins = []
+                    done()
+                }
+            })
+        new Packhouse()
     })
 
     it('promise', function(done) {

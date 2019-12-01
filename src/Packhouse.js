@@ -23,8 +23,8 @@ class PackhouseCore extends Base {
         }
         let namespace = name + '@'
         let options = Utils.verify(data, {
-            molds: [false, ['object'], {}],
-            groups: [false, ['object'], {}]
+            molds: [false, ['object'], () => {}],
+            groups: [false, ['object'], () => {}]
         })
         for (let key in options.molds) {
             this.addMold(namespace + key, options.molds[key])
@@ -108,6 +108,13 @@ class PackhouseCore extends Base {
 class Packhouse {
     constructor() {
         this._core = new PackhouseCore()
+        this._plugins = {
+            classes: [],
+            process: []
+        }
+        for (let [Plugin, options] of Packhouse._plugins) {
+            this.plugin(Plugin, options)
+        }
     }
 
     get utils() {
@@ -123,6 +130,11 @@ class Packhouse {
     }
 
     tool(groupName, name) {
+        if (name == null) {
+            let parse = groupName.split('/')
+            groupName = parse[0]
+            name = parse[1]
+        }
         let tool = this._core.callTool(groupName, name)
         let action = tool.action
         let promise = tool.promise
@@ -132,11 +144,22 @@ class Packhouse {
     }
 
     line(groupName, name) {
+        if (name == null) {
+            let parse = groupName.split('/')
+            groupName = parse[0]
+            name = parse[1]
+        }
         return (...args) => this._core.callLine(groupName, name)(null, ...args)
     }
 
     plugin(Plugin, options) {
-        new Plugin(this, options)
+        if (this._plugins.classes.includes(Plugin) === false) {
+            this._plugins.classes.push(Plugin)
+            this._plugins.process.push({
+                options,
+                instance: new Plugin(this, options)
+            })
+        }
     }
 
     merger(name, data, configs) {
@@ -160,6 +183,12 @@ class Packhouse {
     }
 }
 
+Packhouse._plugins = []
 Packhouse.utils = Utils
+Packhouse.plugin = function(Plugin, options) {
+    if (Packhouse._plugins.includes(Plugin) === false) {
+        Packhouse._plugins.push([Plugin, options])
+    }
+}
 
 module.exports = Packhouse

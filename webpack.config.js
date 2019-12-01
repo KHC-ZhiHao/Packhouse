@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = {
     mode: 'production',
-    entry: './src/Main.js',
+    entry: './src/Packhouse.js',
     output: {
         library: 'Packhouse',
         libraryTarget: 'umd',
