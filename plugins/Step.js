@@ -232,9 +232,7 @@ class Flow {
                 return this.context.exit()
             }
             let next = () => {
-                if (this.over) {
-                    throw new Error('Packhouse Step : Already exit or fail.')
-                }
+                next = () => {}
                 this.history.output()
                 this.next()
             }
@@ -243,9 +241,7 @@ class Flow {
             this.context.nextCall = this.template[0] ? this.template[0].name : null
             template.call(this.self, this.self, () => {
                 next()
-                next = () => {
-                    throw new Error('Packhouse Step : Next called multiple times.')
-                }
+                next = () => {}
             }, this.context)
         }
     }

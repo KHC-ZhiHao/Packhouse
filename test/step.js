@@ -70,27 +70,6 @@ describe('#Step', () => {
             })
     })
 
-    it('repeat next', function(done) {
-        let template = [
-            function(self, next) {
-                next()
-                next()
-            }
-        ]
-        let packhouse = new Packhouse()
-        packhouse.plugin(Step)
-        packhouse.step({
-            template,
-            output(self, context, success) {
-                success('123')
-            }
-        })
-            .catch(e => {
-                expect(e.message).to.equal('Packhouse Step : Next called multiple times.')
-                done()
-            })
-    })
-
     it('timeout', function(done) {
         let template = [
             function() {}
@@ -241,26 +220,6 @@ describe('#Step', () => {
                 success()
             }
         }).then(done)
-    })
-
-    it('fail with next', function(done) {
-        let template = [
-            function(self, next, { fail }) {
-                fail('fail')
-                next()
-            }
-        ]
-        let packhouse = new Packhouse()
-        packhouse.plugin(Step)
-        packhouse.step({
-            template,
-            output(self, { fail }) {
-                expect(fail).to.equal(true)
-            }
-        }).catch((e) => {
-            expect(e.message).to.equal(`Packhouse Step : Already exit or fail.`)
-            done()
-        })
     })
 
     it('inspect', function(done) {
