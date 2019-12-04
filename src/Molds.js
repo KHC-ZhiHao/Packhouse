@@ -58,6 +58,19 @@ module.exports = {
             return value
         }
         if (typeof value === 'string') {
+            if (extras.is) {
+                let success = false
+                let split = extras.is.split(',')
+                for (let target of split) {
+                    if (value === target.trim()) {
+                        success = true
+                        break
+                    }
+                }
+                if (success === false) {
+                    throw new Error(`${message}Parameter ${index} must be ${extras.is.trim()}(${value}).`)
+                }
+            }
             return value
         } else {
             throw new Error(`${message}Parameter ${index} not a string(${value}).`)

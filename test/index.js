@@ -235,6 +235,30 @@ describe('#Packhouse', () => {
         })
     })
 
+    it('use mold string is', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldStringIs')
+            .noGood(done)
+            .action('a', () => {
+                this.packhouse
+                    .tool('demoGroup', 'moldStringIs')
+                    .action('b', (e, r) => {
+                        done()
+                    })
+            })
+    })
+
+    it('use mold string error', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'moldStringIs')
+            .action('c', (e, r) => {
+                if (e) {
+                    return done()
+                }
+                throw new Error(':(')
+            })
+    })
+
     it('use mold', function() {
         let isRun = false
         this.packhouse
@@ -613,6 +637,15 @@ describe('#Packhouse', () => {
             .double()
             .action((e, r) => {
                 expect(r).to.equal(30)
+                done()
+            })
+    })
+
+    it('use line pack', function(done) {
+        this.packhouse
+            .tool('demoGroup', 'linePack')
+            .action((e, r) => {
+                expect(r).to.equal(20)
                 done()
             })
     })

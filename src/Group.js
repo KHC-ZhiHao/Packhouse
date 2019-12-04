@@ -81,8 +81,8 @@ class Group extends Base {
         return this.getTool(name).use()
     }
 
-    callLine(name) {
-        return this.getLine(name).use()
+    callLine(name, packs) {
+        return this.getLine(name).use(packs)
     }
 
     addTool(name, options) {

@@ -47,12 +47,12 @@ class PackhouseCore extends Base {
 
     getCoop(groupName) {
         return {
-            tool: name => this.callTool(groupName, name),
-            line: name => this.callLine(groupName, name)
+            tool: (name) => this.callTool(groupName, name),
+            line: (name, packs) => this.callLine(groupName, name, packs)
         }
     }
 
-    getProcess(type, group, name) {
+    getProcess(type, group, name, packs) {
         let groupDetail = group.split('@')
         this.event.emit('use', {
             type,
@@ -66,7 +66,7 @@ class PackhouseCore extends Base {
         if (type === 'tool') {
             target = this.getGroup(group).callTool(name)
         } else {
-            target = this.getGroup(group).callLine(name)
+            target = this.getGroup(group).callLine(name, packs)
         }
         return target
     }
@@ -75,8 +75,8 @@ class PackhouseCore extends Base {
         return this.getProcess('tool', group, name)
     }
 
-    callLine(group, name) {
-        return this.getProcess('line', group, name)
+    callLine(group, name, packs) {
+        return this.getProcess('line', group, name, packs)
     }
 
     addGroup(name, install, namespace, configs) {

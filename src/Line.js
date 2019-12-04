@@ -26,8 +26,11 @@ class Line extends Base {
         }
     }
 
-    use() {
+    use(packs) {
         return (caller, ...args) => {
+            if (packs) {
+                args = packs.concat(args)
+            }
             return (new Deploy(this, caller, args)).conveyer
         }
     }

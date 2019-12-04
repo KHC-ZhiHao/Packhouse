@@ -75,6 +75,12 @@ module.exports = {
                 self.success(true)
             }
         },
+        moldStringIs: {
+            request: ['string|is: a, b'],
+            handler(self) {
+                self.success(true)
+            }
+        },
         moldTestForDate: {
             request: ['date'],
             handler(self) {
@@ -252,6 +258,18 @@ module.exports = {
             handler(self, name) {
                 self.use('query')(name)
                     .get('123')
+                    .action((err, result) => {
+                        self.success(result)
+                    })
+            }
+        },
+        linePack: {
+            install({ include }) {
+                include('math').line('math', 10)
+            },
+            handler(self) {
+                self.line('math')()
+                    .add(10)
                     .action((err, result) => {
                         self.success(result)
                     })

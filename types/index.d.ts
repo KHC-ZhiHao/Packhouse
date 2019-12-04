@@ -23,13 +23,13 @@ export interface Utils {
 }
 
 export interface Include {
-    line(name: string): void
+    line(name: string, ...args: any): void
     coop(name: string): IncludeCoop
     tool(name: string): ToolProcess
 }
 
 export interface IncludeCoop {
-    line(name: string): void
+    line(name: string, ...args: any): void
     tool(name: string): ToolProcess
 }
 

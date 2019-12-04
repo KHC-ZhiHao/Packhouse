@@ -8,8 +8,8 @@ function mergerParse(name) {
     let match = name.match('/')
     if (match) {
         return {
-            group: name.slice(0, match.index),
-            name: name.slice(match.index + 1)
+            name: name.slice(match.index + 1),
+            group: name.slice(0, match.index)
         }
     }
     return null
@@ -24,12 +24,12 @@ class Includes {
     coop(merger) {
         let coop = this._tool.group.callCoop(merger)
         return {
-            tool: name => {
+            tool: (name) => {
                 this._tool.used[this._name] = coop.tool(name)
                 return this._tool.used[this._name]
             },
-            line: name => {
-                this._tool.used[this._name] = coop.line(name)
+            line: (name, ...packs) => {
+                this._tool.used[this._name] = coop.line(name, packs)
             }
         }
     }
@@ -44,12 +44,12 @@ class Includes {
         }
     }
 
-    line(name) {
+    line(name, ...packs) {
         let merger = mergerParse(name)
         if (merger) {
-            this.coop(merger.group).line(merger.name)
+            this.coop(merger.group).line(merger.name, ...packs)
         } else {
-            this._tool.used[this._name] = this._tool.group.callLine(name)
+            this._tool.used[this._name] = this._tool.group.callLine(name, packs)
         }
     }
 }
