@@ -24,12 +24,6 @@ export interface Utils {
 
 export interface Include {
     line(name: string, ...args: any): void
-    coop(name: string): IncludeCoop
-    tool(name: string): ToolProcess
-}
-
-export interface IncludeCoop {
-    line(name: string, ...args: any): void
     tool(name: string): ToolProcess
 }
 
@@ -55,7 +49,6 @@ export interface Tool {
 }
 
 export interface ToolHandler {
-    use(name: string): any
     tool(name: string): ToolProcess
     line(name: string): (...any: any) => LineProcess & Response
     utils: Utils
@@ -139,6 +132,6 @@ export interface MainBase {
 }
 
 export interface Main extends MainBase {
-    tool(group: string, name: string): ToolProcess
-    line(group: string, name: string): (...any: any) => LineProcess & Response
+    tool(name: string): ToolProcess
+    line(name: string): (...any: any) => LineProcess & Response
 }

@@ -107,12 +107,12 @@ describe('#Step', () => {
     it('history', function(done) {
         let template = [
             function test(self, next) {
-                packhouse.tool('demo', 'includeTest').action(10, 20, () => {
+                packhouse.tool('demo/includeTest').action(10, 20, () => {
                     next()
                 })
             },
             function(self, next) {
-                packhouse.tool('demo', 'get').action(123, () => {
+                packhouse.tool('demo/get').action(123, () => {
                     next()
                 })
             }
@@ -145,7 +145,7 @@ describe('#Step', () => {
         let template = [
             function(self, next) {
                 packhouse
-                    .tool('demo', 'get')
+                    .tool('demo/get')
                     .action(123, () => {
                         next()
                     })
@@ -177,7 +177,7 @@ describe('#Step', () => {
         let template = [
             function(self, next) {
                 packhouse
-                    .tool('demo', 'coopLine')
+                    .tool('demo/coopLine')
                     .action('b', (e, r) => {
                         this.result = r
                         next()

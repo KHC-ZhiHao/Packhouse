@@ -1,7 +1,9 @@
+const Base = require('./Base')
 const Utils = require('./Utils')
 
-class Handler {
+class Handler extends Base {
     constructor(tool, used, context, response) {
+        super('Handler')
         this._used = used
         this._tool = tool
         this.utils = Utils
@@ -14,16 +16,29 @@ class Handler {
         return this._tool.store
     }
 
-    use(name) {
-        return this._used[name]
+    _getUsed(name) {
+        let used = this._used[name]
+        if (used) {
+            return used
+        } else {
+            this.$devError('include', `Include name(${name}) not found`)
+        }
     }
 
     line(name) {
-        return this._used[name]
+        let output = this._getUsed(name)
+        if (typeof output !== 'function') {
+            this.$devError('line', 'Source not a line.')
+        }
+        return output
     }
 
     tool(name) {
-        return this._used[name]
+        let output = this._getUsed(name)
+        if (typeof output === 'function') {
+            this.$devError('tool', 'Source not a tool.')
+        }
+        return output
     }
 
     casting(name, target) {

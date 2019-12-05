@@ -28,13 +28,13 @@ describe('#Packhouse', () => {
             this.packhouse.addGroup('demoGroup', {})
         }).to.throw(Error)
         expect(() => {
-            this.packhouse.line('demoGroupp', 'summ')()
+            this.packhouse.line('demoGroupp/summ')()
         }).to.throw(Error)
         expect(() => {
-            this.packhouse.tool('demoGroup', 'summ')
+            this.packhouse.tool('demoGroup/summ')
         }).to.throw(Error)
         expect(() => {
-            this.packhouse.line('demoGroup', 'summ')()
+            this.packhouse.line('demoGroup/summ')()
         }).to.throw(Error)
     })
 
@@ -53,7 +53,7 @@ describe('#Packhouse', () => {
     it('use tool', function() {
         let isRun = false
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .action(10, 20, (error, result) => {
                 isRun = true
                 expect(result).to.equal(30)
@@ -64,7 +64,7 @@ describe('#Packhouse', () => {
     it('action no callback', function() {
         expect(() => {
             this.packhouse
-                .tool('demoGroup', 'sum')
+                .tool('demoGroup/sum')
                 .action(10, 20)
         }).to.throw(Error)
     })
@@ -77,6 +77,7 @@ describe('#Packhouse', () => {
                 done()
             })
     })
+
     it('expression by include', function(done) {
         this.packhouse
             .tool('demoGroup/includeExpression')
@@ -93,9 +94,26 @@ describe('#Packhouse', () => {
                 done()
             })
     })
+
+    it('not tool', function() {
+        expect(() => {
+            this.packhouse
+                .tool('demoGroup/notTool')
+                .action(10, (e, r) => {})
+        }).to.throw(Error)
+    })
+
+    it('not line', function() {
+        expect(() => {
+            this.packhouse
+                .tool('demoGroup/notLine')
+                .action(10, (e, r) => {})
+        }).to.throw(Error)
+    })
+
     it('use tool promise', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .promise(10, 20)
             .then(result => {
                 expect(result).to.equal(30)
@@ -105,7 +123,7 @@ describe('#Packhouse', () => {
 
     it('no good', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .noGood(e => {
                 expect(typeof e.error.message).to.equal('string')
                 done()
@@ -118,14 +136,14 @@ describe('#Packhouse', () => {
     it('no good not callback', function() {
         expect(() => {
             this.packhouse
-                .tool('demoGroup', 'sum')
+                .tool('demoGroup/sum')
                 .noGood('123')
         }).to.throw(Error)
     })
 
     it('always', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .always(({ result, success }) => {
                 expect(result).to.equal(30)
                 expect(success).to.equal(true)
@@ -138,7 +156,7 @@ describe('#Packhouse', () => {
 
     it('always error', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .always(({ result, success }) => {
                 expect(success).to.equal(false)
                 done()
@@ -149,14 +167,14 @@ describe('#Packhouse', () => {
     it('always not callback', function() {
         expect(() => {
             this.packhouse
-                .tool('demoGroup', 'sum')
+                .tool('demoGroup/sum')
                 .always('123')
         }).to.throw(Error)
     })
 
     it('repack', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .pack(10)
             .repack(20)
             .action(10, (e, r) => {
@@ -167,7 +185,7 @@ describe('#Packhouse', () => {
 
     it('weld', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .pack(10, 20)
             .weld('sum', (result, pack) => pack(result, 10))
             .weld('sum', (result, pack) => pack(result, 20))
@@ -179,7 +197,7 @@ describe('#Packhouse', () => {
 
     it('weld of error', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .pack(10, 20)
             .weld('sum', (result, pack) => pack(result, '10'))
             .action((e, r) => {
@@ -190,7 +208,7 @@ describe('#Packhouse', () => {
 
     it('weld of error with no good', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .pack(10, 20)
             .weld('sum', (result, pack) => pack(result, '10'))
             .noGood((e) => {
@@ -229,7 +247,7 @@ describe('#Packhouse', () => {
                 }
             }
         })
-        packhouse.tool('test', 'test').action((e) => {
+        packhouse.tool('test/test').action((e) => {
             expect(e.error.message).to.equal(`(☉д⊙)!! PackHouse::MoldBox => get -> Mold(aaaaa) not found.`)
             done()
         })
@@ -237,11 +255,11 @@ describe('#Packhouse', () => {
 
     it('use mold string is', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldStringIs')
+            .tool('demoGroup/moldStringIs')
             .noGood(done)
             .action('a', () => {
                 this.packhouse
-                    .tool('demoGroup', 'moldStringIs')
+                    .tool('demoGroup/moldStringIs')
                     .action('b', (e, r) => {
                         done()
                     })
@@ -250,7 +268,7 @@ describe('#Packhouse', () => {
 
     it('use mold string error', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldStringIs')
+            .tool('demoGroup/moldStringIs')
             .action('c', (e, r) => {
                 if (e) {
                     return done()
@@ -262,7 +280,7 @@ describe('#Packhouse', () => {
     it('use mold', function() {
         let isRun = false
         this.packhouse
-            .tool('demoGroup', 'moldTest')
+            .tool('demoGroup/moldTest')
             .pack('type')
             .pack(1234)
             .pack('string')
@@ -282,7 +300,7 @@ describe('#Packhouse', () => {
 
     it('use mold and null', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldTestAndNull')
+            .tool('demoGroup/moldTestAndNull')
             .pack(1234, '1234')
             .action((e, r) => {
                 expect(r).to.equal(true)
@@ -292,13 +310,13 @@ describe('#Packhouse', () => {
 
     it('use mold and response', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldTestAndResponse')
+            .tool('demoGroup/moldTestAndResponse')
             .pack(1234)
             .action((e, r) => {
                 expect(r).to.equal(1234)
             })
         this.packhouse
-            .tool('demoGroup', 'moldTestAndResponse')
+            .tool('demoGroup/moldTestAndResponse')
             .pack('1234')
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
@@ -327,49 +345,49 @@ describe('#Packhouse', () => {
 
     it('use mold type error', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldAbeTest')
+            .tool('demoGroup/moldAbeTest')
             .pack(123)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldAbeTest')
+            .tool('demoGroup/moldAbeTest')
             .pack(null, true)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldAbeTest')
+            .tool('demoGroup/moldAbeTest')
             .pack(null, null, 123)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldAbeTest')
+            .tool('demoGroup/moldAbeTest')
             .pack(null, null, null, true)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldAbeTest')
+            .tool('demoGroup/moldAbeTest')
             .pack(null, null, null, null, true)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldAbeTest')
+            .tool('demoGroup/moldAbeTest')
             .pack(null, null, null, null, null, true)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldAbeTest')
+            .tool('demoGroup/moldAbeTest')
             .pack(null, null, null, null, null, null, true)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldAbeTest')
+            .tool('demoGroup/moldAbeTest')
             .pack(null, null, null, null, null, null, null, true)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
@@ -379,13 +397,13 @@ describe('#Packhouse', () => {
 
     it('use mold date', function() {
         this.packhouse
-            .tool('demoGroup', 'moldTestForDate')
+            .tool('demoGroup/moldTestForDate')
             .pack('fkwopfkopwe')
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldTestForDate')
+            .tool('demoGroup/moldTestForDate')
             .pack(true)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
@@ -394,7 +412,7 @@ describe('#Packhouse', () => {
 
     it('use mold required', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldTestForRequired')
+            .tool('demoGroup/moldTestForRequired')
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
                 done()
@@ -403,13 +421,13 @@ describe('#Packhouse', () => {
 
     it('use mold number', function() {
         this.packhouse
-            .tool('demoGroup', 'moldTestForInt')
+            .tool('demoGroup/moldTestForInt')
             .pack(9)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldTestForInt')
+            .tool('demoGroup/moldTestForInt')
             .pack(21)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
@@ -418,19 +436,19 @@ describe('#Packhouse', () => {
 
     it('use mold int', function() {
         this.packhouse
-            .tool('demoGroup', 'moldTestForNumber')
+            .tool('demoGroup/moldTestForNumber')
             .pack(9)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldTestForNumber')
+            .tool('demoGroup/moldTestForNumber')
             .pack(21)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
             })
         this.packhouse
-            .tool('demoGroup', 'moldTestForNumber')
+            .tool('demoGroup/moldTestForNumber')
             .pack('15')
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
@@ -440,7 +458,7 @@ describe('#Packhouse', () => {
     it('use mold for abe', function() {
         let isRun = false
         this.packhouse
-            .tool('demoGroup', 'moldAbeTest')
+            .tool('demoGroup/moldAbeTest')
             .pack(undefined)
             .pack(null)
             .pack(null)
@@ -458,7 +476,7 @@ describe('#Packhouse', () => {
 
     it('use mold type error', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldTypeTest')
+            .tool('demoGroup/moldTypeTest')
             .pack(4567)
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
@@ -468,7 +486,7 @@ describe('#Packhouse', () => {
 
     it('use mold type abe', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldTypeTest')
+            .tool('demoGroup/moldTypeTest')
             .pack('1234', null)
             .action((e, r) => {
                 expect(r).to.equal(true)
@@ -478,7 +496,7 @@ describe('#Packhouse', () => {
 
     it('use mold type no is', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldTypeTest')
+            .tool('demoGroup/moldTypeTest')
             .pack('1234', '1234')
             .action((e, r) => {
                 expect(e.error instanceof Error).to.equal(true)
@@ -488,7 +506,7 @@ describe('#Packhouse', () => {
 
     it('casting', function(done) {
         this.packhouse
-            .tool('demoGroup', 'moldCasting')
+            .tool('demoGroup/moldCasting')
             .action(5.487, (e, r) => {
                 expect(r).to.equal(5)
                 done()
@@ -497,7 +515,7 @@ describe('#Packhouse', () => {
 
     it('custom mold', function(done) {
         this.packhouse
-            .tool('demoGroup', 'customMold')
+            .tool('demoGroup/customMold')
             .action(10, (e, r) => {
                 expect(r).to.equal('10')
                 done()
@@ -506,7 +524,7 @@ describe('#Packhouse', () => {
 
     it('mold error', function(done) {
         this.packhouse
-            .tool('demoGroup', 'customMold')
+            .tool('demoGroup/customMold')
             .action(123, (e, r) => {
                 expect(e.error.message).to.equal('Error')
                 done()
@@ -515,7 +533,7 @@ describe('#Packhouse', () => {
 
     it('store', function(done) {
         this.packhouse
-            .tool('demoGroup', 'storeTest')
+            .tool('demoGroup/storeTest')
             .action((e, r) => {
                 expect(r).to.equal('test')
                 done()
@@ -524,7 +542,7 @@ describe('#Packhouse', () => {
 
     it('include', function(done) {
         this.packhouse
-            .tool('demoGroup', 'includeTest')
+            .tool('demoGroup/includeTest')
             .action(5, 10, (e, r) => {
                 expect(r).to.equal(15)
                 done()
@@ -533,7 +551,7 @@ describe('#Packhouse', () => {
 
     it('group', function(done) {
         this.packhouse
-            .tool('demoGroup', 'groupTest')
+            .tool('demoGroup/groupTest')
             .action((e, r) => {
                 expect(r).to.equal('test')
                 done()
@@ -542,11 +560,11 @@ describe('#Packhouse', () => {
 
     it('handler casting', function(done) {
         this.packhouse
-            .tool('demoGroup', 'handlerCasting')
+            .tool('demoGroup/handlerCasting')
             .action(10, (e, r) => {
                 expect(r).to.equal('10')
                 this.packhouse
-                    .tool('demoGroup', 'handlerCasting')
+                    .tool('demoGroup/handlerCasting')
                     .action('123', (e, r) => {
                         expect(e.message).to.equal('Error')
                         done()
@@ -556,7 +574,7 @@ describe('#Packhouse', () => {
 
     it('handler utils', function(done) {
         this.packhouse
-            .tool('demoGroup', 'utilsTest')
+            .tool('demoGroup/utilsTest')
             .action(10, (e, r) => {
                 expect(r).to.equal('number')
                 done()
@@ -565,7 +583,7 @@ describe('#Packhouse', () => {
 
     it('response', function(done) {
         this.packhouse
-            .tool('demoGroup', 'responseTest')
+            .tool('demoGroup/responseTest')
             .action(10.1, 20.2, (error, result) => {
                 expect(result).to.equal(30)
                 done()
@@ -574,7 +592,7 @@ describe('#Packhouse', () => {
 
     it('response line', function(done) {
         this.packhouse
-            .line('demoGroup', 'mathResponse')(10)
+            .line('demoGroup/mathResponse')(10)
             .add(20.5)
             .action((error, result) => {
                 expect(result).to.equal(30)
@@ -602,7 +620,7 @@ describe('#Packhouse', () => {
             }
         })
         expect(() => {
-            packhouse.line('test', 'test')().action(() => {})
+            packhouse.line('test/test')().action(() => {})
         }).to.throw(Error)
     })
 
@@ -626,13 +644,13 @@ describe('#Packhouse', () => {
             }
         })
         expect(() => {
-            packhouse.line('test', 'test')().action(() => {})
+            packhouse.line('test/test')().action(() => {})
         }).to.throw(Error)
     })
 
     it('use line', function(done) {
         this.packhouse
-            .line('demoGroup', 'math')(5)
+            .line('demoGroup/math')(5)
             .add(10)
             .double()
             .action((e, r) => {
@@ -643,7 +661,7 @@ describe('#Packhouse', () => {
 
     it('use line pack', function(done) {
         this.packhouse
-            .tool('demoGroup', 'linePack')
+            .tool('demoGroup/linePack')
             .action((e, r) => {
                 expect(r).to.equal(20)
                 done()
@@ -652,7 +670,7 @@ describe('#Packhouse', () => {
 
     it('use line mold error', function(done) {
         this.packhouse
-            .line('demoGroup', 'math')('110')
+            .line('demoGroup/math')('110')
             .add(10)
             .double()
             .action((e, r) => {
@@ -663,7 +681,7 @@ describe('#Packhouse', () => {
 
     it('use line output error', function(done) {
         this.packhouse
-            .line('demoGroup', 'outputError')()
+            .line('demoGroup/outputError')()
             .action((e, r) => {
                 expect(e).to.equal('test')
                 done()
@@ -672,7 +690,7 @@ describe('#Packhouse', () => {
 
     it('use line layout error', function(done) {
         this.packhouse
-            .line('demoGroup', 'math')(10)
+            .line('demoGroup/math')(10)
             .setError('error')
             .add(10)
             .action((e, r) => {
@@ -683,7 +701,7 @@ describe('#Packhouse', () => {
 
     it('use line promise', function(done) {
         this.packhouse
-            .line('demoGroup', 'math')(5)
+            .line('demoGroup/math')(5)
             .add(10)
             .double()
             .promise()
@@ -695,7 +713,7 @@ describe('#Packhouse', () => {
 
     it('use line error', function(done) {
         this.packhouse
-            .line('demoGroup', 'math')(5)
+            .line('demoGroup/math')(5)
             .add('10')
             .double()
             .action((e, r) => {
@@ -706,7 +724,7 @@ describe('#Packhouse', () => {
 
     it('use line error promise', function(done) {
         this.packhouse
-            .line('demoGroup', 'math')(5)
+            .line('demoGroup/math')(5)
             .add('10')
             .double()
             .promise()
@@ -719,7 +737,7 @@ describe('#Packhouse', () => {
     it('use line no return', function(done) {
         try {
             this.packhouse
-                .tool('demoGroup', 'toolCantReturn')
+                .tool('demoGroup/toolCantReturn')
                 .action((e, r) => {})
         } catch (error) {
             done()
@@ -728,7 +746,7 @@ describe('#Packhouse', () => {
 
     it('merger', function(done) {
         this.packhouse
-            .tool('aws@dynamoDB', 'get')
+            .tool('aws@dynamoDB/get')
             .action('a', 'b', (e, r) => {
                 expect(r).to.equal('table - ab')
                 done()
@@ -737,7 +755,7 @@ describe('#Packhouse', () => {
 
     it('coop', function(done) {
         this.packhouse
-            .tool('demoGroup', 'get')
+            .tool('demoGroup/get')
             .action('b', (e, r) => {
                 expect(r).to.equal('table - ab')
                 done()
@@ -746,7 +764,7 @@ describe('#Packhouse', () => {
 
     it('coop line', function(done) {
         this.packhouse
-            .tool('demoGroup', 'coopLine')
+            .tool('demoGroup/coopLine')
             .action('b', (e, r) => {
                 expect(r).to.equal('table - 123b')
                 done()
@@ -763,7 +781,7 @@ describe('#Packhouse', () => {
             done()
         })
         this.packhouse
-            .tool('demoGroup', 'get')
+            .tool('demoGroup/get')
             .action('b', (e, r) => {})
     })
 
@@ -791,7 +809,7 @@ describe('#Packhouse', () => {
             }
         })
         this.packhouse
-            .tool('demoGroup', 'get')
+            .tool('demoGroup/get')
             .action('b', (e, r) => {})
     })
 
@@ -807,18 +825,18 @@ describe('#Packhouse', () => {
             }
         })
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .promise(10, 20)
             .then(() => {
                 this.packhouse
-                    .tool('demoGroup', 'sum')
+                    .tool('demoGroup/sum')
                     .action('10', 20, () => {})
             })
     })
 
     it('merger option', function(done) {
         this.packhouse
-            .tool('aws@dynamoDB', 'optionTest')
+            .tool('aws@dynamoDB/optionTest')
             .action((e, r) => {
                 expect(r).to.equal('test')
                 done()
@@ -859,7 +877,7 @@ describe('#Packhouse', () => {
 
     it('promise', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .promise(10, 20)
             .then((result) => {
                 expect(result).to.equal(30)
@@ -869,7 +887,7 @@ describe('#Packhouse', () => {
 
     it('promise error', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .promise(10, '20')
             .catch((error) => {
                 expect(typeof error.error.message).to.equal('string')
@@ -879,7 +897,7 @@ describe('#Packhouse', () => {
 
     it('promise error with ng', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .noGood(() => {})
             .promise(10, '20')
             .then(result => {
@@ -890,7 +908,7 @@ describe('#Packhouse', () => {
 
     it('promise error with ng and reject', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .noGood(() => {}, { reject: true })
             .promise(10, '20')
             .catch(result => {
@@ -901,7 +919,7 @@ describe('#Packhouse', () => {
 
     it('promise error with ng and done ng', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .noGood((result) => {
                 expect(typeof result.error.message).to.equal('string')
                 done()
@@ -911,7 +929,7 @@ describe('#Packhouse', () => {
 
     it('promise error with ng and done always', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .always(({ result, success }) => {
                 expect(typeof result.error.message).to.equal('string')
                 expect(success).to.equal(false)
@@ -923,7 +941,7 @@ describe('#Packhouse', () => {
 
     it('promise with always', function(done) {
         this.packhouse
-            .tool('demoGroup', 'sum')
+            .tool('demoGroup/sum')
             .always(({ result, success }) => {
                 expect(result).to.equal(30)
                 expect(success).to.equal(true)

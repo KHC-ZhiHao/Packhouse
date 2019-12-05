@@ -34,7 +34,7 @@ module.exports = {
             layout: {
                 get: {
                     handler(self, tableName) {
-                        self.use('get')
+                        self.tool('get')
                             .action(tableName, self.store.name, (err, result) => {
                                 self.store.result = result
                                 self.success()

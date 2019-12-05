@@ -21,15 +21,15 @@ class Includes {
         this._name = name
     }
 
-    coop(merger) {
+    _coop(merger) {
         let coop = this._tool.group.callCoop(merger)
         return {
             tool: (name) => {
                 this._tool.used[this._name] = coop.tool(name)
                 return this._tool.used[this._name]
             },
-            line: (name, ...packs) => {
-                this._tool.used[this._name] = coop.line(name, packs)
+            line: (name) => {
+                this._tool.used[this._name] = coop.line(name)
             }
         }
     }
@@ -37,7 +37,7 @@ class Includes {
     tool(name) {
         let merger = mergerParse(name)
         if (merger) {
-            return this.coop(merger.group).tool(merger.name)
+            return this._coop(merger.group).tool(merger.name)
         } else {
             this._tool.used[this._name] = this._tool.group.callTool(name)
             return this._tool.used[this._name]
@@ -47,10 +47,11 @@ class Includes {
     line(name, ...packs) {
         let merger = mergerParse(name)
         if (merger) {
-            this.coop(merger.group).line(merger.name, ...packs)
+            this._coop(merger.group).line(merger.name)
         } else {
-            this._tool.used[this._name] = this._tool.group.callLine(name, packs)
+            this._tool.used[this._name] = this._tool.group.callLine(name)
         }
+        this._tool.packs[this._name] = packs
     }
 }
 
@@ -78,6 +79,7 @@ class Tool extends Base {
         super('Tool')
         this.name = name || 'no name tool'
         this.used = reference.used || {}
+        this.packs = reference.packs || {}
         this.store = reference.store || {}
         this.group = group
         this.options = Utils.verify(options, {

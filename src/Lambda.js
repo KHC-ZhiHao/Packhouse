@@ -33,7 +33,8 @@ class LambdaCore extends Base {
                 if (this.tool.used[key] instanceof Lambda) {
                     used[key] = this.tool.used[key]._core.copy(context)
                 } else {
-                    used[key] = (...args) => this.tool.used[key](context, ...args)
+                    let packs = this.tool.packs[key]
+                    used[key] = (...args) => this.tool.used[key](context, ...packs, ...args)
                 }
             }
             return this.tool[mode]({
@@ -70,7 +71,7 @@ class LambdaCore extends Base {
                 reject: [false, ['boolean'], false]
             })
         } else {
-            this.$devError('setNG', 'NG param not a function.', action)
+            this.$devError('setNoGood', 'Nogood param not a function.', action)
         }
     }
 

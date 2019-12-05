@@ -48,11 +48,11 @@ class PackhouseCore extends Base {
     getCoop(groupName) {
         return {
             tool: (name) => this.callTool(groupName, name),
-            line: (name, packs) => this.callLine(groupName, name, packs)
+            line: (name) => this.callLine(groupName, name)
         }
     }
 
-    getProcess(type, group, name, packs) {
+    getProcess(type, group, name) {
         let groupDetail = group.split('@')
         this.event.emit('use', {
             type,
@@ -66,7 +66,7 @@ class PackhouseCore extends Base {
         if (type === 'tool') {
             target = this.getGroup(group).callTool(name)
         } else {
-            target = this.getGroup(group).callLine(name, packs)
+            target = this.getGroup(group).callLine(name)
         }
         return target
     }
@@ -75,8 +75,8 @@ class PackhouseCore extends Base {
         return this.getProcess('tool', group, name)
     }
 
-    callLine(group, name, packs) {
-        return this.getProcess('line', group, name, packs)
+    callLine(group, name) {
+        return this.getProcess('line', group, name)
     }
 
     addGroup(name, install, namespace, configs) {
@@ -129,13 +129,8 @@ class Packhouse {
         return this._core.event.off(channelName, id)
     }
 
-    tool(groupName, name) {
-        if (name == null) {
-            let parse = groupName.split('/')
-            groupName = parse[0]
-            name = parse[1]
-        }
-        let tool = this._core.callTool(groupName, name)
+    tool(name) {
+        let tool = this._core.callTool(...name.split('/'))
         let action = tool.action
         let promise = tool.promise
         tool.action = (...args) => action(null, ...args)
@@ -143,13 +138,8 @@ class Packhouse {
         return tool
     }
 
-    line(groupName, name) {
-        if (name == null) {
-            let parse = groupName.split('/')
-            groupName = parse[0]
-            name = parse[1]
-        }
-        return (...args) => this._core.callLine(groupName, name)(null, ...args)
+    line(name) {
+        return (...args) => this._core.callLine(...name.split('/'))(null, ...args)
     }
 
     plugin(Plugin, options) {

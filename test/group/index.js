@@ -41,20 +41,20 @@ module.exports = {
         get: {
             request: ['string'],
             install({ include }) {
-                include('get').coop('dynamoDB').tool('get').pack('a')
+                include('get').tool('dynamoDB/get').pack('a')
             },
             handler(self, name) {
-                self.use('get')
+                self.tool('get')
                     .noGood(self.error)
                     .action(name, self.success)
             }
         },
         coopLine: {
             install({ include }) {
-                include('query').coop('dynamoDB').line('query')
+                include('query').line('dynamoDB/query')
             },
             handler(self, name) {
-                self.use('query')(name)
+                self.line('query')(name)
                     .get('123')
                     .action((err, result) => {
                         self.success(result)
@@ -154,7 +154,7 @@ module.exports = {
                 include('sum').tool('sum')
             },
             handler(self, value1, value2) {
-                self.use('sum')
+                self.tool('sum')
                     .action(value1, value2, (e, r) => {
                         self.success(r)
                     })
@@ -246,7 +246,7 @@ module.exports = {
                 include('get').tool('dynamoDB/get').pack('a')
             },
             handler(self, name) {
-                self.use('get')
+                self.tool('get')
                     .noGood(self.error)
                     .action(name, self.success)
             }
@@ -256,7 +256,7 @@ module.exports = {
                 include('query').line('dynamoDB/query')
             },
             handler(self, name) {
-                self.use('query')(name)
+                self.line('query')(name)
                     .get('123')
                     .action((err, result) => {
                         self.success(result)
@@ -273,6 +273,22 @@ module.exports = {
                     .action((err, result) => {
                         self.success(result)
                     })
+            }
+        },
+        notTool: {
+            install({ include }) {
+                include('math').line('math')
+            },
+            handler(self) {
+                self.tool('math')
+            }
+        },
+        notLine: {
+            install({ include }) {
+                include('math').tool('sum')
+            },
+            handler(self) {
+                self.line('math')
             }
         }
     },
@@ -322,7 +338,7 @@ module.exports = {
                 add: {
                     request: ['number'],
                     handler(self, value) {
-                        self.use('sum')
+                        self.tool('sum')
                             .action(self.store.value, value, () => {
                                 self.store.value += value
                                 self.success()

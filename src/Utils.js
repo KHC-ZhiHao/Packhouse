@@ -1,11 +1,11 @@
 class Utils {
     static getType(target) {
         let type = typeof target
-        if (Array.isArray(target)) {
-            return 'array'
-        }
         if (target == null) {
             return 'empty'
+        }
+        if (Array.isArray(target)) {
+            return 'array'
         }
         if (type === 'number' && isNaN(target)) {
             return 'NaN'
@@ -13,7 +13,7 @@ class Utils {
         if (target instanceof RegExp) {
             return 'regexp'
         }
-        if (target && typeof target.then === 'function') {
+        if (target instanceof Promise) {
             return 'promise'
         }
         if (typeof Buffer !== 'undefined' && Buffer.isBuffer(target)) {
