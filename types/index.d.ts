@@ -53,8 +53,9 @@ export interface ToolHandler {
     line(name: string): (...any: any) => LineProcess & Response
     utils: Utils
     store: {[key: string]: any}
-    error(data: any): void
+    error(data?: any): void
     success(data?: any): void
+    access(compile?: (result?: any) => any): (error?: any, result?: any) => void
     casting(moldName: string, target: any): any
 }
 

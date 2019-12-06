@@ -10,6 +10,17 @@ class Handler extends Base {
         this.context = context
         this.error = reslut => response.error(reslut)
         this.success = reslut => response.success(reslut)
+        this.assess = compile => (error, result) => {
+            if (error) {
+                this.error(error)
+            } else {
+                if (compile) {
+                    this.success(compile(result))
+                } else {
+                    this.success(result)
+                }
+            }
+        }
     }
 
     get store() {
