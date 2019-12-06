@@ -25,6 +25,14 @@ module.exports = {
                 self.success(value1 + value2)
             }
         },
+        assess: {
+            install({ include }) {
+                include('sum').tool('sum')
+            },
+            handler(self, value1, value2) {
+                self.tool('sum').action(value1, value2, self.assess(result => result - 5))
+            }
+        },
         moldVerifyOptions: {
             request: ['verifyOptions'],
             handler(self, object) {

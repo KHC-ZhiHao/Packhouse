@@ -61,6 +61,25 @@ describe('#Packhouse', () => {
         expect(isRun).to.equal(true)
     })
 
+    it('use assess', function(done) {
+        this.packhouse
+            .tool('demoGroup/assess')
+            .noGood(done)
+            .action(10, 20, result => {
+                expect(result).to.equal(25)
+                done()
+            })
+    })
+
+    it('use assess error', function(done) {
+        this.packhouse
+            .tool('demoGroup/assess')
+            .action(10, '20', error => {
+                expect(typeof error.error.message).to.equal('string')
+                done()
+            })
+    })
+
     it('action no callback', function() {
         expect(() => {
             this.packhouse

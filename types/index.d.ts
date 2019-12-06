@@ -55,7 +55,7 @@ export interface ToolHandler {
     store: {[key: string]: any}
     error(data?: any): void
     success(data?: any): void
-    access(compile?: (result?: any) => any): (error?: any, result?: any) => void
+    assess(compile?: (result?: any) => any): (error?: any, result?: any) => void
     casting(moldName: string, target: any): any
 }
 
