@@ -206,6 +206,9 @@ class Flow {
         this.timeout = setTimeout(() => {
             this.timeoutHandler()
         }, this.system.timeout)
+        if (this.timeout.unref) {
+            this.timeout.unref()
+        }
     }
 
     timeoutHandler() {

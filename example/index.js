@@ -1,18 +1,18 @@
 let main = require('./main')
 
 exports.handler = main([
-    function getWeather(next) {
+    function getWeather(self, next) {
         this.ph
-            .tool('Local', 'getWeather')
+            .tool('Local/getWeather')
             .noGood(this.error)
             .always(next)
             .action(this.longitude, this.latitude, result => {
                 this.result.weather = result
             })
     },
-    function getRainfall(next) {
+    function getRainfall(self, next) {
         this.ph
-            .tool('Local', 'getRainfall')
+            .tool('Local/getRainfall')
             .noGood(this.error)
             .always(next)
             .action(this.longitude, this.latitude, result => {

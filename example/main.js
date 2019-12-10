@@ -3,29 +3,29 @@ const packhouse = require('./packhouse')
 module.exports = (template) => async(event = {}) => {
     let ph = packhouse()
     let result = await ph.step({
-        create() {
-            this.ph = ph
-            this.result = {}
-            this.latitude = event.latitude || 0
-            this.longitude = event.longitude || 0
-            this.errorMessage = null
-            this.error = error => {
-                this.errorMessage = error
+        create(self) {
+            self.ph = ph
+            self.result = {}
+            self.latitude = event.latitude || 0
+            self.longitude = event.longitude || 0
+            self.errorMessage = null
+            self.error = error => {
+                self.errorMessage = error
             }
         },
-        middle({ exit }) {
-            if (this.errorMessage) {
+        middle(self, { exit }) {
+            if (self.errorMessage) {
                 exit()
             }
         },
-        output({ history }, success) {
+        output(self, { history }, success) {
             console.log(history.toJSON(true, {
-                result: this.result,
-                errorMessage: this.errorMessage
+                result: self.result,
+                errorMessage: self.errorMessage
             }))
             success({
-                statusCode: this.errorMessage ? 500 : 200,
-                body: JSON.stringify(this.errorMessage || this.result)
+                statusCode: self.errorMessage ? 500 : 200,
+                body: JSON.stringify(self.errorMessage || self.result)
             })
         },
         timeout: 25000,

@@ -6,7 +6,7 @@ module.exports = function() {
     let packhouse = new Packhouse()
     packhouse.plugin(Step)
     packhouse.plugin(Order)
-    packhouse.add('Local', () => {
+    packhouse.addGroup('Local', () => {
         return {
             data: require('./groups/local')
         }

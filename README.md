@@ -30,10 +30,6 @@ This library does not fully follow the Functional Programming design paradigm, b
 
 [JS函數式編程指南(ZH)](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)
 
-[中文讀我](./README_TW.md)
-
-> 我英文能力不太靠譜，如果有錯誤請協助修正，感謝。
-
 ## Install
 
 ```bash
@@ -89,21 +85,21 @@ let packhouse = new Packhouse()
 let group = {
     tools: {
         sum: {
-            handler(v1, v2) {
-                this.success(v1 + v2)
+            handler(self, v1, v2) {
+                self.success(v1 + v2)
             }
         }
     }
 }
 
 // Add group is use lazy loaded.
-packhouse.add('math', () => {
+packhouse.addGroup('math', () => {
     return {
         data: group
     }
 })
 
-packhouse.tool('math', 'sum').action(5, 10, (error, result) => {
+packhouse.tool('math/sum').action(5, 10, (error, result) => {
     console.log(result) // 15
 })
 ```
@@ -118,17 +114,17 @@ The above example can be found that we use `Action` to call sum `Tool`, `Action`
 let group = {
     tools: {
         sum: {
-            handler(v1, v2) {
+            handler(self, v1, v2) {
                 if (typeof v1 + typeof v2 !== 'numbernumber') {
                     // Use the return interrupt program to execute.
-                    return this.error('Param not a number.')
+                    return self.error('Param not a number.')
                 }
-                this.success(v1 + v2)
+                self.success(v1 + v2)
             }
         }
     }
 }
-packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
+packhouse.tool('math/sum').action(5, '10', (error, result) => {
     console.log(error) // Param not a number.
 })
 ```
@@ -140,7 +136,7 @@ Because success and error can be resolve and reject, which allows each of the `T
 > Although have two difference mode asynchronous and synchronous, the original meaning of `Packhouse` is to treat all functions as asynchronous.
 
 ```js
-packhouse.tool('math', 'sum').promise(5, 10).then(r => console.log(r)) // 15
+packhouse.tool('math/sum').promise(5, 10).then(r => console.log(r)) // 15
 ```
 
 ---
@@ -174,13 +170,13 @@ let group = {
         sum: {
             request: ['number', 'number'],
             response: 'number',
-            handler(v1, v2) {
-                this.success(v1 + v2)
+            handler(self, v1, v2) {
+                self.success(v1 + v2)
             }
         }
     }
 }
-packhouse.tool('math', 'sum').action(5, '10', (error, result) => {
+packhouse.tool('math/sum').action(5, '10', (error, result) => {
     console.log(error) // Parameter 1 not a number(10).
 })
 ```
@@ -243,8 +239,8 @@ let group = {
         greeter: {
             // If group has the same named mold, use group first.
             request: ['person'],
-            handler(person) {
-                this.success('Hello, ' + person.firstName + ' ' + person.lastName)
+            handler(self, person) {
+                self.success('Hello, ' + person.firstName + ' ' + person.lastName)
             }
         }
     }
@@ -258,8 +254,8 @@ let group = {
     tools: {
         sum: {
             request: [null, 'number'],
-            handler(v1, v2) {
-                this.success(v1 + v2)
+            handler(self, v1, v2) {
+                self.success(v1 + v2)
             }
         }
     }
@@ -272,12 +268,12 @@ let group = {
 let group = {
     tools: {
         sum: {
-            handler(v1, v2) {
+            handler(self, v1, v2) {
                 try {
-                    v1 = this.casting('number', v1)
-                    this.success(v1 + v2)
+                    v1 = self.casting('number', v1)
+                    self.success(v1 + v2)
                 } catch (error) {
-                    this.error(error)
+                    self.error(error)
                 } 
             }
         }
@@ -294,8 +290,8 @@ let group = {
     tools: {
         sum: {
             request: ['number', 'number|abe'],
-            handler(v1, v2 = 0) {
-                this.success(v1 + v2)
+            handler(self, v1, v2 = 0) {
+                self.success(v1 + v2)
             }
         }
     }
@@ -320,8 +316,8 @@ let group = {
     tools: {
         greeter: {
             request: ['person|minAge:18|boy'],
-            handler(person) {
-                this.success('Hello, ' + person.firstName + ' ' + person.lastName)
+            handler(self, person) {
+                self.success('Hello, ' + person.firstName + ' ' + person.lastName)
             }
         }
     }
@@ -340,7 +336,7 @@ Add parameters in advance.
 
 ```js
 packhouse
-    .tool('math', 'sum')
+    .tool('math/sum')
     .pack(5)
     .action(10, (error, result) => {
         console.log(result) // 15
@@ -353,7 +349,7 @@ packhouse
 
 ```js
 packhouse
-    .tool('math', 'sum')
+    .tool('math/sum')
     .pack(10, 20)
     .pack(30, 40)
     .action((error, result) => {
@@ -365,7 +361,7 @@ packhouse
 
 ```js
 packhouse
-    .tool('math', 'sum')
+    .tool('math/sum')
     .pack(5)
     .pack(10)
     .repack(20, 30)
@@ -380,7 +376,7 @@ Bring the return value to another `Tool`, with `Pack` can to initial currying co
 
 ```js
 packhouse
-    .tool('math', 'sum')
+    .tool('math/sum')
     .pack(10, 20)
     .weld('double', (result, pack) => pack(result))
     .action((error, result) => {
@@ -397,7 +393,7 @@ It is failure callback.
 ```js
 // If noGood is declared, the error of the action callback will be discarded.
 packhouse
-    .tool('math', 'sum')
+    .tool('math/sum')
     .noGood(error => {
         console.log(error) // Parameter 1 not a number(10).
     })
@@ -407,7 +403,7 @@ packhouse
 
 // If the promise is to be declared reslove, this is something to be aware of.
 packhouse
-    .tool('math', 'sum')
+    .tool('math/sum')
     .noGood(error => {
         console.log(error) // Parameter 1 not a number(10).
     })
@@ -415,7 +411,7 @@ packhouse
 
 // If the promise wants noGood to be declared at the same time and the use rejected, the second parameter as follows:
 packhouse
-    .tool('math', 'sum')
+    .tool('math/sum')
     .noGood(error => {
         console.log(error) // Parameter 1 not a number(10).
     }, {
@@ -432,7 +428,7 @@ This callback will be executed regardless of success or failure.
 
 ```js
 packhouse
-    .tool('math', 'sum')
+    .tool('math/sum')
     .always(result => {
         console.log(result) // 25
     })
@@ -462,7 +458,7 @@ let group = {
     }
 }
 
-packhouse.add('demo', () => {
+packhouse.addGroup('demo', () => {
     return {
         data: group,
         options: {
@@ -506,8 +502,8 @@ let group = {
                 // This is tool and group transaction data.
                 store.name = group.name
             },
-            handler() {
-                console.log(this.store.name) // name
+            handler(self) {
+                console.log(self.store.name) // name
             }
         }
     }
@@ -638,12 +634,12 @@ let group = {
                 // First give name, and select the object.
                 include('sum').tool('sum')
             },
-            handler(v1, v2) {
-                // Use "use" keyword invoke tool.
-                this.use('sum')
-                    .noGood(this.error)
+            handler(self, v1, v2) {
+                // Use "tool" keyword invoke tool.
+                self.tool('sum')
+                    .noGood(self.error)
                     .action(result => {
-                        this.success(result * 2)
+                        self.success(result * 2)
                     })
             }
         }
@@ -657,12 +653,13 @@ let group = {
 let group2 = {
     tools: {
         sum: {
-            handler(v1, v2) {
-                this.success(v1 + v2)
+            handler(self, v1, v2) {
+                self.success(v1 + v2)
             }
         }
     }
 }
+
 let group = {
     // Merges is a renamed reference interface, which is mainly used to join the required groups.
     mergers: {
@@ -670,8 +667,8 @@ let group = {
     },
     tools: {
         sum: {
-            handler(v1, v2) {
-                this.success(v1 + v2)
+            handler(self, v1, v2) {
+                self.success(v1 + v2)
             }
         },
         sumAndDouble: {
@@ -680,8 +677,8 @@ let group = {
                 include('sum').tool('sum').pack(10)
                 // Use line,line does not return any value, so it cannot be preprocessed.
                 include('math').line('math')
-                // Use coop to import other groups.
-                include('sum2').coop('useGroup', 'tool', 'sum').pack(10)
+                // Use other groups.
+                include('sum2').tool('useGroup/sum').pack(10)
             },
             handler() {
                 // ...
@@ -690,13 +687,13 @@ let group = {
     }
 }
 
-packhouse.add('group', () => {
+packhouse.addGroup('group', () => {
     return {
         data: group
     }
 })
 
-packhouse.add('group2', () => {
+packhouse.addGroup('group2', () => {
     return {
         data: group2
     }
@@ -723,34 +720,34 @@ let group = {
             request: ['number'],
             response: 'number',
             install({ include }) {
-                // From input to output share "this" state.
+                // From input to output share "self" state.
                 include('sum').tool('sum')
             },
-            input(value) {
+            input(self, value) {
                 // Success in the Line except for output does not transfer value, but passes directly through the store.
-                this.store.value = value
-                this.success()
+                self.store.value = value
+                self.success()
             },
-            output() {
-                this.success(this.store.value)
+            output(self) {
+                self.success(self.store.value)
             },
             layout: {
                 // Layout is a simple tool groups.
                 add: {
                     request: ['number'],
-                    handler(value) {
-                        this.use('sum')
-                            .noGood(this.error)
-                            .action(this.store.value, value, result => {
-                                this.store.value = result
-                                this.success()
+                    handler(self, value) {
+                        self.tool('sum')
+                            .noGood(self.error)
+                            .action(self.store.value, value, result => {
+                                self.store.value = result
+                                self.success()
                             })
                     }
                 },
                 double: {
-                    handler(value) {
-                        this.store.value *= 2
-                        this.success()
+                    handler(self, value) {
+                        self.store.value *= 2
+                        self.success()
                     }
                 }
             }
@@ -758,7 +755,7 @@ let group = {
     }
 }
 
-packhouse.line('groupName', 'math')(10).add(5).add(15).double().action((error, result) => {
+packhouse.line('groupName/math')(10).add(5).add(15).double().action((error, result) => {
     console.log(result) // 60
 })
 ```
@@ -831,7 +828,7 @@ let merger = {
 }
 // Namespace separated by @.
 packhouse.merger('firstMerger', merger)
-packhouse.tool('firstMerger@myGroup', 'myTool').action(() => {
+packhouse.tool('firstMerger@myGroup/myTool').action(() => {
     // ...
 })
 ```
@@ -849,7 +846,7 @@ let client = new AWS.DynamoDB.DocumentClient()
 let group = {
     tools: {
         getUser: {
-            handler(name) {
+            handler(self, name) {
                 let parmas = {
                     TableName: 'users',
                     Key: {
@@ -858,9 +855,9 @@ let group = {
                 }
                 client.get(params, (err, result) => {
                     if (err) {
-                        this.error(err)
+                        self.error(err)
                     } else {
-                        this.success(result)
+                        self.success(result)
                     }
                 })
                 // Avoid the following announcement:
@@ -886,7 +883,7 @@ let Packhouse = require('packhouse')
 let client = new AWS.DynamoDB.DocumentClient()
 let packhouse = new Packhouse()
 
-packhouse.add('db', () => {
+packhouse.addGroup('db', () => {
     return {
         tools: {
             get: {
@@ -899,7 +896,7 @@ packhouse.add('db', () => {
 })
 
 exports.handler = async () => {
-    packhouse.tool('db', 'get').action((() => { ... })
+    packhouse.tool('db/get').action((() => { ... })
 }
 ```
 
@@ -913,7 +910,7 @@ let Packhouse = require('packhouse')
 
 exports.handler = async () => {
     let packhouse = new Packhouse()
-    packhouse.add('db', () => {
+    packhouse.addGroup('db', () => {
         return {
             install(group) {
                 group.client = new AWS.DynamoDB.DocumentClient()
@@ -923,8 +920,8 @@ exports.handler = async () => {
                     install({ group, store }) {
                         store.client = group.client
                     },
-                    handler() {
-                        this.store.client.get({ ... }, () => { ... })
+                    handler(self) {
+                        self.store.client.get({ ... }, () => { ... })
                     }
                 }
             }
@@ -975,11 +972,11 @@ let group = {
                 // order bound on utils.
                 store.order = utils.order()
             },
-            handler(v1, v2) {
+            handler(self, v1, v2) {
                 // key, { success, error }, callback
-                this.store
+                self.store
                     .order
-                    .use(v1 + '+' + v2, this, (error, success) => {
+                    .use(v1 + '+' + v2, self, (error, success) => {
                         success(v1 + v2)
                     })
             }
@@ -987,13 +984,13 @@ let group = {
     }
 }
 
-packhouse.add('math', () => {
+packhouse.addGroup('math', () => {
     return {
         data: group
     }
 })
 
-packhouse.tool('math', 'sum').action(10, 20, (error, result) => {
+packhouse.tool('math/sum').action(10, 20, (error, result) => {
     console.log(result) // 30
 })
 ```
@@ -1012,27 +1009,27 @@ let packhouse = new Packhouse()
 // After the step is used, can use step method in packhouse, and a promise is returned after the announcement.
 packhouse.plugin(Step)
 packhouse.step({
-    create: function() {
-        // Since this is shared, create can support register this.
-        this.result = 0
+    create: function(self) {
+        // Since self is shared, create can support register self.
+        self.result = 0
     },
-    middle: function({ exit, fail }) {
+    middle: function(self, { exit, fail }) {
         // You can set the jump condition between templates.
-        if (this.result > 10) {
+        if (self.result > 10) {
             exit()
         }
     },
     timeout: 25000, // ms
-    output({ timeout, history, fail, message }, success) {
+    output(self, { timeout, history, fail, message }, success) {
         console.log(fail) // True if fail is declared.
         console.log(message) // Exit or fail to carry the message.
         console.log(timeout) // If it is timeout, it will be true.
         console.log(history.toJSON()) // Step will help you build the tracking process and output details.
-        success(this.result)
+        success(self.result)
     },
     template: [
-        function(next, { exit, fail }) {
-            this.result = 10
+        function(self, next, { exit, fail }) {
+            self.result = 10
             next()
         }
         // Your logic.
@@ -1056,6 +1053,14 @@ You can clone this project and package example folder to zip and upload it to AW
   "longitude": 121.5459295
 }
 ```
+
+---
+
+## Like MVC
+
+---
+
+## About TypeScript
 
 ---
 

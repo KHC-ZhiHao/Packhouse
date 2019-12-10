@@ -1,11 +1,7 @@
-const request = require('request')
-const group = {
-    tools: {},
-    molds: {},
-    lines: {},
-    install(group, { baseUrl }) {
-        group.baseUrl = baseUrl
-    }
+const group = {}
+
+group.install = function(group, { baseUrl }) {
+    group.baseUrl = baseUrl
 }
 
 // ===================
@@ -28,22 +24,24 @@ function getGeoDistance(lat1, lng1, lat2, lng2) {
 // Molds
 //
 
-group.molds.location = function(value) {
-    let weather = {}
-    for (let element of value.weatherElement) {
-        let value = Number(element.elementValue.value)
-        if (value === -998) {
-            weather[element.elementName] = null
-            continue
+group.molds = {
+    location: function(value) {
+        let weather = {}
+        for (let element of value.weatherElement) {
+            let value = Number(element.elementValue.value)
+            if (value === -998) {
+                weather[element.elementName] = null
+                continue
+            }
+            weather[element.elementName] = value
         }
-        weather[element.elementName] = value
-    }
-    return {
-        lat: Number(value.lat),
-        lon: Number(value.lon),
-        name: value.locationName,
-        time: value.time.obsTime,
-        weather
+        return {
+            lat: Number(value.lat),
+            lon: Number(value.lon),
+            name: value.locationName,
+            time: value.time.obsTime,
+            weather
+        }
     }
 }
 
@@ -52,51 +50,58 @@ group.molds.location = function(value) {
 // Tools
 //
 
-group.tools.getData = {
-    install({ store, group, utils }) {
-        store.order = utils.order()
-        store.baseUrl = group.baseUrl
-    },
-    handler(self) {
-        self.store
-            .order
-            .use('cache', self, (error, success) => {
-                request.get(self.store.baseUrl, (err, response, body) => {
-                    if (err) {
-                        error(err)
-                    } else {
-                        success(JSON.parse(body))
-                    }
-                })
-            })
-    }
-}
+group.tools = {
 
-group.tools.getLocalByNearGeo = {
-    request: ['number', 'number'],
-    response: 'location',
-    install({ include }) {
-        include('getData').tool('getData')
+    getData: {
+        install({ store, group, utils }) {
+            store.order = utils.order()
+            store.baseUrl = group.baseUrl
+            store.request = require('request')
+        },
+        handler(self) {
+            self.store
+                .order
+                .use('cache', self, (error, success) => {
+                    self.store
+                        .request
+                        .get(self.store.baseUrl, (err, response, body) => {
+                            if (err) {
+                                error(err)
+                            } else {
+                                success(JSON.parse(body))
+                            }
+                        })
+                })
+        }
     },
-    handler(self, longitude, latitude) {
-        let target = null
-        let minDistance = -1000000
-        self.use('getData')
-            .noGood(self.error)
-            .action(data => {
-                let items = data.cwbopendata.location
-                for (let item of items) {
-                    let lat = Number(item.lat)
-                    let lon = Number(item.lon)
-                    let distance = getGeoDistance(latitude, longitude, lat, lon)
-                    if (distance > minDistance) {
-                        target = item
-                        minDistance = distance
+
+    getLocalByNearGeo: {
+        request: ['number', 'number'],
+        response: 'location',
+        install({ include }) {
+            include('getData').tool('getData')
+        },
+        handler(self, longitude, latitude) {
+            let target = null
+            let minDistance = -1000000
+            self.tool('getData')
+                .noGood(self.error)
+                .action(data => {
+                    let items = data.cwbopendata.location
+                    for (let item of items) {
+                        let lat = Number(item.lat)
+                        let lon = Number(item.lon)
+                        let distance = getGeoDistance(latitude, longitude, lat, lon)
+                        if (distance > minDistance) {
+                            target = item
+                            minDistance = distance
+                        }
                     }
-                }
-                self.success(target)
-            })
+                    self.success(target)
+                })
+        }
     }
+
 }
 
 module.exports = group
