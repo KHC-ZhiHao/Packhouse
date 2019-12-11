@@ -50,6 +50,24 @@ describe('#Packhouse', () => {
         }).to.throw(Error)
     })
 
+    it('loader test', function(done) {
+        this.packhouse
+            .tool('demoGroup/loaderTest')
+            .action(10, 20, (error, result) => {
+                expect(result).to.equal(30)
+                done()
+            })
+    })
+
+    it('loader test error', function(done) {
+        this.packhouse
+            .tool('demoGroup/loaderTestError')
+            .action(10, 20, (error, result) => {
+                expect(error).to.equal('OuO')
+                done()
+            })
+    })
+
     it('use tool', function() {
         let isRun = false
         this.packhouse

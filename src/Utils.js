@@ -88,6 +88,15 @@ class Utils {
         }
         return output
     }
+
+    static loader(handler) {
+        let response = new Promise(handler)
+        return (...args) => {
+            return new Promise((resolve, reject) => {
+                response.then(result => resolve(result(...args)), reject)
+            })
+        }
+    }
 }
 
 module.exports = Utils

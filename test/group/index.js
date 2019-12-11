@@ -298,6 +298,35 @@ module.exports = {
             handler(self) {
                 self.line('math')
             }
+        },
+        loaderTest: {
+            install({ store, utils }) {
+                store.sum = utils.loader(async(done) => {
+                    setTimeout(() => {
+                        done((v1, v2) => v1 + v2)
+                    }, 100)
+                })
+            },
+            handler(self, v1, v2) {
+                self.store
+                    .sum(v1, v2)
+                    .then(self.success)
+            }
+        },
+        loaderTestError: {
+            install({ store, utils }) {
+                store.sum = utils.loader(async(done, reject) => {
+                    setTimeout(() => {
+                        reject('OuO')
+                    }, 100)
+                })
+            },
+            handler(self, v1, v2) {
+                self.store
+                    .sum(v1, v2)
+                    .then(self.success)
+                    .catch(self.error)
+            }
         }
     },
     lines: {
