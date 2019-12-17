@@ -37,11 +37,13 @@ let group = {
         }
     }
 }
+
 packhouse.addGroup('math', () => {
     return {
         data: group
     }
 })
+
 packhouse.plugin(Test)
 
 describe('#Test', (done) => {
