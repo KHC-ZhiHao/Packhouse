@@ -1,45 +1,42 @@
-function deepClone(obj, hash = new WeakMap()) {
-    if (Object(obj) !== obj) {
-        return obj
+function copy(source) {
+    if (source == null) {
+        return source
     }
-    if (obj instanceof Set) {
-        return new Set(obj)
+    let newData = Array.isArray(source) ? [] : {}
+    for (const key in source) {
+        let target = source[key]
+        newData[key] = (typeof target === 'object') ? copy(target) : target
     }
-    if (hash.has(obj)) {
-        return hash.get(obj)
-    }
-    const result = obj instanceof Date ? new Date(obj) : obj instanceof RegExp ? new RegExp(obj.source, obj.flags) : Object.create(null)
-    hash.set(obj, result)
-    if (obj instanceof Map) {
-        Array.from(obj, ([key, val]) => {
-            result.set(key, deepClone(val, hash))
-        })
-    }
-    return Object.assign(result, ...Object.keys(obj).map((key) => {
-        return ({
-            [key]: deepClone(obj[key], hash)
-        })
-    }))
+    return newData
 }
 
 class Main {
     constructor(packhouse) {
-        const caches = []
-        const getGroup = name => {
+        let caches = []
+        let getGroup = name => {
             return packhouse._core.getGroup(name)
         }
-        const parseName = name => {
+        let parseName = name => {
             let [group, tool] = name.split('/')
             return { group, tool }
         }
+        let getCache = (type, name) => {
+            for (let cache of caches) {
+                if (cache.type === type && cache.name === name) {
+                    return cache
+                }
+            }
+        }
         packhouse.test = {
             mock: (type, name, callback) => {
+                if (getCache(type, name)) {
+                    throw new Error(`${type}, ${name} already mock.`)
+                }
                 let result = parseName(name)
                 let group = getGroup(result.group)
                 let target = type === 'tool' ? group.getTool(result.tool) : group.getLine(result.tool)
                 let options = target.options
-                let clone = deepClone(options)
-                console.log(clone)
+                let clone = copy(options)
                 callback(clone)
                 target.options = clone
                 caches.push({
@@ -50,17 +47,19 @@ class Main {
                 })
             },
             restore: (type, name) => {
-                for (let cache of caches) {
-                    if (cache.type === type && cache.name === name) {
-                        cache.target.options = cache.options
-                        break
-                    }
+                let cache = getCache(type, name)
+                if (cache) {
+                    cache.target.options = cache.options
+                    caches.splice(caches.indexOf(cache), 1)
+                } else {
+                    throw new Error(`Target(${type}, ${name}) no mock.`)
                 }
             },
             restoreAll: () => {
                 for (let cache of caches) {
                     cache.target.options = cache.options
                 }
+                caches = []
             }
         }
     }
