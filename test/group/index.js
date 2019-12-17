@@ -15,7 +15,7 @@ module.exports = {
         },
         verifyOptions: {
             name: [true, ['string']],
-            array: [false, ['array'], () => []],
+            array: [false, ['array'], () => []]
         }
     },
     tools: {
@@ -126,13 +126,13 @@ module.exports = {
             }
         },
         moldTypeTest: {
-            request: ['type|is:string', 'type|abe'],
+            request: ['type|is:string', 'type?'],
             handler(self) {
                 self.success(true)
             }
         },
         moldAbeTest: {
-            request: ['string|abe', 'number|abe', 'boolean|abe', 'int|abe', 'array|abe', 'buffer|abe', 'object|abe', 'function|abe', 'date|abe'],
+            request: ['string?', 'number?', 'boolean?', 'int?', 'array?', 'buffer?', 'object?', 'function?', 'date?'],
             handler(self) {
                 self.success(true)
             }

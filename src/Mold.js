@@ -59,9 +59,10 @@ class Box extends Base {
         return this.caches.get(text)
     }
 
-    parse(text, source, index, callback) {
-        let { name, extras } = this.cache(text)
-        return this.get(name).parse(source, this.getContext(index, extras), callback)
+    parse(text, source, index, message) {
+        let isRequire = text.slice(-1) === '?'
+        let { name, extras } = this.cache(isRequire ? text.slice(0, -1) : text)
+        return this.get(name).parse(source, this.getContext(index, extras), message, isRequire)
     }
 
     getContext(index, extras) {
@@ -89,10 +90,10 @@ class Mold extends Base {
         }
     }
 
-    parse(source, context, message) {
+    parse(source, context, message, isRequire) {
         context.utils = Utils
         context.message = message
-        return this.handler.call(this.case, source, context)
+        return source == null && isRequire === true ? source : this.handler.call(this.case, source, context)
     }
 }
 

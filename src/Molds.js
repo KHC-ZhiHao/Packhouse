@@ -1,8 +1,5 @@
 module.exports = {
     type(value, { extras, index, utils, message = '' }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
         if (extras.is == null) {
             throw new Error(`Type mold must have 'is' params.`)
         }
@@ -13,10 +10,7 @@ module.exports = {
             throw new Error(`${message}Parameter ${index} not a ${type}.`)
         }
     },
-    boolean(value, { extras, index, message = '' }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
+    boolean(value, { index, message = '' }) {
         if (typeof value === 'boolean') {
             return value
         } else {
@@ -24,9 +18,6 @@ module.exports = {
         }
     },
     number(value, { extras, index, message = '' }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
         if (typeof value !== 'number') {
             throw new Error(`${message}Parameter ${index} not a number(${value}).`)
         }
@@ -39,9 +30,6 @@ module.exports = {
         return value
     },
     int(value, { extras, message = '' }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
         if (typeof value !== 'number') {
             throw new Error(`${message}Parameter ${index} not a number(${value}).`)
         }
@@ -54,9 +42,6 @@ module.exports = {
         return Math.floor(value)
     },
     string(value, { extras, index, message = '' }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
         if (typeof value === 'string') {
             if (extras.is) {
                 let success = false
@@ -76,50 +61,35 @@ module.exports = {
             throw new Error(`${message}Parameter ${index} not a string(${value}).`)
         }
     },
-    array(value, { extras, index, message = '' }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
+    array(value, { index, message = '' }) {
         if (Array.isArray(value)) {
             return value
         } else {
             throw new Error(`${message}Parameter ${index} not a array(${value}).`)
         }
     },
-    buffer(value, { extras, index, message = '' }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
+    buffer(value, { index, message = '' }) {
         if (Buffer.isBuffer(value)) {
             return value
         } else {
             throw new Error(`${message}Parameter ${index} not a buffer(${value}).`)
         }
     },
-    object(value, { extras, index, message = '', utils }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
+    object(value, { index, message = '', utils }) {
         if (utils.getType(value) === 'object') {
             return value
         } else {
             throw new Error(`${message}Parameter ${index} not a object(${value}).`)
         }
     },
-    function(value, { extras, index, message = '' }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
+    function(value, { index, message = '' }) {
         if (typeof value === 'function') {
             return value
         } else {
             throw new Error(`${message}Parameter ${index} not a function(${value}).`)
         }
     },
-    date(value, { extras, index, message = '' }) {
-        if (value == null && extras.abe === true) {
-            return value
-        }
+    date(value, { index, message = '' }) {
         if (!(typeof value).match(/string|number/)) {
             throw new Error(`${message}Parameter ${index} not a string or number(${value}).`)
         }
