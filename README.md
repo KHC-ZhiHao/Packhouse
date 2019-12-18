@@ -1066,7 +1066,7 @@ You can clone this project and package example folder to zip and upload it to AW
 
 ## Version Iteration
 
-The re-examination of the architecture between 1.1.6 and 1.1.7 is therefore quite different.
+The re-examination of the architecture between 1.1.6 and 2.0.0 is therefore quite different.
 
 The file about 1.1.6 is as follows:
 

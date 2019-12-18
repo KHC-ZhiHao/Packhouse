@@ -28,17 +28,11 @@ export interface Include {
 }
 
 export interface ToolProcess {
-    weld(name: string, handler: WeldPack): ToolProcess
     pack(...any: any): ToolProcess
-    repack(...any: any): ToolProcess
     noGood(action: (error: any) => void, options?: {[key: string]: any}): ToolProcess
     always(action: (result: any) => void): ToolProcess
     action(...any: any): void
     promise(...any: any): Promise<any>
-}
-
-export interface WeldPack {
-    (result: any, pack: (...any: any) => void): void
 }
 
 export interface Tool {

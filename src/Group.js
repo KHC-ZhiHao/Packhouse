@@ -4,23 +4,22 @@ const Line = require('./Line')
 const Mold = require('./Mold')
 const Utils = require('./Utils')
 
-class GroupStore {}
 class Group extends Base {
     constructor(packhouse, data = {}, configs = {}, context = {}) {
         super('Group')
         this.name = context.name.replace(context.namespace || '', '')
         this.sign = context.name.match('@') ? context.name.split('@')[0] : ''
         this.namespace = context.namespace || ''
-        this.store = new GroupStore()
+        this.packhouse = packhouse
+        this.store = {}
         this.toolbox = {}
         this.linebox = {}
         this.moldbox = new Mold(packhouse.moldbox, this.namespace)
-        this.packhouse = packhouse
         this.options = Utils.verify(data, {
-            tools: [false, ['object'], () => {}],
-            lines: [false, ['object'], () => {}],
-            molds: [false, ['object'], () => {}],
-            mergers: [false, ['object'], () => {}],
+            tools: [false, ['object'], null],
+            lines: [false, ['object'], null],
+            molds: [false, ['object'], null],
+            mergers: [false, ['object'], null],
             install: [false, ['function'], () => () => {}]
         })
         this.init()

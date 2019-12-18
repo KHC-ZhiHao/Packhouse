@@ -48,10 +48,19 @@ packhouse.plugin(Test)
 
 describe('#Test', (done) => {
     it('mock', function(done) {
+        expect(() => {
+            packhouse.test.restore('tool', 'math/sam')
+        }).to.throw(Error)
         packhouse.test.mock('tool', 'math/sam', options => {
             options.request = ['string', 'string']
             options.handler = self => self.success(50)
         })
+        expect(() => {
+            packhouse.test.mock('tool', 'math/sam', options => {
+                options.request = ['string', 'string']
+                options.handler = self => self.success(70)
+            })
+        }).to.throw(Error)
         packhouse.tool('math/sam').action('10', '20', (error, result) => {
             expect(result).to.equal(50)
             done()

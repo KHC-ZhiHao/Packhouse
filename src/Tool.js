@@ -105,14 +105,14 @@ class Tool extends Base {
     }
 
     call({ parameters, used, mode, context, response }) {
-        let args = []
+        let paramsLength = parameters.length
+        let args = new Array(paramsLength)
         let handler = new ToolHandler(this, used, context, response)
-        for (let i = 0; i < parameters.length; i++) {
-            args.push(Utils.getType(parameters[i]))
+        for (let i = 0; i < paramsLength; i++) {
+            args[i] = Utils.getType(parameters[i])
         }
         // event
-        this.emit('run', {
-            ...context,
+        this.emit('run', Object.assign({
             detail: {
                 name: this.name,
                 args,
@@ -124,7 +124,7 @@ class Tool extends Base {
                     sign: this.group.sign
                 }
             }
-        })
+        }, context))
         // request
         let length = this.options.request.length
         for (let i = 0; i < length; i++) {

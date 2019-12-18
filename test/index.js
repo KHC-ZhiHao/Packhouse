@@ -209,52 +209,6 @@ describe('#Packhouse', () => {
         }).to.throw(Error)
     })
 
-    it('repack', function(done) {
-        this.packhouse
-            .tool('demoGroup/sum')
-            .pack(10)
-            .repack(20)
-            .action(10, (e, r) => {
-                expect(r).to.equal(30)
-                done()
-            })
-    })
-
-    it('weld', function(done) {
-        this.packhouse
-            .tool('demoGroup/sum')
-            .pack(10, 20)
-            .weld('sum', (result, pack) => pack(result, 10))
-            .weld('sum', (result, pack) => pack(result, 20))
-            .action((e, r) => {
-                expect(r).to.equal(60)
-                done()
-            })
-    })
-
-    it('weld of error', function(done) {
-        this.packhouse
-            .tool('demoGroup/sum')
-            .pack(10, 20)
-            .weld('sum', (result, pack) => pack(result, '10'))
-            .action((e, r) => {
-                expect(typeof e.error.message).to.equal('string')
-                done()
-            })
-    })
-
-    it('weld of error with no good', function(done) {
-        this.packhouse
-            .tool('demoGroup/sum')
-            .pack(10, 20)
-            .weld('sum', (result, pack) => pack(result, '10'))
-            .noGood((e) => {
-                expect(typeof e.error.message).to.equal('string')
-                done()
-            })
-            .action((r) => {})
-    })
-
     it('add mold', function() {
         this.packhouse.addMold('test', function(value) {
             return value
@@ -898,18 +852,6 @@ describe('#Packhouse', () => {
                     done()
                 }
             })
-    })
-
-    it('global', function(done) {
-        Packhouse
-            .plugin(class {
-                constructor(packhouse) {
-                    expect(typeof packhouse.utils.generateId()).to.equal('string')
-                    Packhouse._plugins = []
-                    done()
-                }
-            })
-        new Packhouse()
     })
 
     it('promise', function(done) {

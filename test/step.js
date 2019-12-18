@@ -19,11 +19,10 @@ describe('#Step', () => {
             output(self, context, success) {
                 success('123')
             }
+        }).then((result) => {
+            expect(result).to.equal('123')
+            done()
         })
-            .then((result) => {
-                expect(result).to.equal('123')
-                done()
-            })
     })
 
     it('error', function(done) {

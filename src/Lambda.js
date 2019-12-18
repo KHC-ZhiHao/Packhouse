@@ -6,7 +6,6 @@ class LambdaCore extends Base {
     constructor(tool) {
         super('Lambda')
         this.tool = tool
-        this.welds = []
         this.always = null
         this.noGood = null
         this.noGoodOptions = {}
@@ -17,7 +16,6 @@ class LambdaCore extends Base {
 
     get configs() {
         return {
-            welds: Utils.arrayCopy(this.welds),
             always: this.always,
             noGood: this.noGood,
             noGoodOptions: Object.assign({}, this.noGoodOptions),
@@ -51,17 +49,12 @@ class LambdaCore extends Base {
         let action = lambda.action
         let promise = lambda.promise
         let configs = this.configs
-        lambda._core.welds = configs.welds
         lambda._core.always = configs.always
         lambda._core.noGood = configs.noGood
         lambda._core.packages = configs.packages
         lambda.action = (...args) => action(context, ...args)
         lambda.promise = (...args) => promise(context, ...args)
         return lambda
-    }
-
-    addWeld(tool, pack) {
-        this.welds.push({ tool, pack })
     }
 
     setNoGood(action, options) {
@@ -86,10 +79,6 @@ class LambdaCore extends Base {
     pack(args) {
         this.packages = this.packages.concat(args)
     }
-
-    repack(args) {
-        this.packages = args
-    }
 }
 
 class Lambda {
@@ -99,18 +88,8 @@ class Lambda {
         this.promise = this._core.promise
     }
 
-    weld(tool, callback) {
-        this._core.addWeld(tool, callback)
-        return this
-    }
-
     pack(...args) {
         this._core.pack(args)
-        return this
-    }
-
-    repack(...args) {
-        this._core.repack(args)
         return this
     }
 

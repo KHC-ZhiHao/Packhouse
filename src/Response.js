@@ -1,12 +1,10 @@
 const Base = require('./Base.js')
-const Utils = require('./Utils.js')
 
 class Response extends Base {
     constructor(tool, context, configs) {
         super('Response')
         this.over = false
         this.tool = tool
-        this.welds = null
         this.group = tool.group
         this.context = context
         this.exports = {
@@ -15,9 +13,6 @@ class Response extends Base {
         }
         if (configs) {
             this.always = configs.always
-            if (configs.welds.length > 0) {
-                this.welds = Utils.arrayCopy(configs.welds)
-            }
             if (configs.noGood) {
                 this.noGood = configs.noGood
                 this.noGoodOptions = configs.noGoodOptions
@@ -36,13 +31,12 @@ class Response extends Base {
     error(result) {
         if (this.over === false) {
             this.over = true
-            this.tool.emit('done', {
-                ...this.context,
+            this.tool.emit('done', Object.assign({
                 detail: {
                     result,
                     success: false
                 }
-            })
+            }, this.context))
             this.errorBase(result)
             this.callAlways({
                 result,
@@ -68,48 +62,18 @@ class Response extends Base {
                 }
             }
             this.over = true
-            this.tool.emit('done', {
-                ...this.context,
+            this.tool.emit('done', Object.assign({
                 detail: {
                     result,
                     success: true
                 }
+            }, this.context))
+            this.successBase(result)
+            this.callAlways({
+                result,
+                context: this.context,
+                success: true
             })
-            this.runWeld(result, (result) => {
-                this.successBase(result)
-                this.callAlways({
-                    result,
-                    context: this.context,
-                    success: true
-                })
-            })
-        }
-    }
-
-    runWeld(result, callback) {
-        if (this.welds == null) {
-            callback(result)
-            return null
-        }
-        let tool = null
-        let weld = this.welds.shift()
-        if (weld) {
-            tool = this.group.callTool(weld.tool)
-            weld.pack(result, tool.pack.bind(tool))
-            tool.action(this.context, (error, result) => {
-                if (error) {
-                    this.errorBase(error)
-                    this.callAlways({
-                        result: error,
-                        context: this.context,
-                        success: false
-                    })
-                } else {
-                    this.runWeld(result, callback)
-                }
-            })
-        } else {
-            callback(result)
         }
     }
 

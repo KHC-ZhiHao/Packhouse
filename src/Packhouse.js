@@ -23,8 +23,8 @@ class PackhouseCore extends Base {
         }
         let namespace = name + '@'
         let options = Utils.verify(data, {
-            molds: [false, ['object'], () => {}],
-            groups: [false, ['object'], () => {}]
+            molds: [false, ['object'], null],
+            groups: [false, ['object'], null]
         })
         for (let key in options.molds) {
             this.addMold(namespace + key, options.molds[key])
@@ -47,8 +47,8 @@ class PackhouseCore extends Base {
 
     getCoop(groupName) {
         return {
-            tool: (name) => this.callTool(groupName, name),
-            line: (name) => this.callLine(groupName, name)
+            tool: name => this.callTool(groupName, name),
+            line: name => this.callLine(groupName, name)
         }
     }
 
@@ -112,9 +112,6 @@ class Packhouse {
             classes: [],
             process: []
         }
-        for (let [Plugin, options] of Packhouse._plugins) {
-            this.plugin(Plugin, options)
-        }
     }
 
     get utils() {
@@ -173,12 +170,6 @@ class Packhouse {
     }
 }
 
-Packhouse._plugins = []
 Packhouse.utils = Utils
-Packhouse.plugin = function(Plugin, options) {
-    if (Packhouse._plugins.includes(Plugin) === false) {
-        Packhouse._plugins.push([Plugin, options])
-    }
-}
 
 module.exports = Packhouse
