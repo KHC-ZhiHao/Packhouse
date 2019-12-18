@@ -22,10 +22,10 @@ module.exports = {
             throw new Error(`${message}Parameter ${index} not a number(${value}).`)
         }
         if (extras.max && value > Number(extras.max)) {
-            throw new Error(`${message}Parameter ${index} less of (${extras.max}).`)
+            throw new Error(`${message}Parameter ${index} less than (${extras.max}).`)
         }
         if (extras.min && value < Number(extras.min)) {
-            throw new Error(`${message}Parameter ${index} exceed of (${extras.min}).`)
+            throw new Error(`${message}Parameter ${index} exceed than (${extras.min}).`)
         }
         return value
     },
