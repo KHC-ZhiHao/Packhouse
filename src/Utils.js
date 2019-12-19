@@ -90,8 +90,11 @@ class Utils {
     }
 
     static loader(handler) {
-        let response = new Promise(handler)
+        let response = null
         return (...args) => {
+            if (response == null) {
+                response = new Promise(handler)
+            }
             return new Promise((resolve, reject) => {
                 response.then(result => resolve(result(...args)), reject)
             })
