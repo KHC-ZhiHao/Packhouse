@@ -27,19 +27,10 @@ module.exports = {
         if (extras.min && value < Number(extras.min)) {
             throw new Error(`${message}Parameter ${index} exceed than (${extras.min}).`)
         }
+        if (extras.int) {
+            value = Math.floor(value)
+        }
         return value
-    },
-    int(value, { extras, message = '' }) {
-        if (typeof value !== 'number') {
-            throw new Error(`${message}Parameter ${index} not a number(${value}).`)
-        }
-        if (extras.max && value > Number(extras.max)) {
-            throw new Error(`${message}Parameter ${index} less of (${extras.max}).`)
-        }
-        if (extras.min && value < Number(extras.min)) {
-            throw new Error(`${message}Parameter ${index} exceed of (${extras.min}).`)
-        }
-        return Math.floor(value)
     },
     string(value, { extras, index, message = '' }) {
         if (typeof value === 'string') {

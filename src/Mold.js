@@ -48,20 +48,24 @@ class Box extends Base {
             let data = text.split('|')
             let name = data.shift()
             let extras = {}
+            let isRequire = false
+            if (name.slice(-1) === '?') {
+                name = name.slice(0, -1)
+                isRequire = true
+            }
             for (let text of data) {
                 let [key, value] = text.split(':')
                 if (value !== 'undefined') {
                     extras[key] = value === undefined ? true : value
                 }
             }
-            this.caches.set(text, { name, extras })
+            this.caches.set(text, { name, extras, isRequire })
         }
         return this.caches.get(text)
     }
 
     parse(text, source, index, message) {
-        let isRequire = text.slice(-1) === '?'
-        let { name, extras } = this.cache(isRequire ? text.slice(0, -1) : text)
+        let { name, extras, isRequire } = this.cache(text)
         return this.get(name).parse(source, this.getContext(index, extras), message, isRequire)
     }
 

@@ -70,15 +70,6 @@ class Utils {
         })
     }
 
-    static arrayCopy(array) {
-        var i = array.length
-        var output = []
-        while (i--) {
-            output[i] = array[i]
-        }
-        return output
-    }
-
     static peel(target, path, def) {
         let output = path.split(/[.[\]'"]/g).filter(s => s !== '').reduce((obj, key) => {
             return obj && obj[key] !== 'undefined' ? obj[key] : undefined

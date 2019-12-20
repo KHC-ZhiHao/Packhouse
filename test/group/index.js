@@ -41,7 +41,7 @@ module.exports = {
         },
         responseTest: {
             request: ['number', 'number'],
-            response: 'int',
+            response: 'number|int',
             handler(self, value1, value2) {
                 self.success(value1 + value2)
             }
@@ -108,7 +108,7 @@ module.exports = {
             }
         },
         moldTestForInt: {
-            request: ['int|min:10|max:20'],
+            request: ['number|int|min:10|max:20'],
             handler(self) {
                 self.success(true)
             }
@@ -132,13 +132,13 @@ module.exports = {
             }
         },
         moldAbeTest: {
-            request: ['string?', 'number?', 'boolean?', 'int?', 'array?', 'buffer?', 'object?', 'function?', 'date?'],
+            request: ['string?', 'number?', 'boolean?', 'number?|int', 'array?', 'buffer?', 'object?', 'function?', 'date?'],
             handler(self) {
                 self.success(true)
             }
         },
         moldCasting: {
-            request: ['int'],
+            request: ['number|int'],
             handler(self, number) {
                 self.success(number)
             }
@@ -249,6 +249,20 @@ module.exports = {
                     })
             }
         },
+        orderTestExpired: {
+            install({ store, utils }) {
+                store.order = utils.order({
+                    expired: 100
+                })
+            },
+            handler(self, name) {
+                self.store
+                    .order
+                    .use(name, self, (error, success) => {
+                        success(self.store.order)
+                    })
+            }
+        },
         includeExpression: {
             install({ include }) {
                 include('get').tool('dynamoDB/get').pack('a')
@@ -341,7 +355,7 @@ module.exports = {
         },
         mathResponse: {
             request: ['number'],
-            response: 'int',
+            response: 'number|int',
             input(self, value) {
                 self.store.value = value
                 self.success()

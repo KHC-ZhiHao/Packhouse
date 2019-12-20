@@ -94,4 +94,16 @@ describe('#Order', () => {
                     })
             })
     })
+
+    it('Expired', function(done) {
+        this.packhouse
+            .tool('demoGroup/orderTestExpired')
+            .action('123', (error, order) => {
+                expect(order.has('123')).to.equal(true)
+                setTimeout(() => {
+                    expect(order.has('123')).to.equal(false)
+                    done()
+                }, 200)
+            })
+    })
 })

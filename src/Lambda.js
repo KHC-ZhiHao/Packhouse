@@ -2,6 +2,15 @@ const Base = require('./Base')
 const Utils = require('./Utils')
 const Context = require('./Context')
 
+function arrayCopy(array) {
+    var i = array.length
+    var output = []
+    while (i--) {
+        output[i] = array[i]
+    }
+    return output
+}
+
 class LambdaCore extends Base {
     constructor(tool) {
         super('Lambda')
@@ -19,7 +28,7 @@ class LambdaCore extends Base {
             always: this.always,
             noGood: this.noGood,
             noGoodOptions: Object.assign({}, this.noGoodOptions),
-            packages: Utils.arrayCopy(this.packages)
+            packages: arrayCopy(this.packages)
         }
     }
 

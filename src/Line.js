@@ -81,6 +81,9 @@ class Deploy extends Base {
     }
 
     register(name, args) {
+        if (this.layout[name].response) {
+            this.layout[name].response = null
+        }
         this.flow.push({
             name,
             args,
