@@ -323,8 +323,8 @@ module.exports = {
             },
             handler(self, v1, v2) {
                 self.store
-                    .sum(v1, v2)
-                    .then(self.success)
+                    .sum()
+                    .then(cb => self.success(cb(v1, v2)))
             }
         },
         loaderTestError: {
@@ -337,7 +337,7 @@ module.exports = {
             },
             handler(self, v1, v2) {
                 self.store
-                    .sum(v1, v2)
+                    .sum()
                     .then(self.success)
                     .catch(self.error)
             }

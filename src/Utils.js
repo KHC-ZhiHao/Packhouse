@@ -81,10 +81,13 @@ class Utils {
     }
 
     static loader(handler) {
-        let response = new Promise(handler)
-        return (...args) => {
+        let response = null
+        return () => {
+            if (response == null) {
+                response = new Promise(handler)
+            }
             return new Promise((resolve, reject) => {
-                response.then(result => resolve(result(...args)), reject)
+                response.then(result => resolve(result), reject)
             })
         }
     }

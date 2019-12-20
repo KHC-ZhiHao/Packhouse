@@ -771,7 +771,7 @@ let Packhouse = require('packhouse')
 let packhouse = new Packhouse()
 
 // Triggered whenever only group is used.
-packhouse.on('run', (event, { type, name, group })) => {})
+packhouse.on('use', (event, { type, name, group })) => {})
 
 // Whenever the tool is triggered, the context of the call can be known by the current id and caller.
 packhouse.on('run', (event, { id, caller, detail })) => {})
