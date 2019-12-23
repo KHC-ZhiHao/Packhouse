@@ -5,7 +5,7 @@ const expect = require('chai').expect
 let packhouse = new Packhouse()
 let group = {
     tools: {
-        sam: {
+        sum: {
             handler(self, v1, v2) {
                 self.success(v1 + v2)
             }
@@ -49,26 +49,26 @@ packhouse.plugin(Test)
 describe('#Test', (done) => {
     it('mock', function(done) {
         expect(() => {
-            packhouse.test.restore('tool', 'math/sam')
+            packhouse.test.restore('tool', 'math/sum')
         }).to.throw(Error)
-        packhouse.test.mock('tool', 'math/sam', options => {
+        packhouse.test.mock('tool', 'math/sum', options => {
             options.request = ['string', 'string']
             options.handler = self => self.success(50)
         })
         expect(() => {
-            packhouse.test.mock('tool', 'math/sam', options => {
+            packhouse.test.mock('tool', 'math/sum', options => {
                 options.request = ['string', 'string']
                 options.handler = self => self.success(70)
             })
         }).to.throw(Error)
-        packhouse.tool('math/sam').action('10', '20', (error, result) => {
+        packhouse.tool('math/sum').action('10', '20', (error, result) => {
             expect(result).to.equal(50)
             done()
         })
     })
     it('restore', function(done) {
-        packhouse.test.restore('tool', 'math/sam')
-        packhouse.tool('math/sam').action(10, 20, (error, result) => {
+        packhouse.test.restore('tool', 'math/sum')
+        packhouse.tool('math/sum').action(10, 20, (error, result) => {
             expect(result).to.equal(30)
             done()
         })
@@ -102,7 +102,7 @@ describe('#Test', (done) => {
             })
     })
     it('restoreAll', function() {
-        packhouse.test.mock('tool', 'math/sam', options => {
+        packhouse.test.mock('tool', 'math/sum', options => {
             options.request = ['string', 'string']
             options.handler = self => self.success(50)
         })
@@ -114,7 +114,7 @@ describe('#Test', (done) => {
             }
         })
         packhouse.test.restoreAll()
-        packhouse.tool('math/sam').action(10, 20, (error, result) => {
+        packhouse.tool('math/sum').action(10, 20, (error, result) => {
             expect(result).to.equal(30)
         })
         packhouse
