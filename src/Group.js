@@ -23,7 +23,7 @@ class Group extends Base {
             install: [false, ['function'], () => () => {}]
         })
         this.init()
-        this.options.install.call(this.store, this.store, configs)
+        this.options.install.call(this.store, this.store, configs, packhouse)
     }
 
     init() {

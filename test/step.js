@@ -162,7 +162,7 @@ describe('#Step', () => {
             template,
             output(self, { history }, success, error) {
                 let key = Object.keys(history.template[0].logs)[0]
-                expect(history.template[0].logs[key].resultType).to.equal('object')
+                expect(typeof history.template[0].logs[key].result).to.equal('object')
                 success('123')
             }
         })

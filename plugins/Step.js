@@ -104,20 +104,17 @@ class History {
             profile,
             template: this.list,
             isDone: name => this.isDone(name),
-            toJSON: (beautify, metadata) => this.toJSON(profile, beautify, metadata)
+            toJSON: metadata => this.toJSON(profile, metadata)
         }
     }
 
-    toJSON(profile, beautify, metadata = {}) {
+    toJSON(profile, metadata = {}) {
         let data = {
             profile,
             metadata,
             template: this.list
         }
-        if (beautify) {
-            return JSON.stringify(this.inspect(data), null, 4)
-        }
-        return JSON.stringify(this.inspect(data))
+        return JSON.stringify(this.inspect(data), null, 4)
     }
 
     isDone(name) {
@@ -154,7 +151,7 @@ class History {
                 log = data.logs[id]
             }
             log.success = detail.success
-            log.resultType = this.packhouse.utils.getType(detail.result)
+            log.result = detail.result
             log.finishTime = Date.now()
             log.totalTime = logs[id].finishTime - logs[id].startTime
         })

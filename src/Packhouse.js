@@ -139,13 +139,10 @@ class Packhouse {
         return (...args) => this._core.callLine(...name.split('/'))(null, ...args)
     }
 
-    plugin(Plugin, options) {
+    plugin(Plugin) {
         if (this._plugins.classes.includes(Plugin) === false) {
             this._plugins.classes.push(Plugin)
-            this._plugins.process.push({
-                options,
-                instance: new Plugin(this, options)
-            })
+            this._plugins.process.push(new Plugin(this))
         }
     }
 
