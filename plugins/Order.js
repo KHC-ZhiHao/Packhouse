@@ -1,24 +1,9 @@
 class OrderCore {
-    constructor(packhouse, options) {
+    constructor() {
         this.caches = new Map()
-        this.options = packhouse.utils.verify(options, {
-            expired: [false, ['number'], null]
-        })
-    }
-
-    checkExpired(key) {
-        if (this.options.expired == null) {
-            return null
-        }
-        let now = Date.now()
-        let cache = this.caches.get(key)
-        if (cache && now - cache._core.createdAt > this.options.expired) {
-            this.remove(key, true)
-        }
     }
 
     has(key) {
-        this.checkExpired(key)
         if (typeof key !== 'string') {
             throw new Error('Key not a string.')
         }
@@ -132,8 +117,8 @@ class Cache {
 }
 
 class Order {
-    constructor(packhouse, options) {
-        this._core = new OrderCore(packhouse, options)
+    constructor() {
+        this._core = new OrderCore()
     }
 
     has(key) {
@@ -163,7 +148,7 @@ class Order {
 
 class Main {
     constructor(packhouse) {
-        packhouse.utils.order = (options) => new Order(packhouse, options)
+        packhouse.utils.order = () => new Order()
     }
 }
 
