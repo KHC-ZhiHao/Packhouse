@@ -83,6 +83,7 @@ class Tool extends Base {
         this.store = reference.store || {}
         this.group = group
         this.options = Utils.verify(options, {
+            info: [false, ['string'], null],
             request: [false, ['array'], () => []],
             handler: [true, ['function']],
             install: [false, ['function'], () => () => {}],
@@ -112,6 +113,7 @@ class Tool extends Base {
                 name: this.name,
                 args: parameters.slice(0),
                 mode,
+                info: this.options.info,
                 request: this.requestJSON,
                 response: this.options.response,
                 group: {

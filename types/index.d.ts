@@ -36,6 +36,7 @@ export interface ToolProcess {
 }
 
 export interface Tool {
+    info?: string
     request?: Array<SystemMold>
     response?: SystemMold
     install?(context: ToolContext): void
@@ -78,6 +79,7 @@ export interface MoldContext {
 }
 
 export interface Line {
+    info?: string
     request?: Array<SystemMold>
     response?: SystemMold
     install?(context: ToolContext): void

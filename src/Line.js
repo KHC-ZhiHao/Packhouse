@@ -8,6 +8,7 @@ class Line extends Base {
         this.name = name || 'no_name_line'
         this.group = group
         this.options = Utils.verify(options, {
+            info: [false, ['string'], null],
             input: [true, ['function']],
             output: [true, ['function']],
             layout: [true, ['object']],
@@ -48,6 +49,7 @@ class Deploy extends Base {
 
     init() {
         this.input = this.createTool('input', {
+            info: this.main.options.info,
             request: this.main.options.request,
             handler: this.main.options.input,
             install: system => this.main.options.install(system)
