@@ -7,6 +7,7 @@ export interface ToolContext {
     group: {[key: string]: any}
     utils: Utils
     include(name: string): Include
+    require(name: string): any
 }
 
 export interface VerifyOptions {
