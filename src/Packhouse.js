@@ -167,6 +167,4 @@ class Packhouse {
     }
 }
 
-Packhouse.utils = Utils
-
 module.exports = Packhouse
