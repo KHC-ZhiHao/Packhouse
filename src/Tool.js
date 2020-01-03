@@ -61,6 +61,10 @@ class System {
         this.include = name => this._tool.include(name)
     }
 
+    get packhouse() {
+        return this._tool.group.packhouse.main
+    }
+
     get group() {
         return this._tool.group.store
     }

@@ -6,8 +6,9 @@ const Utils = require('./Utils')
 const Molds = require('./Molds')
 
 class PackhouseCore extends Base {
-    constructor() {
+    constructor(main) {
         super('Packhouse')
+        this.main = main
         this.event = new Event(this)
         this.modules = {}
         this.moldbox = new Mold()
@@ -107,7 +108,7 @@ class PackhouseCore extends Base {
 
 class Packhouse {
     constructor() {
-        this._core = new PackhouseCore()
+        this._core = new PackhouseCore(this)
         this._plugins = {
             classes: [],
             process: []

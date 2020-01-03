@@ -116,7 +116,7 @@ export interface Event {
     off(): void
 }
 
-export interface MainBase {
+export interface CoreBase {
     utils: Utils
     on(name: EventName, callback: (event: Event, ...any: any) => void): Event
     off(name: EventName, id: string): void
@@ -129,7 +129,25 @@ export interface MainBase {
     [key: string]: any
 }
 
-export interface Main extends MainBase {
+export interface Core extends CoreBase {
     tool(name: string): ToolProcess
     line(name: string): (...any: any) => LineProcess & Response
+}
+
+interface MainHandler {
+    (options: any, method?: string): {
+        plugins: Array<any>
+        groups: { [key: string]: () => {
+            data: Group,
+            options?: any
+        }}
+        mergers: { [key: string]: () => {
+            data: Merger,
+            options?: any
+        }}
+    }
+}
+
+export interface Main {
+    (handler: MainHandler): (event?: any) => Core
 }

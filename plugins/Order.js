@@ -148,7 +148,7 @@ class Order {
 
 class Main {
     constructor(packhouse) {
-        packhouse.utils.order = () => new Order()
+        packhouse.order = () => new Order()
     }
 }
 
