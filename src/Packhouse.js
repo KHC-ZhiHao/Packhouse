@@ -133,7 +133,7 @@ class Packhouse {
             }
             if (mergers) {
                 for (let merger in mergers) {
-                    let data = mergers[merger]
+                    let data = mergers[merger]()
                     packhouse.merger(merger, data.data, data.options)
                 }
             }
