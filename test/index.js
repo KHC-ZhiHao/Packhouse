@@ -7,6 +7,27 @@ describe('#Packhouse', () => {
         this.packhouse = new Packhouse()
     })
 
+    it('main', function() {
+        let pk = Packhouse.Main(number => {
+            expect(number).to.equal(10)
+            return {
+                plugins: [require('../plugins/Order')],
+                groups: {
+                    article: () => ({
+                        data: require('../test/group/index')
+                    })
+                },
+                mergers: {
+                    aws: () => ({
+                        data: require('../test/merger/aws/index')
+                    })
+                }
+            }
+        })
+        let result = pk(10)
+        expect(result instanceof Packhouse).to.equal(true)
+    })
+
     it('add group', function() {
         this.packhouse.addGroup('demoGroup', () => {
             return {

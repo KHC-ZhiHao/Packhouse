@@ -114,6 +114,33 @@ class Packhouse {
         }
     }
 
+    static Main(callback) {
+        return (event, methods) => {
+            let { plugins, groups, mergers } = callback(event)
+            if (methods === '_options') {
+                return { plugins, groups, mergers }
+            }
+            let packhouse = new Packhouse()
+            if (plugins) {
+                for (let plugin of plugins) {
+                    packhouse.plugin(plugin)
+                }
+            }
+            if (groups) {
+                for (let group in groups) {
+                    packhouse.addGroup(group, groups[group])
+                }
+            }
+            if (mergers) {
+                for (let merger in mergers) {
+                    let data = mergers[merger]
+                    packhouse.merger(merger, data.data, data.options)
+                }
+            }
+            return packhouse
+        }
+    }
+
     get utils() {
         return Utils
     }
@@ -164,6 +191,10 @@ class Packhouse {
 
     hasGroup(name) {
         return this._core.hasGroup(name)
+    }
+
+    _toProfile() {
+
     }
 }
 
