@@ -134,20 +134,20 @@ export interface Core extends CoreBase {
     line(name: string): (...any: any) => LineProcess & Response
 }
 
-interface MainHandler {
-    (options: any, method?: string): {
-        plugins: Array<any>
-        groups: { [key: string]: () => {
-            data: Group,
-            options?: any
-        }}
-        mergers: { [key: string]: () => {
-            data: Merger,
-            options?: any
-        }}
-    }
-}
-
 export interface Main {
-    (handler: MainHandler): (event?: any) => Core
+    (handler: (options?: any, method?: string) => {
+        plugins: Array<any>
+        groups: {
+            [key: string]: () => {
+                data: Group,
+                options?: any
+            }
+        }
+        mergers: { 
+            [key: string]: () => {
+                data: Merger,
+                options?: any
+            }
+        }
+    }): (options?: any) => Core
 }
