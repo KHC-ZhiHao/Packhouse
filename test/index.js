@@ -2,6 +2,7 @@ const Packhouse = require('../src/Packhouse')
 const expect = require('chai').expect
 const group = require('./group')
 const merger = require('./merger/aws/index')
+
 describe('#Packhouse', () => {
     before(function() {
         this.packhouse = new Packhouse()
