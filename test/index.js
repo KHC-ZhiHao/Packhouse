@@ -9,7 +9,8 @@ describe('#Packhouse', () => {
     })
 
     it('main', function() {
-        let pk = Packhouse.Main(number => {
+        let pk = Packhouse.Main((core, number) => {
+            expect(core instanceof Packhouse).to.equal(true)
             expect(number).to.equal(10)
             return {
                 plugins: [require('../plugins/Order')],

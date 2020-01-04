@@ -116,9 +116,9 @@ class Packhouse {
     }
 
     static Main(callback) {
-        return (event, method) => {
-            let { plugins, groups, mergers } = callback(event)
+        return (options, mode) => {
             let packhouse = new Packhouse()
+            let { plugins, groups, mergers } = callback(packhouse, options)
             if (plugins) {
                 for (let plugin of plugins) {
                     packhouse.plugin(plugin)
@@ -135,7 +135,7 @@ class Packhouse {
                     packhouse.merger(merger, data.data, data.options)
                 }
             }
-            if (method === '_options') {
+            if (mode === 'READ') {
                 return { packhouse, plugins, groups, mergers }
             }
             return packhouse

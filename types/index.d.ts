@@ -1,3 +1,4 @@
+type Mode = 'READ' | undefined | null
 type EventName = 'use' | 'done' | 'run' | String
 type SystemMold = 'type' | 'boolean' | 'number' | 'int' | 'string' | 'array' | 'buffer' | 'object' | 'function' | 'date' | 'request' | String
 type GetTypeResult = 'string' | 'undefined' | 'object' | 'boolean' | 'number' | 'bigint' | 'symbol' | 'function' | 'array' | 'empty' | 'NaN' | 'regexp' | 'promise' | 'buffer' | 'error'
@@ -145,7 +146,7 @@ export interface Core extends CoreBase {
 }
 
 export interface Main {
-    (handler: (options?: any) => {
+    (callback: (packhouse?: Core, options?: any) => {
         plugins: Array<any>
         groups: {
             [key: string]: () => {
@@ -159,5 +160,5 @@ export interface Main {
                 options?: any
             }
         }
-    }): (options?: any) => Core
+    }): (options?: any, mode?: Mode) => Core
 }
