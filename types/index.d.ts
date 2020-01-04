@@ -8,6 +8,7 @@ export interface ToolContext {
     utils: Utils
     include(name: string): Include
     require(name: string): any
+    packhouse: any
 }
 
 export interface VerifyOptions {
@@ -42,7 +43,6 @@ export interface ToolProcess {
     noGood(action: (error: any) => void, options?: {[key: string]: any}): ToolProcess
     always(action: (result: Always) => void): ToolProcess
     action(...any: any): void
-    packhouse: any,
     promise(...any: any): Promise<any>
 }
 
