@@ -72,14 +72,6 @@ class System {
     get store() {
         return this._tool.store
     }
-
-    get require() {
-        if (typeof require === 'undefined') {
-            return () => {}
-        } else {
-            return require
-        }
-    }
 }
 
 class Tool extends Base {
