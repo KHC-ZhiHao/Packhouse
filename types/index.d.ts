@@ -146,7 +146,7 @@ export interface Core extends CoreBase {
 }
 
 export interface Main {
-    (callback: (packhouse?: Core, options?: any) => {
+    (callback: (packhouse?: Core, options?: any, mode?: Mode) => {
         plugins: Array<any>
         groups: {
             [key: string]: () => {
