@@ -6,8 +6,9 @@ const Utils = require('./Utils')
 const Molds = require('./Molds')
 
 class PackhouseCore extends Base {
-    constructor() {
+    constructor(main) {
         super('Packhouse')
+        this.main = main
         this.event = new Event(this)
         this.modules = {}
         this.moldbox = new Mold()
@@ -107,10 +108,37 @@ class PackhouseCore extends Base {
 
 class Packhouse {
     constructor() {
-        this._core = new PackhouseCore()
+        this._core = new PackhouseCore(this)
         this._plugins = {
             classes: [],
             process: []
+        }
+    }
+
+    static Main(callback) {
+        return (event, method) => {
+            let { plugins, groups, mergers } = callback(event)
+            let packhouse = new Packhouse()
+            if (plugins) {
+                for (let plugin of plugins) {
+                    packhouse.plugin(plugin)
+                }
+            }
+            if (groups) {
+                for (let group in groups) {
+                    packhouse.addGroup(group, groups[group])
+                }
+            }
+            if (mergers) {
+                for (let merger in mergers) {
+                    let data = mergers[merger]()
+                    packhouse.merger(merger, data.data, data.options)
+                }
+            }
+            if (method === '_options') {
+                return { packhouse, plugins, groups, mergers }
+            }
+            return packhouse
         }
     }
 
@@ -164,6 +192,10 @@ class Packhouse {
 
     hasGroup(name) {
         return this._core.hasGroup(name)
+    }
+
+    _toProfile() {
+
     }
 }
 

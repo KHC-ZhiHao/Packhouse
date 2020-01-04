@@ -194,8 +194,8 @@ module.exports = {
             }
         },
         orderTest: {
-            install({ store, utils }) {
-                store.order = utils.order()
+            install({ store, packhouse }) {
+                store.order = packhouse.order()
             },
             handler(self, name) {
                 self.store
@@ -210,8 +210,8 @@ module.exports = {
             }
         },
         orderTestForUse: {
-            install({ store, utils }) {
-                store.order = utils.order()
+            install({ store, packhouse }) {
+                store.order = packhouse.order()
             },
             handler(self, name) {
                 self.store
@@ -224,8 +224,8 @@ module.exports = {
             }
         },
         orderTestLite: {
-            install({ store, utils }) {
-                store.order = utils.order()
+            install({ store, packhouse }) {
+                store.order = packhouse.order()
             },
             handler(self, name) {
                 self.store
@@ -236,8 +236,8 @@ module.exports = {
             }
         },
         orderTestForUseAndError: {
-            install({ store, utils }) {
-                store.order = utils.order()
+            install({ store, packhouse }) {
+                store.order = packhouse.order()
             },
             handler(self, name) {
                 self.store
@@ -250,8 +250,8 @@ module.exports = {
             }
         },
         orderTestExpired: {
-            install({ store, utils }) {
-                store.order = utils.order({
+            install({ store, packhouse }) {
+                store.order = packhouse.order({
                     expired: 100
                 })
             },

@@ -28,11 +28,21 @@ export interface Include {
     tool(name: string): ToolProcess
 }
 
+export interface Always {
+    result: any,
+    context: {
+        id: string,
+        caller: string
+    },
+    success: boolean
+}
+
 export interface ToolProcess {
     pack(...any: any): ToolProcess
     noGood(action: (error: any) => void, options?: {[key: string]: any}): ToolProcess
-    always(action: (result: any) => void): ToolProcess
+    always(action: (result: Always) => void): ToolProcess
     action(...any: any): void
+    packhouse: any,
     promise(...any: any): Promise<any>
 }
 
@@ -116,7 +126,7 @@ export interface Event {
     off(): void
 }
 
-export interface MainBase {
+export interface CoreBase {
     utils: Utils
     on(name: EventName, callback: (event: Event, ...any: any) => void): Event
     off(name: EventName, id: string): void
@@ -129,7 +139,25 @@ export interface MainBase {
     [key: string]: any
 }
 
-export interface Main extends MainBase {
+export interface Core extends CoreBase {
     tool(name: string): ToolProcess
     line(name: string): (...any: any) => LineProcess & Response
+}
+
+export interface Main {
+    (handler: (options?: any) => {
+        plugins: Array<any>
+        groups: {
+            [key: string]: () => {
+                data: Group,
+                options?: any
+            }
+        }
+        mergers: { 
+            [key: string]: () => {
+                data: Merger,
+                options?: any
+            }
+        }
+    }): (options?: any) => Core
 }
