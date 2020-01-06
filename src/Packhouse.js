@@ -118,7 +118,7 @@ class Packhouse {
     static Main(callback) {
         return (options, mode) => {
             let packhouse = new Packhouse()
-            let { plugins, groups, mergers } = callback(packhouse, options)
+            let { plugins, groups, mergers } = callback(packhouse, options, mode)
             if (plugins) {
                 for (let plugin of plugins) {
                     packhouse.plugin(plugin)
@@ -192,10 +192,6 @@ class Packhouse {
 
     hasGroup(name) {
         return this._core.hasGroup(name)
-    }
-
-    _toProfile() {
-
     }
 }
 
