@@ -114,7 +114,7 @@ export interface Group {
     lines?: { [key: string]: Line }
     molds?: { [key: string]: Mold | VerifyOptions }
     mergers?: { [key: string]: string }
-    install?(group: {[key: string]: any}, options: any): void
+    install?(group: {[key: string]: any}, options: any, packhouse: Core): void
 }
 
 export interface Merger {
