@@ -26,7 +26,6 @@ class Includes {
         return {
             tool: (name) => {
                 this._tool.used[this._name] = coop.tool(name)
-                return this._tool.used[this._name]
             },
             line: (name) => {
                 this._tool.used[this._name] = coop.line(name)
@@ -34,13 +33,17 @@ class Includes {
         }
     }
 
-    tool(name) {
+    tool(name, ...packs) {
         let merger = mergerParse(name)
         if (merger) {
-            return this._coop(merger.group).tool(merger.name)
+            this._coop(merger.group).tool(merger.name)
         } else {
             this._tool.used[this._name] = this._tool.group.callTool(name)
-            return this._tool.used[this._name]
+        }
+        if (packs) {
+            for (let pack of packs) {
+                this._tool.used[this._name].pack(pack)
+            }
         }
     }
 

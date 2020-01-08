@@ -49,7 +49,7 @@ module.exports = {
         get: {
             request: ['string'],
             install({ include }) {
-                include('get').tool('dynamoDB/get').pack('a')
+                include('get').tool('dynamoDB/get', 'a')
             },
             handler(self, name) {
                 self.tool('get')
@@ -265,7 +265,7 @@ module.exports = {
         },
         includeExpression: {
             install({ include }) {
-                include('get').tool('dynamoDB/get').pack('a')
+                include('get').tool('dynamoDB/get', 'a')
             },
             handler(self, name) {
                 self.tool('get')

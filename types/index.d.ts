@@ -22,12 +22,11 @@ export interface Utils {
     generateId(): string
     arrayCopy(array: Array<any>): Array<any>
     peel(target: {[key: string]: any}, path: string, def: any): any
-    [key: string]: any
 }
 
 export interface Include {
     line(name: string, ...args: any): void
-    tool(name: string): ToolProcess
+    tool(name: string, ...args: any): void
 }
 
 export interface Always {
