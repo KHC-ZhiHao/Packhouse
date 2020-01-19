@@ -241,7 +241,9 @@ class Flow {
                 return this.context.exit()
             }
             let next = () => {
-                next = () => {}
+                next = () => {
+                    console.warn('Next repeated declarations may cause unnecessary errors.')
+                }
                 this.history.output()
                 this.next()
             }
@@ -250,7 +252,9 @@ class Flow {
             this.context.nextCall = this.template[0] ? this.template[0].name : null
             template.call(this.self, this.self, () => {
                 next()
-                next = () => {}
+                next = () => {
+                    console.warn('Next repeated declarations may cause unnecessary errors.')
+                }
             }, this.context)
         }
     }
