@@ -134,15 +134,15 @@ class History {
         }
         this.list[this.index] = data
         this.useEventId = this.packhouse.on('run', (event, { id, caller, detail }) => {
+            logs[id] = {
+                logs: {},
+                caller: caller ? caller.id : null,
+                startTime: Date.now(),
+                ...detail
+            }
             if (caller) {
                 logs[caller.id].logs[id] = logs[id]
             } else {
-                logs[id] = {
-                    logs: {},
-                    caller: caller ? caller.id : null,
-                    startTime: Date.now(),
-                    ...detail
-                }
                 data.logs[id] = logs[id]
             }
         })
