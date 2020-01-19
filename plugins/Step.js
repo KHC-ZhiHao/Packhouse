@@ -81,6 +81,8 @@ class History {
                         trace: aims.trace,
                         message: aims.message
                     }
+                } else if (type === 'string' && aims.length > 50) {
+                    output[key] = aims.slice(0, 50) + '...'
                 } else {
                     output[key] = aims
                 }
@@ -132,14 +134,15 @@ class History {
         }
         this.list[this.index] = data
         this.useEventId = this.packhouse.on('run', (event, { id, caller, detail }) => {
-            logs[id] = {
-                logs: {},
-                startTime: Date.now(),
-                ...detail
-            }
             if (caller) {
                 logs[caller.id].logs[id] = logs[id]
             } else {
+                logs[id] = {
+                    logs: {},
+                    caller: caller ? caller.id : null,
+                    startTime: Date.now(),
+                    ...detail
+                }
                 data.logs[id] = logs[id]
             }
         })
@@ -150,8 +153,8 @@ class History {
             } else {
                 log = data.logs[id]
             }
-            log.success = detail.success
             log.result = detail.result
+            log.success = detail.success
             log.finishTime = Date.now()
             log.totalTime = logs[id].finishTime - logs[id].startTime
         })

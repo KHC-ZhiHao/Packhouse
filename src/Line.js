@@ -115,17 +115,18 @@ class Process extends Base {
         super('Process')
         this.stop = false
         this.index = 0
-        this.deploy = deploy
         this.error = error
+        this.deploy = deploy
         this.success = success
         this.context = null
         this.deploy
             .input
             .noGood(e => this.fail(e))
-            .always(data => { this.context = data.context })
-            .action(this.deploy.caller, ...this.deploy.args, () => {
+            .always(data => {
+                this.context = data.context
                 this.next()
             })
+            .action(this.deploy.caller, ...this.deploy.args, () => '')
     }
 
     fail(error) {
