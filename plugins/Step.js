@@ -153,10 +153,12 @@ class History {
             } else {
                 log = data.logs[id]
             }
-            log.result = detail.result
-            log.success = detail.success
-            log.finishTime = Date.now()
-            log.totalTime = logs[id].finishTime - logs[id].startTime
+            if (log) {
+                log.result = detail.result
+                log.success = detail.success
+                log.finishTime = Date.now()
+                log.totalTime = logs[id].finishTime - logs[id].startTime
+            }
         })
     }
 
