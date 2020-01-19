@@ -113,7 +113,6 @@ class Tool extends Base {
     }
 
     call({ parameters, used, mode, context, response }) {
-        let handler = new ToolHandler(this, used, context, response)
         // event
         this.emit('run', Object.assign({
             detail: {
@@ -130,6 +129,7 @@ class Tool extends Base {
             }
         }, context))
         // request
+        let handler = new ToolHandler(this, used, context, response)
         let length = this.options.request.length
         for (let i = 0; i < length; i++) {
             let mold = this.options.request[i]

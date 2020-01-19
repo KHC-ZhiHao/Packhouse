@@ -33,6 +33,7 @@ class Response extends Base {
             this.over = true
             this.tool.emit('done', Object.assign({
                 detail: {
+                    name: this.tool.name,
                     result,
                     success: false
                 }
@@ -64,6 +65,7 @@ class Response extends Base {
             this.over = true
             this.tool.emit('done', Object.assign({
                 detail: {
+                    name: this.tool.name,
                     result,
                     success: true
                 }
