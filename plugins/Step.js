@@ -26,10 +26,13 @@ class History {
         this.packhouse = packhouse
     }
 
-    inspect(target, lite, used = []) {
+    inspect(target, options = {}, used = []) {
         if (target == null) {
             return null
         }
+        let miniString = options.miniString || true
+        let detailArgs = options.detailArgs || false
+        let detailResult = options.detailResult || false
         let output = Array.isArray(target) ? [] : {}
         for (let key in target) {
             let aims = target[key]
@@ -42,7 +45,13 @@ class History {
                         type: 'CircularStructureObject'
                     }
                 } else {
-                    output[key] = this.inspect(aims, lite, newUsed)
+                    if (type === 'array' && key === 'args' && detailArgs === false) {
+                        output[key] = (aims || []).map(a => this.packhouse.utils.getType(a))
+                    } else if (key === 'result' && detailResult === false && aims.type !== 'mold') {
+                        output[key] = this.packhouse.utils.getType(aims)
+                    } else {
+                        output[key] = this.inspect(aims, options, newUsed)
+                    }
                 }
             } else {
                 if (type === 'function') {
@@ -81,8 +90,8 @@ class History {
                         trace: aims.trace,
                         message: aims.message
                     }
-                } else if (type === 'string' && aims.length > 50) {
-                    output[key] = aims.slice(0, 50) + '...'
+                } else if (type === 'string' && aims.length > 50 && miniString) {
+                    output[key] = aims.slice(0, 50) + '...' + `(length: ${aims.length})`
                 } else {
                     output[key] = aims
                 }
@@ -106,17 +115,21 @@ class History {
             profile,
             template: this.list,
             isDone: name => this.isDone(name),
-            toJSON: metadata => this.toJSON(profile, metadata)
+            toJSON: options => this.toJSON(profile, options)
         }
     }
 
-    toJSON(profile, metadata = {}) {
+    toJSON(profile, options = {}) {
         let data = {
             profile,
-            metadata,
+            metadata: options.metadata,
             template: this.list
         }
-        return JSON.stringify(this.inspect(data), null, 4)
+        if (options.beautify === false) {
+            return JSON.stringify(this.inspect(data, options))
+        } else {
+            return JSON.stringify(this.inspect(data, options), null, 4)
+        }
     }
 
     isDone(name) {

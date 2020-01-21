@@ -53,8 +53,8 @@ group.molds = {
 group.tools = {
 
     getData: {
-        install({ store, group, utils }) {
-            store.order = utils.order()
+        install({ store, group, packhouse }) {
+            store.order = packhouse.order()
             store.baseUrl = group.baseUrl
             store.request = require('request')
         },

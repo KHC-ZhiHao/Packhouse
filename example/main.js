@@ -19,9 +19,12 @@ module.exports = (template) => async(event = {}) => {
             }
         },
         output(self, { history }, success) {
-            console.log(history.toJSON(true, {
-                result: self.result,
-                errorMessage: self.errorMessage
+            console.log(history.toJSON({
+                detailArgs: true,
+                metadata: {
+                    result: self.result,
+                    errorMessage: self.errorMessage
+                }
             }))
             success({
                 statusCode: self.errorMessage ? 500 : 200,
