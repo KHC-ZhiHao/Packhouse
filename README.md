@@ -22,6 +22,8 @@
 
 ## Summary
 
+[完整教學文件](https://packhouse-doc.metalsheep.com/)
+
 Packhouse是一個基於函數式程式設計(Functional Programming)的程式設計模型，其擁有以下特性：
 
 * 追蹤呼叫上下文
@@ -43,17 +45,19 @@ Packhouse是一個基於函數式程式設計(Functional Programming)的程式�
 
 ### 無伺服器架構 - Serverless
 
-> 你不需要逐步建立服務，可以直接參考API Service章節。
+> 你不需要逐步建立服務，可以直接參考[API Service](https://packhouse-doc.metalsheep.com/application/api-service)章節。
 
-無伺服器架構是Packhouse絕佳的運作平台，Mess的後端就是使用Packhouse與Serverless Framework建構整個API Service，我們推薦下列兩種Serverless框架：
+無伺服器架構是Packhouse絕佳的運作平台：
 
-Serverless Framework
+[Serverless Framework](https://serverless.com/)
 
-AWS Serverless Application
+[AWS Serverless Application](https://docs.aws.amazon.com/zh_tw/serverlessrepo/latest/devguide/using-aws-sam.html)
 
-### Install
+### 安裝
 
+```bash
 $ npm i packhouse --save
+```
 
 ### 運行環境
 
@@ -66,6 +70,8 @@ Node 8.x以上。
 以下是最低限度地執行程式：
 
 ```js
+const Packhouse = require('packhouse')
+const packhouse = new Packhouse()
 const group = {
     tools: {
         sum: {
