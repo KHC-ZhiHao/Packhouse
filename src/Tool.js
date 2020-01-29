@@ -40,10 +40,8 @@ class Includes {
         } else {
             this._tool.used[this._name] = this._tool.group.callTool(name)
         }
-        if (packs) {
-            for (let pack of packs) {
-                this._tool.used[this._name].pack(pack)
-            }
+        for (let pack of packs) {
+            this._tool.used[this._name].pack(pack)
         }
     }
 
