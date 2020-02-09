@@ -34,6 +34,8 @@ Packhouse是一個基於函數式程式設計(Functional Programming)的程式�
 
 > 開始前可以閱讀[函數式編程指南](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)了解基本觀念。
 
+---
+
 ### 為何採用Packhouse？
 1. Packhouse開發可以建構統一的Input/Output接口。
 
@@ -42,6 +44,8 @@ Packhouse是一個基於函數式程式設計(Functional Programming)的程式�
 3. 並不是所有的專案都能運行TypeScript，而Packhouse是原生的JavaScript，不需要經由任何編譯就能執行。
 
 4. 編寫Cloud Function時將所有的邏輯編寫在一個檔案中難以應付頻繁的需求變更，物件導向開發在minify或編譯後難以除錯，雖然我們可以藉由單元測試來避免錯誤，但上線後會發生的事永遠比開發時離奇。
+
+---
 
 ### 無伺服器架構 - Serverless
 
@@ -53,17 +57,23 @@ Packhouse是一個基於函數式程式設計(Functional Programming)的程式�
 
 [AWS Serverless Application](https://docs.aws.amazon.com/zh_tw/serverlessrepo/latest/devguide/using-aws-sam.html)
 
+---
+
 ### 安裝
 
 ```bash
-$ npm i packhouse --save
+npm i packhouse --save
 ```
+
+---
 
 ### 運行環境
 
 Node 8.x以上。
 
 > Packhouse並沒有強制必須於哪個環境下運作，它甚至允許於瀏覽器執行，但我們不會在乎瀏覽器兼容性。
+
+---
 
 ### First Function
 
@@ -93,6 +103,8 @@ packhouse
     })
 ```
 
+---
+
 ### 使用案例
 
 <p align="center">
@@ -102,6 +114,8 @@ packhouse
 </p>
 
 [Mess](https://mess.metalsheep.com/)是為通勤族精心設計的閱讀網站，你可以在任何等待時間使用任何裝置隨時閱讀國外媒體或文章，並享受精心設計的使用者介面與翻譯、語音服務。
+
+---
 
 ### Versions
 
