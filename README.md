@@ -95,9 +95,13 @@ packhouse
 
 ### 使用案例
 
-[MESS](https://mess.metalsheep.com/)
+<p align="center">
+    <a href="https://mess.metalsheep.com/">
+        <img src="https://mess.metalsheep.com/images/logo.png">
+    </a>
+</p>
 
-為通勤族精心設計的閱讀網站，你可以在任何等待時間使用任何裝置隨時閱讀國外媒體或文章，並享受精心設計的使用者介面與翻譯、語音服務。
+[Mess](https://mess.metalsheep.com/)是為通勤族精心設計的閱讀網站，你可以在任何等待時間使用任何裝置隨時閱讀國外媒體或文章，並享受精心設計的使用者介面與翻譯、語音服務。
 
 ### Versions
 
