@@ -1,6 +1,6 @@
 {
   "name": "packhouse",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Packhouse is a function wrapper based on the concept of functional programming",
   "main": "dist/index.js",
   "scripts": {
