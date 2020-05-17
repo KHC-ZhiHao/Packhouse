@@ -8,8 +8,14 @@ class Handler extends Base {
         this._tool = tool
         this.utils = Utils
         this.context = context
-        this.error = reslut => response.error(reslut)
         this.success = reslut => response.success(reslut)
+        this.error = reslut => {
+            if (this._tool.packhouse.interceptError == null) {
+                response.error(reslut)
+            } else {
+                response.error(this._tool.packhouse.interceptError(reslut))
+            }
+        }
         this.assess = compile => (error, result) => {
             if (error) {
                 this.error(error)

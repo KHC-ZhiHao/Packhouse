@@ -13,6 +13,7 @@ class PackhouseCore extends Base {
         this.modules = {}
         this.moldbox = new Mold()
         this.groupbox = {}
+        this.interceptError = null
         for (let key in Molds) {
             this.addMold(key, Molds[key])
         }
@@ -192,6 +193,14 @@ class Packhouse {
 
     hasGroup(name) {
         return this._core.hasGroup(name)
+    }
+
+    interceptError(callback) {
+        if (typeof callback === 'function') {
+            this._core.interceptError = callback
+        } else {
+            this.$devError('interceptError', 'Callback not a function.')
+        }
     }
 }
 

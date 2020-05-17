@@ -8,6 +8,49 @@ describe('#Packhouse', () => {
         this.packhouse = new Packhouse()
     })
 
+    it('interceptError', function() {
+        let packhouse = new Packhouse()
+        packhouse.addGroup('test', () => {
+            return {
+                data: {
+                    tools: {
+                        test: {
+                            handler(self) {
+                                self.error('-.-')
+                            }
+                        }
+                    },
+                    lines: {
+                        test: {
+                            input(self) {
+                                self.success()
+                            },
+                            output(self) {
+                                self.error('><')
+                            },
+                            layout: {}
+                        }
+                    }
+                }
+            }
+        })
+        packhouse.tool('test/test').action((error) => {
+            expect(error).to.equal('-.-')
+        })
+        packhouse.line('test/test')().action((error) => {
+            expect(error).to.equal('><')
+        })
+        packhouse.interceptError(error => {
+            return error + 'ouo'
+        })
+        packhouse.tool('test/test').action((error) => {
+            expect(error).to.equal('-.-ouo')
+        })
+        packhouse.line('test/test')().action((error) => {
+            expect(error).to.equal('><ouo')
+        })
+    })
+
     it('main', function() {
         let pk = Packhouse.Main((core, number, mode) => {
             expect(core instanceof Packhouse).to.equal(true)

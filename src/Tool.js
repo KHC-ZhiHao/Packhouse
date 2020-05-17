@@ -87,6 +87,7 @@ class Tool extends Base {
         this.packs = reference.packs || {}
         this.store = reference.store || {}
         this.group = group
+        this.packhouse = group.packhouse
         this.options = Utils.verify(options, {
             info: [false, ['string'], null],
             request: [false, ['array'], () => []],
