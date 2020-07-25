@@ -2,7 +2,7 @@ const path = require('path')
 
 module.exports = {
     mode: 'production',
-    entry: './src/index.ts',
+    entry: './src/Packhouse.js',
     output: {
         library: 'Packhouse',
         libraryTarget: 'umd',
@@ -11,25 +11,22 @@ module.exports = {
         filename: 'index.js',
         globalObject: 'this || (typeof window !== \'undefined\' ? window : global)'
     },
-    optimization: {
-        removeAvailableModules: false,
-        removeEmptyChunks: false,
-        splitChunks: false
-    },
-    resolve: {
-        extensions: ['.tsx', '.ts', '.js']
-    },
     module: {
         rules: [
             {
-                test: /\.ts$/,
                 enforce: 'pre',
-                use: 'tslint-loader'
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'eslint-loader'
             },
             {
-                test: /\.ts$/,
-                use: 'ts-loader',
-                exclude: /node_modules/
+                test: /\.js$/,
+                use: {
+                    loader: 'babel-loader',
+                    query: {
+                        compact: false
+                    }
+                }
             }
         ]
     }

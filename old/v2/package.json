@@ -1,0 +1,46 @@
+{
+  "name": "packhouse",
+  "version": "2.0.1",
+  "description": "Packhouse is a function wrapper based on the concept of functional programming",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "nyc mocha",
+    "build": "nyc mocha && cross-env webpack --progress --hide-modules",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KHC-ZhiHao/Packhouse.git"
+  },
+  "keywords": [
+    "lambda",
+    "azure functions",
+    "serverless",
+    "functional programming"
+  ],
+  "author": "KHC-ZhiHao",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KHC-ZhiHao/Packhouse/issues"
+  },
+  "homepage": "https://github.com/KHC-ZhiHao/Packhouse#readme",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "babel-loader": "^8.0.6",
+    "chai": "^4.2.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^6.1.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-loader": "^2.1.2",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-node": "^9.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "mocha": "^6.2.0",
+    "webpack": "^4.35.0",
+    "webpack-cli": "^3.3.7",
+    "coveralls": "^3.0.6",
+    "nyc": "^14.1.1"
+  }
+}

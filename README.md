@@ -1,20 +1,21 @@
-<p align="center"><img src="https://khc-zhihao.github.io/MyBook/Packhouse/images/logo.png"></p>
+<br>
 
-<p align="center" style="font-size:2em">Functional Programming Design Pattern</p>
+<p align="center"><img src="./logo.png"></p>
+
+<p align="center" style="font-size:2em">View Model Library</p>
 
 <p align="center">
-    <a href="https://www.npmjs.com/package/packhouse"><img src="https://img.shields.io/npm/v/packhouse.svg"></a>
-    <a href="https://travis-ci.org/KHC-ZhiHao/Packhouse">
-    <img src="https://travis-ci.org/KHC-ZhiHao/Packhouse.svg?branch=master" alt="travis-ci"  style="max-width:100%;">
+    <a href="https://www.npmjs.com/package/alas"><img src="https://img.shields.io/npm/v/alas.svg"></a>
+    <a href="https://travis-ci.org/KHC-ZhiHao/Alas">
+    <img src="https://travis-ci.org/KHC-ZhiHao/Alas.svg?branch=master" alt="travis-ci"  style="max-width:100%;">
     </a>
-    <a href="https://coveralls.io/github/KHC-ZhiHao/Packhouse?branch=master">
-        <img src="https://coveralls.io/repos/github/KHC-ZhiHao/Packhouse/badge.svg?branch=master" alt="Coverage Status"  style="max-width:100%;">
+    <a href="https://coveralls.io/github/KHC-ZhiHao/Alas?branch=master">
+        <img src="https://coveralls.io/repos/github/KHC-ZhiHao/Alas/badge.svg?branch=master" alt="Coverage Status"  style="max-width:100%;">
     </a>
     <a href="https://standardjs.com/">
         <img src="https://img.shields.io/badge/code_style-standard-brightgreen.svg" alt="Standard Code Style"  style="max-width:100%;">
     </a>
-    <a href="https://lgtm.com/projects/g/KHC-ZhiHao/Packhouse/context:javascript"><img alt="Language grade: JavaScript" src="https://img.shields.io/lgtm/grade/javascript/g/KHC-ZhiHao/Packhouse.svg?logo=lgtm&logoWidth=18"/></a>
-    <a href="https://github.com/KHC-ZhiHao/Packhouse"><img src="https://img.shields.io/github/stars/KHC-ZhiHao/Packhouse.svg?style=social"></a>
+    <a href="https://github.com/KHC-ZhiHao/Alas"><img src="https://img.shields.io/github/stars/KHC-ZhiHao/Alas.svg?style=social"></a>
     <br>
 </p>
 
@@ -22,105 +23,132 @@
 
 ## Summary
 
-[完整教學文件](https://packhouse-doc.metalsheep.com/)
+[教學與文件](https://alas-doc.metalsheep.com/)
 
-Packhouse是一個基於函數式程式設計(Functional Programming)的程式設計模型，其擁有以下特性：
+#### 為了UI/UX而生
 
-* 追蹤呼叫上下文
-* 真正的型態檢查
-* 管理與分類函式
-* 美麗的寫作規範
-* 建構後端服務的能力
+具有諸多的內置方法與事件都是為了優化流程而設計的。
 
-> 開始前可以閱讀[函數式編程指南](https://yucj.gitbooks.io/mostly-adequate-guide-traditional-chinese/content/)了解基本觀念。
+#### 重構與優化程式碼
 
----
+可以有效地建立資料結構讓開發人員不需要花太多時間驗證資料正確與否。
 
-### 為何採用Packhouse？
-1. Packhouse開發可以建構統一的Input/Output接口。
+#### 單元測試
 
-2. Packhouse的精神是建構微服務中的微服務，建立細微可控的函式能夠快速反應需求變更，且如果保持函數式編程的核心理念，便可以在專案破碎化的情況下複製模式到各個專案中。
+Alas試圖降低耦合，促使前端可以獨立進行單元測試。
 
-3. 並不是所有的專案都能運行TypeScript，而Packhouse是原生的JavaScript，不需要經由任何編譯就能執行。
+#### 語系與規則的自我管理
 
-4. 編寫Cloud Function時將所有的邏輯編寫在一個檔案中難以應付頻繁的需求變更，物件導向開發在minify或編譯後難以除錯，雖然我們可以藉由單元測試來避免錯誤，但上線後會發生的事永遠比開發時離奇。
+以Container為主的擴展方式可以將Model快速的遷移至各種專案。
 
----
+#### 為Vue.js進行優化
 
-### 無伺服器架構 - Serverless
-
-> 你不需要逐步建立服務，可以直接參考[API Service](https://packhouse-doc.metalsheep.com/application/api-service)章節。
-
-無伺服器架構是Packhouse絕佳的運作平台：
-
-[Serverless Framework](https://serverless.com/)
-
-[AWS Serverless Application](https://docs.aws.amazon.com/zh_tw/serverlessrepo/latest/devguide/using-aws-sam.html)
+Alas可以說是Vue開發的經驗總結，雖然該Library不需要運行於其中，但可以說已經盡可能的針對Vue雙向綁定事件進行處理。
 
 ---
 
 ### 安裝
 
 ```bash
-npm i packhouse --save
+npm i alas --save
 ```
 
 ---
 
-### 運行環境
-
-Node 8.x以上。
-
-> Packhouse並沒有強制必須於哪個環境下運作，它甚至允許於瀏覽器執行，但我們不會在乎瀏覽器兼容性。
-
----
-
-### First Function
-
-以下是最低限度地執行程式：
+### 第一隻Model
 
 ```js
-const Packhouse = require('packhouse')
-const packhouse = new Packhouse()
-const group = {
-    tools: {
-        sum: {
-            handler: (self, v1, v2) => self.success(v1 + v2)
-        }
-    }
-}
+import Alas from 'alas'
+import Ms from 'alas/packages/ms'
 
-packhouse.addGroup('math', () => {
-    return {
-        data: group
+let alas = new Alas()
+
+alas.addPackage(Ms)
+alas.addContainer('user', {
+    models: {
+        user: {
+            body: {
+                name: ['#ms.type | is: string']
+            }
+        }
     }
 })
 
-packhouse
-    .tool('math/sum')
-    .action(10, 20, (error, result) => {
-        console.log(result) // 30
-    })
+let user = alas.make('user', 'user').$init({
+    name: 'dave'
+})
+
+console.log(user.name) // dave
+```
+
+### 特色
+
+#### 規範設計模型
+
+規範每個模型的結構與定義入口，統一管理後不必再猜測每個對象生成時會是什麼模樣，而來源是什麼。
+
+```js
+let model = {
+    body: {
+        user: ['#ms.type | is: string']
+    }
+}
+```
+
+#### 重複編寫與煩雜的繼承樹
+
+經由Alas生成的模型都具有各種時用的方法，低耦合高內聚的設計，捨棄JS的Class設計可以避免每個人的書寫風格不同造成的維護困難。
+
+```js
+class User {
+    constructor(name) {
+        this.name = name
+        this.oriName = name
+    }
+    
+    isChange() {
+        return this.name !== this.oriName
+    }
+}
+
+let user = new User('dave')
+
+user.name = 'sum'
+
+console.log(user.isChange()) // true
+```
+
+使用Alsa：
+
+```js
+let user = alas.make('user', 'user').$init({
+    name: 'dave'
+})
+
+user.name = 'sum'
+
+console.log(user.$isChange()) // true
+```
+
+#### 自我狀態管理
+
+身為View Model Library，狀態管理是必要的，以async系統為主的Loader、Event等都能讓你的互動
+介面達到最佳化。
+
+```js
+let user = alas.make('user', 'user')
+
+user.$on('$ready', () => {
+    console.log(user.$o.fetch.loading) // false
+})
+
+user.$o.fetch('dave')
+
+console.log(user.$o.fetch.loading) // true
 ```
 
 ---
 
-### 使用案例
+### Other
 
-<p align="center">
-    <a href="https://mess.metalsheep.com/">
-        <img src="https://mess.metalsheep.com/images/logo.png">
-    </a>
-</p>
-
-[Mess](https://mess.metalsheep.com/)是為通勤族精心設計的閱讀網站，你可以在任何等待時間使用任何裝置隨時閱讀國外媒體或文章，並享受精心設計的使用者介面與翻譯、語音服務。
-
----
-
-### Versions
-
-1.x與2.x的版本差異非常大，如果使用1.x請參照下列文件：
-
-[Guide](https://khc-zhihao.github.io/MyBook/Packhouse/static/)
-
-[API Document](https://khc-zhihao.github.io/Packhouse/old/document/document.html)
+[Version Log](https://github.com/KHC-ZhiHao/Alas/blob/master/version.md)

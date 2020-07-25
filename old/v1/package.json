@@ -1,0 +1,31 @@
+{
+  "name": "packhouse",
+  "version": "1.1.6",
+  "description": "Packhouse is a function wrapper based on the concept of functional programming",
+  "main": "dist/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KHC-ZhiHao/Packhouse.git"
+  },
+  "keywords": [
+    "lambda",
+    "azure functions",
+    "serverless",
+    "functional programming"
+  ],
+  "author": "KHC-ZhiHao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KHC-ZhiHao/Packhouse/issues"
+  },
+  "homepage": "https://github.com/KHC-ZhiHao/Packhouse#readme",
+  "dependencies": {
+    "request": "^2.88.0"
+  }
+}
