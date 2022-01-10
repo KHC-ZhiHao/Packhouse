@@ -1,12 +1,12 @@
 {
   "name": "packhouse",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Packhouse is a function wrapper based on the concept of functional programming",
   "main": "dist/index.js",
   "scripts": {
     "test": "nyc mocha",
     "build": "nyc mocha && cross-env webpack --progress --hide-modules",
-    "coverage": "nyc report --reporter=text-lcov | coveralls"
+    "coverage": "nyc --reporter=lcov npm test"
   },
   "repository": {
     "type": "git",
