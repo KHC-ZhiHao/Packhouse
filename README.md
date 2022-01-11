@@ -1,6 +1,7 @@
 <p align="center"><img src="./logo.png"></p>
 
-<p align="center" style="font-size:2em">Functional Programming Design Pattern</p>
+<h1 align="center">ALAS</h1>
+<h3 align="center">Functional Programming Design Pattern</h3>
 
 <p align="center">
     <a href="https://www.npmjs.com/package/packhouse">
