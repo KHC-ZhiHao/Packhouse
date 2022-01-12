@@ -1,6 +1,6 @@
 <p align="center"><img src="./logo.png"></p>
 
-<h1 align="center">ALAS</h1>
+<h1 align="center">Packhouse</h1>
 <h3 align="center">Functional Programming Design Pattern</h3>
 
 <p align="center">
